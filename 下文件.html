@@ -1,25 +1,51 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>下载按钮示例</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>下载任意文件</title>
 </head>
 <body>
 
-<button id="downloadButton">下载文件</button>
+<!-- 文件URL输入框 -->
+<input type="text" id="fileUrlInput" placeholder="请输入文件URL" size="50">
+<!-- 下载按钮 -->
+<button id="downloadBtn">下载文件</button>
 
 <script>
-document.getElementById('downloadButton').addEventListener('click', function() {
-    // 创建一个a标签
-    var element = document.createElement('a');
-    element.setAttribute('href', 'data:text/plain;charset=utf-8,这里是文件内容');
-    element.setAttribute('download', '测试文件');
-
-    element.style.display = 'none';
-    document.body.appendChild(element);
-
-    element.click();
-
-    document.body.removeChild(element);
+// 当页面加载完成后，‌为下载按钮添加点击事件监听器
+document.addEventListener('DOMContentLoaded', function() {
+  const fileUrlInput = document.getElementById('fileUrlInput');
+  const downloadBtn = document.getElementById('downloadBtn');
+  
+  downloadBtn.addEventListener('click', function() {
+    // 获取用户输入的文件URL
+    const fileURL = fileUrlInput.value;
+    
+    // 检查URL是否为空
+    if (!fileURL) {
+      alert('请输入有效的文件URL！‌');
+      return;
+    }
+    
+    // 创建一个临时的a标签用于触发下载
+    const a = document.createElement('a');
+    a.href = fileURL;
+    
+    // 尝试从URL中提取文件名作为下载的文件名
+    // 注意：‌这只是一个简单的示例，‌可能无法在所有情况下都有效
+    const filename = fileURL.split('/').pop().split('#')[0].split('?')[0];
+    a.download = filename;
+    
+    // 将a标签添加到文档中（‌不需要添加到body中，‌因为只是为了触发下载）‌
+    document.body.appendChild(a);
+    
+    // 触发点击事件
+    a.click();
+    
+    // 清理工作：‌移除a标签（‌虽然在这个场景中可能不是必需的）‌
+    document.body.removeChild(a);
+  });
 });
 </script>
 
