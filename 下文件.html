@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>下载按钮示例</title>
+</head>
+<body>
+
+<button id="downloadButton">下载文件</button>
+
+<script>
+document.getElementById('downloadButton').addEventListener('click', function() {
+    // 创建一个a标签
+    var element = document.createElement('a');
+    element.setAttribute('href', 'data:text/plain;charset=utf-8,这里是文件内容');
+    element.setAttribute('download', '测试文件');
+
+    element.style.display = 'none';
+    document.body.appendChild(element);
+
+    element.click();
+
+    document.body.removeChild(element);
+});
+</script>
+
+</body>
+</html>
