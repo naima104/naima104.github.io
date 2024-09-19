@@ -1,9 +1,10 @@
+
 <!DOCTYPE html>
 <html lang="zh">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>中秋快乐</title>
+    <title>中秋快乐 - 烟花效果</title>
     <style>
         body, html {
             height: 100%;
@@ -12,24 +13,66 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            background-image: url('https://p6-tt.byteimg.com/origin/pgc-image/357be96653534e579c816fa01c7388f6?from=pc'); 
-            background-size: cover; 
-            background-position: center; 
-            color: white; 
-            font-family: Arial, sans-serif; 
-            text-align: center; 
+            background-image: url('https://p6-tt.byteimg.com/origin/pgc-image/357be96653534e579c816fa01c7388f6?from=pc');
+            background-size: cover;
+            background-position: center;
+            color: white;
+            font-family: Arial, sans-serif;
+            text-align: center;
+            overflow: hidden; /* what can i sey */
         }
         .message {
-            font-size: 24px; 
-            padding: 20px; 
-            background-color: rgba(0, 0, 0, 0.5); 
-            border-radius: 10px; /* what can i sey*/
+            font-size: 24px;
+            padding: 20px;
+            background-color: rgba(0, 0, 0, 0.5);
+            border-radius: 10px;
+            display: inline-block; /* what can i sey */
+        }
+        .firework {
+            position: absolute;
+            border-radius: 50%;
+            opacity: 0;
+            animation: firework-animation 3s ease-out forwards;
+        }
+        @keyframes firework-animation {
+            0% {
+                opacity: 1;
+                transform: scale(0);
+            }
+            50% {
+                opacity: 1;
+                transform: scale(1);
+            }
+            100% {
+                opacity: 0;
+                transform: scale(2);
+            }
         }
     </style>
 </head>
 <body>
     <div class="message">
         中秋节快乐<br>
+        <button onclick="launchFireworks()">放烟花</button>
     </div>
+
+    <script>
+        function launchFireworks() {
+            for (let i = 0; i < 20; i++) {
+                const firework = document.createElement('div');
+                firework.className = 'firework';
+                firework.style.left = `${Math.random() * window.innerWidth}px`;
+                firework.style.top = `${Math.random() * window.innerHeight}px`;
+                firework.style.backgroundColor = `hsl(${Math.random() * 360}, 100%, 50%)`;
+                firework.style.width = `${Math.random() * 50 + 10}px`;
+                firework.style.height = firework.style.width;
+                document.body.appendChild(firework);
+
+                setTimeout(() => {
+                    firework.remove();
+                }, 3000);
+            }
+        }
+    </script>
 </body>
 </html>
