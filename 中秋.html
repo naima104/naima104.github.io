@@ -40,12 +40,40 @@
             50% {opacity: 1; transform: scale(1);}
             100% {opacity: 0; transform: scale(2);}
         }
+        #fpsDisplay {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            color: white;
+            font-family: Arial, sans-serif;
+            font-size: 16px;
+        }
     </style>
 </head>
 <body>
-    <div class="message" onclick="launchFireworks()">中秋节快乐！(可点击</div>
+    <div class="message" onclick="launchFireworks()">中秋节快乐</div>
+    <div id="fpsDisplay">FPS: 0</div>
 
     <script>
+        let lastTime = 0;
+        let frames = 0;
+
+        function updateFPS() {
+            const now = performance.now();
+            frames++;
+
+            if (now - lastTime >= 1000) {
+                const fps = frames / ((now - lastTime) / 1000);
+                document.getElementById('fpsDisplay').textContent = `FPS: ${Math.round(fps)}`;
+                frames = 0;
+                lastTime = now;
+            }
+
+            requestAnimationFrame(updateFPS);
+        }
+
+        requestAnimationFrame(updateFPS);
+
         function launchFireworks() {
             for (let i = 0; i < 20; i++) {
                 const firework = document.createElement('div');
