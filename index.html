@@ -15,6 +15,34 @@ body {
     min-height: 100vh;
     margin: 0;
 }
+<div id="fullscreen-container"></div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+$(document).ready(function($) {
+    var texts = ["富强", "民主", "文明", "和谐", "自由", "平等", "公正", "法治", "爱国", "敬业", "诚信", "友善"];
+    var textIndex = 0;
+
+    $("#fullscreen-container").click(function(e) {
+        var $textElement = $("<div/>").addClass("click-text").text(texts[textIndex]);
+        textIndex = (textIndex + 1) % texts.length;
+
+        var x = e.pageX,
+            y = e.pageY;
+
+        $textElement.css({
+            "top": y + "px",
+            "left": x + "px"
+        });
+
+        $("#fullscreen-container").append($textElement);
+
+        // 可以在这里添加代码来使文本在一段时间后消失
+        setTimeout(function() {
+            $textElement.remove();
+        }, 2000); // 2秒后移除文本元素
+    });
+});
     </style>
 </head>
 <body>
