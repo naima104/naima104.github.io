@@ -1,38 +1,156 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>我的第一个网页</title>
+    <title>主屏幕</title>
+    <link href="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="icon" href="icon.png" type="image/png">
+
     <style>
-body {
-    background-image: url('背景.png');
-    background-size: cover;
-    background-repeat: no-repeat;
-    background-attachment: fixed;
-    background-position: center;
-    min-height: 100vh;
+        body {
+    font-family: Arial, sans-serif;
     margin: 0;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: url('image.png') no-repeat center center;
+    background-size: cover;
+    position: relative;
+    overflow: hidden;
+}
+
+/* 黑色遮罩层 */
+.overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    z-index: 1;
+}
+
+/* 按钮样式 */
+.btn {
+    font-size: 20px; /* 提高字体大小以适应按钮宽度 */
+    width: 180px; /* 增加按钮宽度 */
+    height: 60px; /* 增加按钮高度 */
+    border-radius: 12px;
+    color: white;
+    font-weight: bold;
+    text-decoration: none;
+    text-align: center;
+    display: block;
+    line-height: 60px; /* 确保按钮中的文字垂直居中 */
+    transition: all 0.3s ease; /* 添加平滑过渡效果 */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); /* 按钮阴影效果 */
+}
+
+/* 蓝色按钮（举报/纠错） */
+.btn-report {
+    background-color: #007bff;
+}
+
+.btn-report:hover {
+    background-color: #0056b3; /* 悬停效果 */
+    transform: scale(1.05); /* 轻微缩放 */
+}
+
+/* 绿色按钮（上传应用） */
+.btn-upload {
+    background-color: #28a745;
+}
+
+.btn-upload:hover {
+    background-color: #218838; /* 悬停效果 */
+    transform: scale(1.05); /* 轻微缩放 */
+}
+
+/* 按钮容器，确保按钮之间的间距足够 */
+.button-container {
+    display: flex;
+    justify-content: space-between; /* 让按钮有足够的间距 */
+    gap: 30px; /* 调整按钮间距 */
+    margin-top: 30px;
+}
+
+/* 内容容器，调整按钮包裹的文字和图片 */
+.content-container {
+    position: relative;
+    z-index: 2;
+    text-align: center;
+    color: white;
+    padding: 60px; /* 增加内边距 */
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+    box-shadow: 0 0 20px rgba(255, 255, 255, 0.3); /* 增加阴影效果 */
+    width: 450px; /* 调整容器的宽度 */
+}
+
+/* 图标 */
+.icon {
+    width: 100px; /* 增加图标大小 */
+    height: 100px;
+    margin-bottom: 20px;
+}
+
+/* 标题 */
+h1 {
+    margin-bottom: 20px;
+    font-size: 36px;
+    letter-spacing: 1px; /* 添加字母间距 */
+}
+
+/* 按钮点击炫酷特效 */
+.effect {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.8), transparent);
+    pointer-events: none;
+    z-index: 999;
+    transform: scale(0);
+    transition: transform 0.6s ease;
+}
+
+/* 点击按钮时的覆盖效果 */
+.effect.active {
+    transform: scale(10);
 }
 
     </style>
 </head>
 <body>
-    <h3>欢迎来到我的网站</h3>
-<a href="公告.html">公告</a><br>
-    <a href="https://m.bilibili.com/space/3546610954931052">我的B站主页</a><br>
-    <a href="114514.html">你干嘛</a><br>
-    QQ号: 3698088118<br>
-    <i>没 树枝 就不要乱叫🤣☞</i><br>
-    <small><i>PS:电脑访问可能有鬼畜效果</i></small><br>
-    <a href="666.html">666</a><br>
-    <hr>
-    <i>下面为测试项目</i><br>
-    <input placeholder="输入用户名"><br>
-    <input type="password" placeholder="输入密码"><br>
-    <a href="404.html">确定</a><br>
-    <a href="下文件">下载测试</a><br>
-    <i>我只是小初生，不要制裁我 无限期断更中</i>
+
+<div class="overlay"></div>
+
+<div class="content-container">
+    <img src="icon.png" alt="icon" class="icon">
+    <h1>欢迎访问功能页</h1>
+    <div class="button-container">
+        <a href="report.html" class="btn btn-report">举报/纠错</a>
+        <a href="up.html" class="btn btn-upload">上传应用</a>
+    </div>
+</div>
+
+<div class="effect" id="effect"></div>
+
+<script>
+    // 为按钮添加点击事件，显示炫酷特效
+    document.querySelectorAll('.btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const effect = document.getElementById('effect');
+            effect.classList.add('active');
+            setTimeout(() => {
+                effect.classList.remove('active');
+            }, 700);
+        });
+    });
+</script>
+
 </body>
 </html>
