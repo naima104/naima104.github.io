@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="这是一个炫酷的网页，充满了惊喜和创意！">
+    <meta name="author" content="炫酷开发者">
+    <meta name="theme-color" content="#ff0000"> <!-- 设置浏览器标签页的颜色 -->
+    <title>我的网页</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(45deg, #ff0000, #00ff00);
+            color: #ffffff;
+            text-align: center;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        h1 {
+            font-size: 4em;
+            text-shadow: 2px 2px #000000;
+            animation: glow 1.5s infinite alternate;
+        }
+        @keyframes glow {
+            from {
+                text-shadow: 2px 2px 5px #ffffff, 0 0 10px #ffffff, 0 0 15px #ff0000, 0 0 20px #ff0000, 0 0 25px #ff0000, 0 0 30px #ff0000, 0 0 35px #ff0000;
+            }
+            to {
+                text-shadow: 2px 2px 5px #ff0000, 0 0 10px #ff0000, 0 0 15px #ffffff, 0 0 20px #ffffff, 0 0 25px #ffffff, 0 0 30px #ffffff, 0 0 35px #ffffff;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>欢迎来到我的网页</h1>
+</body>
+</html>
