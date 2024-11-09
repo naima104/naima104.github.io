@@ -1,0 +1,32 @@
+body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  margin: 0;
+  background-color: #f0f0f0;
+}
+
+.loader-blurry {
+  width: 50px;
+  height: 50px;
+  background-color: #3498db;
+  border-radius: 50%;
+  filter: blur(5px); /* 初始模糊效果 */
+  animation: blurryMove 2s infinite ease-in-out;
+}
+
+@keyframes blurryMove {
+  0% {
+    transform: translateX(0) scale(1);
+    filter: blur(5px);
+  }
+  50% {
+    transform: translateX(50px) scale(1.2);
+    filter: blur(3px); /* 在移动过程中减少模糊 */
+  }
+  100% {
+    transform: translateX(0) scale(1);
+    filter: blur(5px); /* 回到初始状态 */
+  }
+}
