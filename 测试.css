@@ -1,0 +1,22 @@
+body, html {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  overflow: hidden;
+  background-color: #fff; /* 设置背景颜色为白色，让小球更明显 */
+}
+
+#container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.ball {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background-color: rgba(255, 0, 0, 0.5); /* 初始背景颜色为红色半透明，之后会在 JavaScript 中随机生成 */
+  opacity: 0.7; /* 设置透明度 */
+}
