@@ -1,13 +1,76 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>测试项目</title>
-<link rel="stylesheet" href="styles.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>随机游走并回弹的小球</title>
+    <style>
+        body {
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #f0f0f0;
+            overflow: hidden;
+        }
+        .ball {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            position: absolute;
+        }
+    </style>
 </head>
 <body>
-<div id="container"></div>
-<script src="script.js"></script>
+    <script>
+        function getRandomSpeed(min, max) {
+            return (Math.random() * (max - min) + min) * (Math.random() > 0.5 ? 1 : -1);
+        }
+
+        function createBall() {
+            const ball = document.createElement('div');
+            ball.classList.add('ball');
+            const colors = ['#FF5733', '#33FF57', '#3357FF', '#FF33A1', '#A133FF', '#33FFA8'];
+            ball.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+            ball.style.left = `${Math.random() * (window.innerWidth - 50)}px`;
+            ball.style.top = `${Math.random() * (window.innerHeight - 50)}px`;
+            document.body.appendChild(ball);
+            moveBall(ball);
+        }
+
+        function moveBall(ball) {
+            let xSpeed = getRandomSpeed(2, 5);
+            let ySpeed = getRandomSpeed(2, 5);
+            const maxX = window.innerWidth - 50;
+            const maxY = window.innerHeight - 50;
+            let x = parseInt(ball.style.left, 10);
+            let y = parseInt(ball.style.top, 10);
+
+            function animate() {
+                x += xSpeed;
+                y += ySpeed;
+
+                // 边界检测并回弹
+                if (x <= 0 || x >= maxX) {
+                    xSpeed = -xSpeed;
+                    x = x <= 0 ? 0 : maxX;
+                }
+                if (y <= 0 || y >= maxY) {
+                    ySpeed = -ySpeed;
+                    y = y <= 0 ? 0 : maxY;
+                }
+
+                ball.style.left = `${x}px`;
+                ball.style.top = `${y}px`;
+                requestAnimationFrame(animate);
+            }
+
+            animate();
+        }
+
+        // 在页面上点击时创建并移动小球
+        document.body.addEventListener('click', createBall);
+    </script>
 </body>
 </html>
