@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>随机游走并回弹的小球</title>
+    <title>黑色小球随机游走、回弹、碰撞检测与帧率显示</title>
     <style>
         body {
             margin: 0;
@@ -19,11 +19,29 @@
             height: 50px;
             border-radius: 50%;
             position: absolute;
+            background-color: #000; /* 将小球设置为黑色 */
+        }
+        #fps {
+            position: fixed;
+            top: 10px;
+            left: 10px;
+            font-size: 20px;
+            color: #000;
+            background-color: rgba(255, 255, 255, 0.7);
+            padding: 5px;
+            border-radius: 5px;
         }
     </style>
 </head>
 <body>
+    <div id="fps">FPS: 0</div>
     <script>
+        const balls = [];
+        let lastTime = 0;
+        let frames = 0;
+        let fps = 0;
+        const fpsElement = document.getElementById('fps');
+
         function getRandomSpeed(min, max) {
             return (Math.random() * (max - min) + min) * (Math.random() > 0.5 ? 1 : -1);
         }
@@ -31,46 +49,84 @@
         function createBall() {
             const ball = document.createElement('div');
             ball.classList.add('ball');
-            const colors = ['#FF5733', '#33FF57', '#3357FF', '#FF33A1', '#A133FF', '#33FFA8'];
-            ball.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
             ball.style.left = `${Math.random() * (window.innerWidth - 50)}px`;
             ball.style.top = `${Math.random() * (window.innerHeight - 50)}px`;
+            const speedX = getRandomSpeed(1, 5);
+            const speedY = getRandomSpeed(1, 5);
+            ball.dataset.speedX = speedX;
+            ball.dataset.speedY = speedY;
+
+            balls.push(ball);
             document.body.appendChild(ball);
-            moveBall(ball);
         }
 
-        function moveBall(ball) {
-            let xSpeed = getRandomSpeed(2, 5);
-            let ySpeed = getRandomSpeed(2, 5);
-            const maxX = window.innerWidth - 50;
-            const maxY = window.innerHeight - 50;
-            let x = parseInt(ball.style.left, 10);
-            let y = parseInt(ball.style.top, 10);
+        function checkCollisions() {
+            for (let i = 0; i < balls.length; i++) {
+                for (let j = i + 1; j < balls.length; j++) {
+                    const ball1 = balls[i];
+                    const ball2 = balls[j];
+                    const rect1 = ball1.getBoundingClientRect();
+                    const rect2 = ball2.getBoundingClientRect();
 
-            function animate() {
-                x += xSpeed;
-                y += ySpeed;
+                    if (rect1.left < rect2.right &&
+                        rect1.right > rect2.left &&
+                        rect1.top < rect2.bottom &&
+                        rect1.bottom > rect2.top) {
+                        // 碰撞发生，反转速度
+                        let speedX1 = parseFloat(ball1.dataset.speedX);
+                        let speedY1 = parseFloat(ball1.dataset.speedY);
+                        let speedX2 = parseFloat(ball2.dataset.speedX);
+                        let speedY2 = parseFloat(ball2.dataset.speedY);
 
-                // 边界检测并回弹
-                if (x <= 0 || x >= maxX) {
-                    xSpeed = -xSpeed;
-                    x = x <= 0 ? 0 : maxX;
+                        ball1.dataset.speedX = speedX2;
+                        ball1.dataset.speedY = speedY2;
+                        ball2.dataset.speedX = speedX1;
+                        ball2.dataset.speedY = speedY1;
+                    }
                 }
-                if (y <= 0 || y >= maxY) {
-                    ySpeed = -ySpeed;
-                    y = y <= 0 ? 0 : maxY;
-                }
+            }
+        }
 
-                ball.style.left = `${x}px`;
-                ball.style.top = `${y}px`;
-                requestAnimationFrame(animate);
+        function moveBalls(time) {
+            frames++;
+            const deltaTime = time - lastTime;
+            if (deltaTime >= 1000) {
+                fps = frames;
+                frames = 0;
+                lastTime = time;
+                fpsElement.textContent = `FPS: ${fps}`;
             }
 
-            animate();
+            for (const ball of balls) {
+                let rect = ball.getBoundingClientRect();
+                let speedX = parseFloat(ball.dataset.speedX);
+                let speedY = parseFloat(ball.dataset.speedY);
+
+                if (rect.left <= 0 || rect.right >= window.innerWidth) {
+                    speedX = -speedX;
+                }
+                if (rect.top <= 0 || rect.bottom >= window.innerHeight) {
+                    speedY = -speedY;
+                }
+
+                ball.style.left = `${rect.left + speedX}px`;
+                ball.style.top = `${rect.top + speedY}px`;
+                ball.dataset.speedX = speedX;
+                ball.dataset.speedY = speedY;
+            }
+
+            checkCollisions();
+            requestAnimationFrame(moveBalls);
         }
 
-        // 在页面上点击时创建并移动小球
-        document.body.addEventListener('click', createBall);
+        // 创建多个小球
+        for (let i = 0; i < 10; i++) {
+            createBall();
+        }
+
+        // 开始动画并计算帧率
+        lastTime = performance.now();
+        requestAnimationFrame(moveBalls);
     </script>
 </body>
 </html>
