@@ -1,132 +1,235 @@
 <!DOCTYPE html>
-<html lang="zh">
+<html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>好玩的</title>
+    <title>个人网页</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        body {
+        * {
             margin: 0;
-            height: 100vh;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background-color: #f5f5f5;
+            cursor: default;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        header {
+            text-align: center;
+            padding: 2rem 0;
+            background: linear-gradient(45deg, #2c3e50, #3498db);
+            color: white;
+        }
+
+        .info {
+            margin-top: 2rem;
+        }
+
+        .skills {
             display: flex;
             justify-content: center;
-            align-items: center;
-            background-color: #f0f0f0;
-            overflow: hidden;
+            flex-wrap: wrap;
+            gap: 2rem;
+            margin: 2rem 0;
         }
-        .ball {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            position: absolute;
-            background-color: #000; /* 将小球设置为黑色 */
+
+        .skill-item {
+            background: white;
+            padding: 1rem;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            text-align: center;
+            transition: transform 0.3s ease;
+            cursor: pointer;
         }
-        #fps {
-            position: fixed;
-            top: 10px;
-            left: 10px;
-            font-size: 20px;
-            color: #000;
-            background-color: rgba(255, 255, 255, 0.7);
-            padding: 5px;
+
+        .skill-item:hover {
+            transform: translateY(-5px);
+        }
+
+        .projects {
+            margin-top: 3rem;
+        }
+
+        .project-card {
+            background: white;
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+            cursor: pointer;
+        }
+
+        .project-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 0.8rem 1.5rem;
+            background: #3498db;
+            color: white;
+            text-decoration: none;
             border-radius: 5px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            text-align: center;
+        }
+
+        .btn:hover {
+            background: #2980b9;
+            transform: scale(1.05);
+        }
+
+        .btn:active {
+            transform: scale(0.95);
+        }
+
+        .contact {
+            margin-top: 3rem;
+            text-align: center;
+        }
+
+        .contact-info {
+            margin: 2rem 0;
+        }
+
+        .contact-info i {
+            margin-right: 1rem;
+            color: #3498db;
+            transition: color 0.3s ease;
+        }
+
+        .contact-info i:hover {
+            color: #2980b9;
+        }
+
+        footer {
+            text-align: center;
+            padding: 2rem;
+            color: #666;
+        }
+
+        /* 添加点击特效 */
+        .click-effect {
+            position: relative;
+            display: inline-block;
+        }
+
+        .click-effect::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 0;
+            height: 0;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            opacity: 0;
+            transition: width 0.3s, height 0.3s, opacity 0.3s;
+        }
+
+        .click-effect:active::after {
+            width: 100%;
+            height: 100%;
+            opacity: 1;
         }
     </style>
 </head>
 <body>
-    <div id="fps">FPS: 0</div>
+    <header>
+        <div class="container">
+            <h1>你的名字</h1>
+            <p>你的职业或专业</p>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="info">
+            <h2>关于我</h2>
+            <p>你的个人简介或自我介绍内容...</p>
+        </div>
+
+        <div class="skills">
+            <div class="skill-item click-effect">
+                <i class="fab fa-html5"></i>
+                <h3>HTML5</h3>
+            </div>
+            <div class="skill-item click-effect">
+                <i class="fab fa-css3-alt"></i>
+                <h3>CSS3</h3>
+            </div>
+            <div class="skill-item click-effect">
+                <i class="fab fa-js"></i>
+                <h3>JavaScript</h3>
+            </div>
+        </div>
+
+        <div class="projects">
+            <h2>我的项目</h2>
+            <div class="project-card click-effect">
+                <h3>项目1</h3>
+                <p>项目描述...</p>
+                <a href="#" class="btn">查看项目</a>
+            </div>
+            <div class="project-card click-effect">
+                <h3>项目2</h3>
+                <p>项目描述...</p>
+                <a href="#" class="btn">查看项目</a>
+            </div>
+        </div>
+
+        <div class="contact">
+            <h2>联系我</h2>
+            <div class="contact-info">
+                <p class="click-effect"><i class="fas fa-envelope"></i>你的邮箱</p>
+                <p class="click-effect"><i class="fas fa-phone"></i>你的电话</p>
+                <p class="click-effect"><i class="fas fa-map-marker-alt"></i>你的地址</p>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2023 你的名字. All rights reserved.</p>
+        </div>
+    </footer>
+
     <script>
-        const balls = [];
-        let lastTime = 0;
-        let frames = 0;
-        let fps = 0;
-        const fpsElement = document.getElementById('fps');
+        // 为所有带有click-effect类的元素添加点击动画
+        document.querySelectorAll('.click-effect').forEach(element => {
+            element.addEventListener('click', function() {
+                // 添加动态效果
+                this.style.transform = 'scale(0.95)';
+                setTimeout(() => {
+                    this.style.transform = 'scale(1)';
+                }, 200);
+            });
+        });
 
-        function getRandomSpeed(min, max) {
-            return (Math.random() * (max - min) + min) * (Math.random() > 0.5 ? 1 : -1);
-        }
-
-        function createBall() {
-            const ball = document.createElement('div');
-            ball.classList.add('ball');
-            ball.style.left = `${Math.random() * (window.innerWidth - 50)}px`;
-            ball.style.top = `${Math.random() * (window.innerHeight - 50)}px`;
-            const speedX = getRandomSpeed(1, 5);
-            const speedY = getRandomSpeed(1, 5);
-            ball.dataset.speedX = speedX;
-            ball.dataset.speedY = speedY;
-
-            balls.push(ball);
-            document.body.appendChild(ball);
-        }
-
-        function checkCollisions() {
-            for (let i = 0; i < balls.length; i++) {
-                for (let j = i + 1; j < balls.length; j++) {
-                    const ball1 = balls[i];
-                    const ball2 = balls[j];
-                    const rect1 = ball1.getBoundingClientRect();
-                    const rect2 = ball2.getBoundingClientRect();
-
-                    if (rect1.left < rect2.right &&
-                        rect1.right > rect2.left &&
-                        rect1.top < rect2.bottom &&
-                        rect1.bottom > rect2.top) {
-                        // 碰撞发生，反转速度
-                        let speedX1 = parseFloat(ball1.dataset.speedX);
-                        let speedY1 = parseFloat(ball1.dataset.speedY);
-                        let speedX2 = parseFloat(ball2.dataset.speedX);
-                        let speedY2 = parseFloat(ball2.dataset.speedY);
-
-                        ball1.dataset.speedX = speedX2;
-                        ball1.dataset.speedY = speedY2;
-                        ball2.dataset.speedX = speedX1;
-                        ball2.dataset.speedY = speedY1;
-                    }
-                }
-            }
-        }
-
-        function moveBalls(time) {
-            frames++;
-            const deltaTime = time - lastTime;
-            if (deltaTime >= 1000) {
-                fps = frames;
-                frames = 0;
-                lastTime = time;
-                fpsElement.textContent = `FPS: ${fps}`;
-            }
-
-            for (const ball of balls) {
-                let rect = ball.getBoundingClientRect();
-                let speedX = parseFloat(ball.dataset.speedX);
-                let speedY = parseFloat(ball.dataset.speedY);
-
-                if (rect.left <= 0 || rect.right >= window.innerWidth) {
-                    speedX = -speedX;
-                }
-                if (rect.top <= 0 || rect.bottom >= window.innerHeight) {
-                    speedY = -speedY;
-                }
-
-                ball.style.left = `${rect.left + speedX}px`;
-                ball.style.top = `${rect.top + speedY}px`;
-                ball.dataset.speedX = speedX;
-                ball.dataset.speedY = speedY;
-            }
-
-            checkCollisions();
-            requestAnimationFrame(moveBalls);
-        }
-
-        // 创建多个小球
-        for (let i = 0; i < 10; i++) {
-            createBall();
-        }
-
-        // 开始动画并计算帧率
-        lastTime = performance.now();
-        requestAnimationFrame(moveBalls);
+        // 为按钮添加动态效果
+        document.querySelectorAll('.btn').forEach(button => {
+            button.addEventListener('click', function() {
+                // 添加动态效果
+                this.style.transform = 'scale(0.95)';
+                setTimeout(() => {
+                    this.style.transform = 'scale(1)';
+                }, 200);
+            });
+        });
     </script>
 </body>
 </html>
