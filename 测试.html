@@ -3,233 +3,79 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>我的网页</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <title>我的网站</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Poppins', sans-serif;
-        }
-
         body {
+            font-family: '微软雅黑', Arial, sans-serif;
             background-color: #f5f5f5;
-            cursor: default;
+            margin: 0;
+            padding: 20px;
+            color: #333;
         }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 2rem;
+        
+        h3 {
+            color: #2c3e50;
+            margin-bottom: 30px;
         }
-
-        header {
-            text-align: center;
-            padding: 2rem 0;
-            background: linear-gradient(45deg, #2c3e50, #3498db);
-            color: white;
+        
+        ul {
+            list-style: none;
+            padding: 0;
         }
-
-        .info {
-            margin-top: 2rem;
+        
+        li {
+            margin: 10px 0;
         }
-
-        .skills {
-            display: flex;
-            justify-content: center;
-            flex-wrap: wrap;
-            gap: 2rem;
-            margin: 2rem 0;
-        }
-
-        .skill-item {
-            background: white;
-            padding: 1rem;
-            border-radius: 10px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-            text-align: center;
-            transition: transform 0.3s ease;
-            cursor: pointer;
-        }
-
-        .skill-item:hover {
-            transform: translateY(-5px);
-        }
-
-        .projects {
-            margin-top: 3rem;
-        }
-
-        .project-card {
-            background: white;
-            border-radius: 10px;
-            padding: 1.5rem;
-            margin-bottom: 2rem;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-            transition: transform 0.3s ease;
-            cursor: pointer;
-        }
-
-        .project-card:hover {
-            transform: translateY(-5px);
-        }
-
-        .btn {
-            display: inline-block;
-            padding: 0.8rem 1.5rem;
-            background: #3498db;
-            color: white;
-            text-decoration: none;
-            border-radius: 5px;
-            transition: all 0.3s ease;
-            cursor: pointer;
-            text-align: center;
-        }
-
-        .btn:hover {
-            background: #2980b9;
-            transform: scale(1.05);
-        }
-
-        .btn:active {
-            transform: scale(0.95);
-        }
-
-        .contact {
-            margin-top: 3rem;
-            text-align: center;
-        }
-
-        .contact-info {
-            margin: 2rem 0;
-        }
-
-        .contact-info i {
-            margin-right: 1rem;
+        
+        a {
             color: #3498db;
-            transition: color 0.3s ease;
+            text-decoration: none;
+            font-weight: 500;
         }
-
-        .contact-info i:hover {
+        
+        a:hover {
             color: #2980b9;
         }
-
-        footer {
-            text-align: center;
-            padding: 2rem;
+        
+        .info {
+            margin-top: 30px;
+            font-size: 14px;
             color: #666;
         }
-
-        /* 添加点击特效 */
-        .click-effect {
-            position: relative;
-            display: inline-block;
+        
+        .contact {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
         }
-
-        .click-effect::after {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 0;
-            height: 0;
-            background: rgba(255, 255, 255, 0.2);
-            border-radius: 50%;
-            opacity: 0;
-            transition: width 0.3s, height 0.3s, opacity 0.3s;
-        }
-
-        .click-effect:active::after {
-            width: 100%;
-            height: 100%;
-            opacity: 1;
+        
+        .contact h4 {
+            color: #2c3e50;
+            margin-bottom: 15px;
         }
     </style>
 </head>
 <body>
-    <header>
-        <div class="container">
-            <h1>/.</h1>
-            <p>主页</p>
-        </div>
-    </header>
+    <h3>欢迎来到我的网站</h3>
+    
+    <ul>
+        <li><a href="公告.html">最新公告</a></li>
+        <li><a href="https://m.bilibili.com/space/3546610954931052">B站主页</a></li>
+        <li><a href="666.html">特别页面</a></li>
+    </ul>
 
-    <div class="container">
-        <div class="info">
-            <h2>关于</h2>
-            <p>闲的没事做出来的</p>
-        </div>
-
-        <div class="skills">
-            <div class="skill-item click-effect">
-                <i class="fab fa-html5"></i>
-                <h3>HTML5</h3>
-            </div>
-            <div class="skill-item click-effect">
-                <i class="fab fa-css3-alt"></i>
-                <h3>CSS3</h3>
-            </div>
-            <div class="skill-item click-effect">
-                <i class="fab fa-js"></i>
-                <h3>JavaScript</h3>
-            </div>
-        </div>
-
-        <div class="projects">
-            <h2>我的项目</h2>
-            <div class="project-card click-effect">
-                <h3>公告</h3>
-                <p>()</p>
-                <a href="公告.html" class="btn">查看项目</a>
-            </div>
-            <div class="project-card click-effect">
-                <h3>项目1</h3>
-                <p>我家鸽鸽</p>
-                <a href="114.html" class="btn">查看项目</a>
-            </div>
-        </div>
-
-        <div class="contact">
-            <h2>联系我</h2>
-            <div class="contact-info">
-                <p class="click-effect"><i class="fas fa-envelope"></i>3698088118@qq.com</p>
-                <p class="click-effect"><i class="fas fa-phone"></i>?</p>
-                <p class="click-effect"><i class="fas fa-map-marker-alt"></i>?</p>
-            </div>
-        </div>
+    <div class="contact">
+        <h4>联系方式</h4>
+        <ul>
+            <li><a href="tencent://message/?uin=3698088118&site=qq&menu=yes">QQ: 3698088118</a></li>
+            <li><a href="weixin://">微信: 请复制QQ联系</a></li>
+            <li><a href="mailto:your.email@example.com">邮箱: your.email@example.com</a></li>
+        </ul>
     </div>
 
-    <footer>
-        <div class="container">
-            <p>&copy; 2025 奶妈. All rights reserved.</p>
-        </div>
-    </footer>
-
-    <script>
-        // 为所有带有click-effect类的元素添加点击动画
-        document.querySelectorAll('.click-effect').forEach(element => {
-            element.addEventListener('click', function() {
-                // 添加动态效果
-                this.style.transform = 'scale(0.95)';
-                setTimeout(() => {
-                    this.style.transform = 'scale(1)';
-                }, 200);
-            });
-        });
-
-        // 为按钮添加动态效果
-        document.querySelectorAll('.btn').forEach(button => {
-            button.addEventListener('click', function() {
-                // 添加动态效果
-                this.style.transform = 'scale(0.95)';
-                setTimeout(() => {
-                    this.style.transform = 'scale(1)';
-                }, 200);
-            });
-        });
-    </script>
+    <div class="info">
+        没树枝就不要乱叫<br>
+        无限期断更中
+    </div>
 </body>
 </html>
