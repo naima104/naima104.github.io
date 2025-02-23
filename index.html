@@ -1,35 +1,136 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN">
 <head>
-     <link rel="stylesheet" type="text/css" href="114.css">
-    <script type="text/javascript" src="114.js"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>我的第一个网页</title>
+    <title>我的网站</title>
     <style>
-body {
-    background-image: url('背景.png');
-    background-size: cover;
-    background-repeat: no-repeat;
-    background-attachment: fixed;
-    background-position: center;
-    min-height: 100vh;
-    margin: 0;
-}
+        /* 加载动画 */
+        .loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #1a1a1a;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
 
+        .loader .spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #3498db;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* 隐藏加载动画 */
+        .loader.hidden {
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease-out;
+        }
+
+        /* 页面内容 */
+        body {
+            font-family: '微软雅黑', Arial, sans-serif;
+            background-color: #1a1a1a;
+            margin: 0;
+            padding: 20px;
+            color: #ffffff;
+            opacity: 0;
+            transition: opacity 0.3s ease-out;
+        }
+
+        body.visible {
+            opacity: 1;
+        }
+
+        h3 {
+            color: #ffffff;
+            margin-bottom: 30px;
+            font-size: 24px;
+        }
+
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        li {
+            margin: 10px 0;
+        }
+
+        a {
+            color: #3498db;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        a:hover {
+            color: #2980b9;
+        }
+
+        .info {
+            margin-top: 30px;
+            font-size: 14px;
+            color: #cccccc;
+        }
+
+        .contact {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #333333;
+        }
+
+        .contact h4 {
+            color: #ffffff;
+            margin-bottom: 15px;
+        }
     </style>
 </head>
 <body>
+    <!-- 加载动画 -->
+    <div class="loader">
+        <div class="spinner"></div>
+    </div>
+
+    <!-- 页面内容 -->
     <h3>欢迎来到我的网站</h3>
-<a href="公告.html">公告</a><br>
-    <a href="https://m.bilibili.com/space/3546610954931052">我的B站主页</a><br>
-    <a href="114514.html">你干嘛</a><br>
-    QQ号: 3698088118<br>
-    <i>没 树枝 就不要乱叫</i><br>
-    <small><i>PS:电脑访问可能有鬼畜效果</i></small><br>
-    <a href="666.html">666</a><br>
-    <a href="下文件">下载测试</a><br>
-    <i>我只是小初生，不要制裁我 无限期断更中</i>
+
+    <ul>
+        <li><a href="公告.html">最新公告</a></li>
+        <li><a href="https://m.bilibili.com/space/3546610954931052">B站主页</a></li>
+    </ul>
+
+    <div class="contact">
+        <h4>联系方式</h4>
+        <ul>
+            <li><a href="tencent://message/?uin=3698088118&site=qq&menu=yes">QQ: 3698088118</a></li>
+            <li><a href="mailto:your.email@example.com">邮箱: your.email@example.com</a></li>
+        </ul>
+    </div>
+
+    <div class="info">
+        没树枝就不要乱叫<br>
+        无限期断更中
+    </div>
+
+    <script>
+        // 页面加载完成后隐藏加载动画
+        window.addEventListener('load', function() {
+            document.querySelector('.loader').classList.add('hidden');
+            document.body.classList.add('visible');
+        });
+    </script>
 </body>
 </html>
