@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>点击生成小球</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            background-color: #1a1a1a;
+        }
+
+        .container {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+        }
+
+        .ball {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.5);
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container"></div>
+
+    <script>
+        const container = document.querySelector('.container');
+        const balls = [];
+        const maxBalls = 100;
+
+        container.addEventListener('click', (e) => {
+            if (balls.length >= maxBalls) {
+                // 移除最早生成的小球
+                const oldestBall = balls.shift();
+                oldestBall.element.remove();
+            }
+
+            // 创建新的小球
+            const ball = document.createElement('div');
+            ball.className = 'ball';
+            container.appendChild(ball);
+
+            // 随机初始位置
+            const startX = e.clientX - ball.offsetWidth / 2;
+            const startY = e.clientY - ball.offsetHeight / 2;
+            ball.style.left = startX + 'px';
+            ball.style.top = startY + 'px';
+
+            // 随机速度和方向
+            let speedX = (Math.random() - 0.5) * 5;
+            let speedY = (Math.random() - 0.5) * 5;
+
+            // 随机颜色
+            const hue = Math.random() * 360;
+            ball.style.backgroundColor = `hsl(${hue}, 100%, 50%)`;
+
+            // 更新小球位置
+            let interval = setInterval(() => {
+                // 更新位置
+                const rect = ball.getBoundingClientRect();
+                const width = window.innerWidth;
+                const height = window.innerHeight;
+
+                // 检查碰撞
+                if (rect.left <= 0 || rect.right >= width) {
+                    speedX = -speedX;
+                }
+                if (rect.top <= 0 || rect.bottom >= height) {
+                    speedY = -speedY;
+                }
+
+                // 应用速度
+                ball.style.left = (parseFloat(ball.style.left) + speedX) + 'px';
+                ball.style.top = (parseFloat(ball.style.top) + speedY) + 'px';
+            }, 16); // 每16毫秒更新一次，大约60帧每秒
+
+            // 将小球添加到数组
+            balls.push({
+                element: ball,
+                interval: interval
+            });
+        });
+    </script>
+</body>
+</html>
