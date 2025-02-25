@@ -12,38 +12,29 @@
         .typing-effect {
             background-color: #34495e;
             color: #ecf0f1;
-            padding: 40px; /* 调大内边距 */
-            border-radius: 20px; /* 调大圆角 */
-            border: 4px solid #2c3e50; /* 调大边框 */
-            font-size: 36px; /* 调大字体 */
-            line-height: 1.8; /* 调大行高 */
+            padding: 40px;
+            border-radius: 20px;
+            border: 4px solid #2c3e50;
+            font-size: 36px;
+            line-height: 1.8;
             white-space: pre-wrap;
             word-wrap: break-word;
-            max-width: 800px; /* 调大最大宽度 */
-            margin: 30px; /* 调大外边距 */
+            max-width: 800px;
+            margin: 30px;
             position: relative;
             z-index: 2;
         }
 
-        .ball {
-            
-            height: 40px;
-            background-color: rgba(255, 255, 255, 0.3);
-            border-radius: 50%;
-            position: absolute;
-            pointer-events: none;
-        }
-
         .fps-display {
             position: fixed;
-            bottom: 20px; /* 调大底部距离 */
-            right: 20px; /* 调大右侧距离 */
+            bottom: 20px;
+            right: 20px;
             color: rgba(255, 255, 255, 0.8);
             font-family: Arial, sans-serif;
-            font-size: 18px; /* 调大字体 */
+            font-size: 18px;
             background-color: rgba(0, 0, 0, 0.5);
-            padding: 8px 20px; /* 调大内边距 */
-            border-radius: 8px; /* 调大圆角 */
+            padding: 8px 20px;
+            border-radius: 8px;
             z-index: 100;
         }
     </style>
@@ -53,31 +44,31 @@
     <div class="fps-display" id="fps-display">FPS: 0</div>
 
     <script>
-        
-                });
+        class FPSCounter {
+            constructor(displayElement) {
+                this.fps = 0;
+                this.frameCount = 0;
+                this.lastTime = performance.now();
+                this.displayElement = displayElement;
+            }
 
+            update(currentTime) {
                 this.frameCount++;
                 if (currentTime - this.lastTime >= 1000) {
                     this.fps = this.frameCount;
                     this.frameCount = 0;
                     this.lastTime = currentTime;
-                }
-                if (this.fpsDisplay) {
-                    this.fpsDisplay.textContent = `FPS: ${Math.floor(this.fps)}`;
+                    this.displayElement.textContent = `FPS: ${this.fps}`;
                 }
             }
         }
 
         function init() {
             const text = "这是一个随机字符显示间隔的打字效果示例。";
-            const ballManager = new BallManager(25, document.getElementById('fps-display'));
-
-            document.addEventListener('click', (e) => {
-                ballManager.createBall(e.clientX, e.clientY);
-            });
+            const fpsDisplay = new FPSCounter(document.getElementById('fps-display'));
 
             function animate(timestamp) {
-                ballManager.updateBalls(timestamp);
+                fpsDisplay.update(timestamp);
                 requestAnimationFrame(animate);
             }
             requestAnimationFrame(animate);
