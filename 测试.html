@@ -12,22 +12,22 @@
         .typing-effect {
             background-color: #34495e;
             color: #ecf0f1;
-            padding: 26px;
-            border-radius: 16px;
-            border: 2px solid #2c3e50;
-            font-size: 24px;
-            line-height: 1.5;
+            padding: 40px; /* 调大内边距 */
+            border-radius: 20px; /* 调大圆角 */
+            border: 4px solid #2c3e50; /* 调大边框 */
+            font-size: 36px; /* 调大字体 */
+            line-height: 1.8; /* 调大行高 */
             white-space: pre-wrap;
             word-wrap: break-word;
-            max-width: 600px;
-            margin: 20px;
+            max-width: 800px; /* 调大最大宽度 */
+            margin: 30px; /* 调大外边距 */
             position: relative;
             z-index: 2;
         }
 
         .ball {
-            width: 20px;
-            height: 20px;
+            width: 40px; /* 调大小球大小 */
+            height: 40px;
             background-color: rgba(255, 255, 255, 0.3);
             border-radius: 50%;
             position: absolute;
@@ -36,14 +36,14 @@
 
         .fps-display {
             position: fixed;
-            bottom: 16px;
-            right: 10px;
+            bottom: 20px; /* 调大底部距离 */
+            right: 20px; /* 调大右侧距离 */
             color: rgba(255, 255, 255, 0.8);
             font-family: Arial, sans-serif;
-            font-size: 14px;
+            font-size: 18px; /* 调大字体 */
             background-color: rgba(0, 0, 0, 0.5);
-            padding: 5px 16px;
-            border-radius: 5px;
+            padding: 8px 20px; /* 调大内边距 */
+            border-radius: 8px; /* 调大圆角 */
             z-index: 100;
         }
     </style>
@@ -70,8 +70,8 @@
                 const randomColor = `hsl(${Math.random() * 360}, 100%, 50%)`;
                 ball.style.backgroundColor = randomColor;
 
-                const speedX = (Math.random() - 0.5) * 4;
-                const speedY = (Math.random() - 0.5) * 4;
+                const speedX = (Math.random() - 0.5) * 6; /* 调大小球速度 */
+                const speedY = (Math.random() - 0.5) * 6;
                 ball.style.left = x + 'px';
                 ball.style.top = y + 'px';
                 document.body.appendChild(ball);
@@ -107,7 +107,7 @@
 
                     const screenWidth = window.innerWidth;
                     const screenHeight = window.innerHeight;
-                    const ballRadius = 10;
+                    const ballRadius = 20; /* 调大碰撞半径 */
 
                     if (ball.x < ballRadius || ball.x > screenWidth - ballRadius) {
                         ball.speedX *= -1;
