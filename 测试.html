@@ -12,8 +12,8 @@
         .typing-effect {
             background-color: #34495e;
             color: #ecf0f1;
-            padding: 20px;
-            border-radius: 10px;
+            padding: 26px;
+            border-radius: 16px;
             border: 2px solid #2c3e50;
             font-size: 24px;
             line-height: 1.5;
@@ -36,13 +36,13 @@
 
         .fps-display {
             position: fixed;
-            bottom: 10px;
+            bottom: 16px;
             right: 10px;
             color: rgba(255, 255, 255, 0.8);
             font-family: Arial, sans-serif;
             font-size: 14px;
-            background-color: rgba(0, 0, 0, 0.3);
-            padding: 5px 10px;
+            background-color: rgba(0, 0, 0, 0.5);
+            padding: 5px 16px;
             border-radius: 5px;
             z-index: 100;
         }
@@ -53,9 +53,8 @@
     <div class="fps-display" id="fps-display">FPS: 0</div>
 
     <script>
-        // 这里是用来管小球的
         class BallManager {
-            constructor(maxBalls = 25, fpsDisplay =) {
+            constructor(maxBalls = 25, fpsDisplay = null) {
                 this.balls = [];
                 this.maxBalls = maxBalls;
                 this.fpsDisplay = fpsDisplay;
@@ -64,23 +63,19 @@
                 this.fps = 0;
             }
 
-            // 直接丢个小球
             createBall(x, y) {
                 const ball = document.createElement('div');
                 ball.className = 'ball';
-                
-                // 给你分个颜色
+
                 const randomColor = `hsl(${Math.random() * 360}, 100%, 50%)`;
                 ball.style.backgroundColor = randomColor;
-                
-                // 给你分个速度
+
                 const speedX = (Math.random() - 0.5) * 4;
                 const speedY = (Math.random() - 0.5) * 4;
-                
                 ball.style.left = x + 'px';
                 ball.style.top = y + 'px';
                 document.body.appendChild(ball);
-                
+
                 this.balls.push({
                     element: ball,
                     x: x,
@@ -89,14 +84,12 @@
                     speedY: speedY,
                     timestamp: Date.now()
                 });
-                
-                // 让我看看你有没有超过最大限额
+
                 if (this.balls.length > this.maxBalls) {
                     this.removeOldestBall();
                 }
             }
 
-            // 旧球给它飞了
             removeOldestBall() {
                 const oldestBall = this.balls.shift();
                 if (oldestBall && oldestBall.element) {
@@ -104,34 +97,29 @@
                 }
             }
 
-            // 你搁哪呢？
             updateBalls(currentTime) {
                 const deltaTime = currentTime - this.lastTime;
                 this.lastTime = currentTime;
-                
+
                 this.balls.forEach(ball => {
-                    // 你又搁哪呢？
                     ball.x += ball.speedX * deltaTime;
                     ball.y += ball.speedY * deltaTime;
-                    
-                    // 让我看看！你有没有碰到边框
+
                     const screenWidth = window.innerWidth;
                     const screenHeight = window.innerHeight;
                     const ballRadius = 10;
-                    
+
                     if (ball.x < ballRadius || ball.x > screenWidth - ballRadius) {
                         ball.speedX *= -1;
                     }
                     if (ball.y < ballRadius || ball.y > screenHeight - ballRadius) {
                         ball.speedY *= -1;
                     }
-                    
-                    // 把这个元素位置给他刷了
+
                     ball.element.style.left = ball.x + 'px';
                     ball.element.style.top = ball.y + 'px';
                 });
 
-                // 直接把这个FPS给他刷了
                 this.frameCount++;
                 if (currentTime - this.lastTime >= 1000) {
                     this.fps = this.frameCount;
@@ -144,25 +132,20 @@
             }
         }
 
-        // 准备 开!
         function init() {
             const text = "这是一个随机字符显示间隔的打字效果示例。";
             const ballManager = new BallManager(25, document.getElementById('fps-display'));
-            
-            // 直接监听
+
             document.addEventListener('click', (e) => {
                 ballManager.createBall(e.clientX, e.clientY);
             });
 
-            // 把这个东皇循环
             function animate(timestamp) {
                 ballManager.updateBalls(timestamp);
                 requestAnimationFrame(animate);
             }
-
             requestAnimationFrame(animate);
 
-            // 不是你直接给我显示
             const typingEffect = {
                 text: text,
                 targetElement: 'text-container',
@@ -176,17 +159,14 @@
                         this.element.style.opacity = '1';
                         this.element.innerHTML += this.chars[this.index];
                         this.index++;
-                        
                         const randomSpeed = Math.floor(Math.random() * (this.maxSpeed - this.minSpeed + 1)) + this.minSpeed;
                         setTimeout(() => this.animateText(), randomSpeed);
                     }
                 }
             };
-
             typingEffect.animateText();
         }
 
-        // 开!将大局逆转
         init();
     </script>
 </body>
