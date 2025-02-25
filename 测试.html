@@ -26,7 +26,7 @@
         }
 
         .ball {
-            width: 40px; /* 调大小球大小 */
+            
             height: 40px;
             background-color: rgba(255, 255, 255, 0.3);
             border-radius: 50%;
@@ -53,71 +53,7 @@
     <div class="fps-display" id="fps-display">FPS: 0</div>
 
     <script>
-        class BallManager {
-            constructor(maxBalls = 25, fpsDisplay = null) {
-                this.balls = [];
-                this.maxBalls = maxBalls;
-                this.fpsDisplay = fpsDisplay;
-                this.lastTime = 0;
-                this.frameCount = 0;
-                this.fps = 0;
-            }
-
-            createBall(x, y) {
-                const ball = document.createElement('div');
-                ball.className = 'ball';
-
-                const randomColor = `hsl(${Math.random() * 360}, 100%, 50%)`;
-                ball.style.backgroundColor = randomColor;
-
-                const speedX = (Math.random() - 0.5) * 6; /* 调大小球速度 */
-                const speedY = (Math.random() - 0.5) * 6;
-                ball.style.left = x + 'px';
-                ball.style.top = y + 'px';
-                document.body.appendChild(ball);
-
-                this.balls.push({
-                    element: ball,
-                    x: x,
-                    y: y,
-                    speedX: speedX,
-                    speedY: speedY,
-                    timestamp: Date.now()
-                });
-
-                if (this.balls.length > this.maxBalls) {
-                    this.removeOldestBall();
-                }
-            }
-
-            removeOldestBall() {
-                const oldestBall = this.balls.shift();
-                if (oldestBall && oldestBall.element) {
-                    oldestBall.element.remove();
-                }
-            }
-
-            updateBalls(currentTime) {
-                const deltaTime = currentTime - this.lastTime;
-                this.lastTime = currentTime;
-
-                this.balls.forEach(ball => {
-                    ball.x += ball.speedX * deltaTime;
-                    ball.y += ball.speedY * deltaTime;
-
-                    const screenWidth = window.innerWidth;
-                    const screenHeight = window.innerHeight;
-                    const ballRadius = 20; /* 调大碰撞半径 */
-
-                    if (ball.x < ballRadius || ball.x > screenWidth - ballRadius) {
-                        ball.speedX *= -1;
-                    }
-                    if (ball.y < ballRadius || ball.y > screenHeight - ballRadius) {
-                        ball.speedY *= -1;
-                    }
-
-                    ball.element.style.left = ball.x + 'px';
-                    ball.element.style.top = ball.y + 'px';
+        
                 });
 
                 this.frameCount++;
