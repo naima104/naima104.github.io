@@ -2,78 +2,118 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <title>手写信</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>./手写信</title>
     <style>
-        :root {
-            --paper: #fcf5e6;
-            --ink: #4a4a4a;
-        }
-      .container {
-            max-width: 680px;
-            margin: 0 auto;
-        }
-
-        .letter {
-            background: var(--paper);
-            padding: 2.5rem;
-            border-radius: 3px;
-            box-shadow: 0 2px 12px rgba(0,0,0,0.08);
-            position: relative;
+        /* 加载动画 */
+        .loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #1a1a1a;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
         }
 
-        .letter:before {
-            content: '';
-            position: absolute;
-            top: -10px;
-            left: 50%;
-            width: 95%;
-            height: 12px;
-            background: rgba(0,0,0,0.03);
-            transform: translateX(-50%);
-        }
-
-        .letter-link {
-            display: block;
-            padding: 1.2rem;
-            margin: 1.5rem 0;
-            border-left: 3px solid #c44536;
-            text-decoration: none;
-            color: var(--ink);
-            transition: 0.3s;
-            position: relative;
-        }
-
-        .letter-link:hover {
-            transform: translateX(8px);
-            background: rgba(196, 69, 54, 0.03);
-        }
-
-        .letter-date {
-            display: block;
-            font-size: 0.9em;
-            color: #888;
-            margin-top: 0.5rem;
-        }
-
-        .stamp {
-            position: absolute;
-            right: 1.5rem;
-            top: 50%;
-            transform: translateY(-50%);
+        .loader .spinner {
             width: 50px;
-            opacity: 0.7;
+            height: 50px;
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #3498db;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* 隐藏加载动画 */
+        .loader.hidden {
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease-out;
+        }
+
+        /* 页面内容 */
+        body {
+            font-family: '微软雅黑', Arial, sans-serif;
+            background-color: #1a1a1a;
+            margin: 0;
+            padding: 20px;
+            color: #ffffff;
+            opacity: 0;
+            transition: opacity 0.3s ease-out;
+        }
+
+        body.visible {
+            opacity: 1;
+        }
+
+        h3 {
+            color: #ffffff;
+            margin-bottom: 30px;
+            font-size: 24px;
+        }
+
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        li {
+            margin: 10px 0;
+        }
+
+        a {
+            color: #3498db;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        a:hover {
+            color: #2980b9;
+        }
+
+        .info {
+            margin-top: 30px;
+            font-size: 14px;
+            color: #cccccc;
+        }
+
+        .contact {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #333333;
+        }
+
+        .contact h4 {
+            color: #ffffff;
+            margin-bottom: 15px;
         }
     </style>
-    <link href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div class="container">
-        <div class="letter">
-            <!-- 在这里修改链接 -->
-            <a href="250227" class="letter-link" target="_blank">
-
-            </a>
-        </div>
+    <!-- 加载动画 -->
+    <div class="loader">
+        <div class="spinner"></div>
     </div>
+
+    <!-- 页面内容 -->
+    <h3>./手写信</h3>
+
+    <ul>
+        <li><a href="250227.html">25年02.27份</a></li><script>
+        // 页面加载完成后隐藏加载动画
+        window.addEventListener('load', function() {
+            document.querySelector('.loader').classList.add('hidden');
+            document.body.classList.add('visible');
+        });
+    </script>
 </body>
 </html>
