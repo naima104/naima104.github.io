@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>手写信</title>
+    <style>
+        :root {
+            --paper: #fcf5e6;
+            --ink: #4a4a4a;
+        }
+
+        body {
+            background: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAECAYAAACp8Z5+AAAAIklEQVQIW2NkQAKrVq36zwjjgzhhYWGMYAEYB8RmROaABADeOQ8CXl/xfgAAAABJRU5ErkJggg==');
+            min-height: 100vh;
+            padding: 2rem;
+            font-family: 'Ma Shan Zheng', cursive;
+        }
+
+        .container {
+            max-width: 680px;
+            margin: 0 auto;
+        }
+
+        .letter {
+            background: var(--paper);
+            padding: 2.5rem;
+            border-radius: 3px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+            position: relative;
+        }
+
+        .letter:before {
+            content: '';
+            position: absolute;
+            top: -10px;
+            left: 50%;
+            width: 95%;
+            height: 12px;
+            background: rgba(0,0,0,0.03);
+            transform: translateX(-50%);
+        }
+
+        .letter-link {
+            display: block;
+            padding: 1.2rem;
+            margin: 1.5rem 0;
+            border-left: 3px solid #c44536;
+            text-decoration: none;
+            color: var(--ink);
+            transition: 0.3s;
+            position: relative;
+        }
+
+        .letter-link:hover {
+            transform: translateX(8px);
+            background: rgba(196, 69, 54, 0.03);
+        }
+
+        .letter-date {
+            display: block;
+            font-size: 0.9em;
+            color: #888;
+            margin-top: 0.5rem;
+        }
+
+        .stamp {
+            position: absolute;
+            right: 1.5rem;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 50px;
+            opacity: 0.7;
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <div class="letter">
+            <!-- 在这里修改链接 -->
+            <a href="250227" class="letter-link" target="_blank">
+
+            </a>
+        </div>
+    </div>
+</body>
+</html>
