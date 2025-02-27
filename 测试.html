@@ -7,7 +7,7 @@
             background-color: #2c3e50;
             margin: 0;
             overflow: hidden;
-            opacity: 0; /* 初始隐藏 */
+            opacity: 0; 
             transition: opacity 0.5s ease;
         }
 
@@ -22,12 +22,12 @@
             white-space: pre-wrap;
             word-wrap: break-word;
             max-width: 800px;
-            margin: 30px auto; /* 居中 */
+            margin: 30px auto; 
             position: relative;
             z-index: 2;
-            transform: scale(0.9); /* 初始缩放 */
+            transform: scale(0.9); 
             transition: all 0.8s cubic-bezier(0.68, -0.55, 0.27, 1.55);
-            opacity: 0; /* 初始透明 */
+            opacity: 0; 
         }
 
         .cursor {
@@ -93,7 +93,7 @@
         }
 
         function init() {
-            // 强制至少1秒加载时间
+            
             setTimeout(() => {
                 document.body.style.opacity = 1;
                 const container = document.getElementById('text-container');
@@ -157,7 +157,7 @@
                         
                         setTimeout(() => this.animateText(), randomSpeed);
                     } else {
-                        // 打字完成后的处理
+                        
                         this.element.innerHTML = text;
                         const finishedCursor = this.element.querySelector('.cursor');
                         if (finishedCursor) {
