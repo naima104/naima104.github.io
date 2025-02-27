@@ -1,1 +1,180 @@
-114
+<!DOCTYPE html>
+<html>
+<head>
+    <title>25 02.27</title>
+    <style>
+        body {
+            background-color: #2c3e50;
+            margin: 0;
+            overflow: hidden;
+            opacity: 0; 
+            transition: opacity 0.5s ease;
+        }
+
+        .typing-effect {
+            background-color: #34495e;
+            color: #ecf0f1;
+            padding: 40px;
+            border-radius: 20px;
+            border: 4px solid #2c3e50;
+            font-size: 36px;
+            line-height: 1.8;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            max-width: 800px;
+            margin: 30px auto; 
+            position: relative;
+            z-index: 2;
+            transform: scale(0.9); 
+            transition: all 0.8s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+            opacity: 0; 
+        }
+
+        .cursor {
+            display: inline-block;
+            width: 3px;
+            height: 1.2em;
+            background: #ecf0f1;
+            margin-left: 2px;
+            vertical-align: middle;
+            animation: blink 0.8s infinite;
+        }
+
+        .cursor.finished {
+            animation: none;
+            width: 20px;
+            height: 2px;
+            margin-top: 12px;
+            opacity: 0;
+            transition: all 0.6s ease;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+
+        .fps-display {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            color: rgba(255, 255, 255, 0.8);
+            font-family: Arial, sans-serif;
+            font-size: 18px;
+            background-color: rgba(0, 0, 0, 0.5);
+            padding: 8px 20px;
+            border-radius: 8px;
+            z-index: 100;
+        }
+    </style>
+</head>
+<body>
+    <div class="typing-effect" id="text-container"></div>
+    <div class="fps-display" id="fps-display">FPS: 0</div>
+
+    <script>
+        class FPSCounter {
+            constructor(displayElement) {
+                this.fps = 0;
+                this.frameCount = 0;
+                this.lastTime = performance.now();
+                this.displayElement = displayElement;
+            }
+
+            update(currentTime) {
+                this.frameCount++;
+                if (currentTime - this.lastTime >= 1000) {
+                    this.fps = this.frameCount;
+                    this.frameCount = 0;
+                    this.lastTime = currentTime;
+                    this.displayElement.textContent = `FPS: ${this.fps}`;
+                }
+            }
+        }
+
+        function init() {
+
+            setTimeout(() => {
+                document.body.style.opacity = 1;
+                const container = document.getElementById('text-container');
+                container.style.transform = 'scale(1)';
+                container.style.opacity = 1;
+            }, 1000);
+
+            const text = `你问“想不想谈恋爱”时，  
+我好像听见心里炸开了一小簇烟花。  
+
+当然想啊。    
+想把“早安”“晚安”磨成细沙，  
+漏进彼此岁岁年年的缝隙里。  
+
+其实早就偷偷练习过答案——  
+怕说得太轻
+像敷衍，
+太重
+又像玩笑。    
+
+要不要试试看？  
+从共享一个未完成的黄昏开始。  
+
+**  
+笨拙但真诚的 奶妈  
+[上传日期]02.27`;
+
+            const fpsDisplay = new FPSCounter(document.getElementById('fps-display'));
+
+            function animate(timestamp) {
+                fpsDisplay.update(timestamp);
+                requestAnimationFrame(animate);
+            }
+            requestAnimationFrame(animate);
+
+            // 创建光标元素
+            const cursor = document.createElement('div');
+            cursor.className = 'cursor';
+
+            const typingEffect = {
+                text: text,
+                targetElement: 'text-container',
+                minSpeed: 50,
+                maxSpeed: 200,
+                index: 0,
+                chars: text.split(''),
+                element: document.getElementById('text-container'),
+                cursor: cursor,
+
+                animateText() {
+                    if (this.index < this.chars.length) {
+                        // 更新文字
+                        this.element.innerHTML = 
+                            text.substring(0, this.index) + 
+                            `<span class="cursor"></span>`;
+
+                        this.index++;
+                        const randomSpeed = Math.floor(
+                            Math.random() * (this.maxSpeed - this.minSpeed + 1)
+                        ) + this.minSpeed;
+
+                        setTimeout(() => this.animateText(), randomSpeed);
+                    } else {
+
+                        this.element.innerHTML = text;
+                        const finishedCursor = this.element.querySelector('.cursor');
+                        if (finishedCursor) {
+                            finishedCursor.classList.add('finished');
+                            setTimeout(() => {
+                                finishedCursor.style.opacity = 0;
+                            }, 600);
+                        }
+                    }
+                }
+            };
+
+            // 延迟启动打字效果
+            setTimeout(() => typingEffect.animateText(), 1200);
+        }
+
+        init();
+    </script>
+</body>
+</html>
