@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>25 03.01</title>
+    <style>
+        body {
+            background-color: #2c3e50;
+            margin: 0;
+            overflow: hidden;
+            opacity: 0; 
+            transition: opacity 0.5s ease;
+        }
+
+        .typing-effect {
+            background-color: #34495e;
+            color: #ecf0f1;
+            padding: 40px;
+            border-radius: 20px;
+            border: 4px solid #2c3e50;
+            font-size: 36px;
+            line-height: 1.8;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            max-width: 800px;
+            margin: 30px auto; 
+            position: relative;
+            z-index: 2;
+            transform: scale(0.9); 
+            transition: all 0.8s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+            opacity: 0; 
+        }
+
+        .cursor {
+            display: inline-block;
+            width: 3px;
+            height: 1.2em;
+            background: #ecf0f1;
+            margin-left: 2px;
+            vertical-align: middle;
+            animation: blink 0.8s infinite;
+        }
+
+        .cursor.finished {
+            animation: none;
+            width: 20px;
+            height: 2px;
+            margin-top: 12px;
+            opacity: 0;
+            transition: all 0.6s ease;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+
+        .fps-display {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            color: rgba(255, 255, 255, 0.8);
+            font-family: Arial, sans-serif;
+            font-size: 18px;
+            background-color: rgba(0, 0, 0, 0.5);
+            padding: 8px 20px;
+            border-radius: 8px;
+            z-index: 100;
+        }
+    </style>
+</head>
+<body>
+    <div class="typing-effect" id="text-container"></div>
+    <div class="fps-display" id="fps-display">FPS: 0</div>
+
+    <script>
+        class FPSCounter {
+            constructor(displayElement) {
+                this.fps = 0;
+                this.frameCount = 0;
+                this.lastTime = performance.now();
+                this.displayElement = displayElement;
+            }
+
+            update(currentTime) {
+                this.frameCount++;
+                if (currentTime - this.lastTime >= 1000) {
+                    this.fps = this.frameCount;
+                    this.frameCount = 0;
+                    this.lastTime = currentTime;
+                    this.displayElement.textContent = `FPS: ${this.fps}`;
+                }
+            }
+        }
+
+        function init() {
+
+            setTimeout(() => {
+                document.body.style.opacity = 1;
+                const container = document.getElementById('text-container');
+                container.style.transform = 'scale(1)';
+                container.style.opacity = 1;
+            }, 1000);
+
+            const text = `to znf
+    嘻嘻嘻嘻嘻好无聊凌晨给你写小作文怎么样 被迷上我哈哈
+其实我没有你想的那么好   我其实挺自私敏感的 其实我在学校常常生你的气 我也不知道为什么 我就是这样的一个人 莫名其妙又经常嘻嘻哈哈的 有时会因为你为什么不主动给我传信 有时又会因为你给我回的信内容让我不开心 我知道是我自己的问题 但我不知道我为什么老是这样 其实一般来说我不会和任何一个人这么描述自己我也可能就是自己写写 我也不知道会不会把这封信给你看 其实我这个人挺失败的 其实我在赌 我在赌你是真的很喜欢我 但我又很怕你也有一天会不喜欢我 会讨厌我 因为我遇到太多半路离我而去的人了 所以我希望你不是这样的人 
+   我希望你哪天不喜欢我了 就一定一定要说出来 我也不会一直纠缠着你 我们做回朋友就好了 不必拘束  可能我想的这些还早着呢 但我就是害怕我也不知道为什么 我现在特别不清楚你是一个怎么样的人 看到这段话的时候你是什么感受你可能会很懵很不解等等我也不知道 没谈之前你在我眼中一直都是一个抽象的小男孩 但谈了就不清楚了 好奇怪哈哈
+   幸福这条路我一直没走过 但是直到遇见了你 鸡他们都说你好喜欢好喜欢我 我不确定 我不知道 我不理解 可能你真的是他们口中的很喜欢很喜欢我 那我！！也算是幸福了一次好吧 乐子奶妈 那咋了就想骂你
+     你不是说我之前那封信写的不够坦白吗 不够表达感觉嘛 那我这封信就好好说说了 我不知道怎么说 那我就直白一点 我喜欢你 嘻嘻 你就红温着吧 乐子奶妈 乐子 还有啥好说的不道啊 半夜写小作文这件事也没有经历过你也算是第一个人拿到我半夜写的小作文了 啧啧啧 不是乐子奶妈你配吗 好好好 不说了 我要睡觉了
+    不是奶妈我又不想睡了 嘻嘻嘻嘻 晚安奶妈
+                 ——lzy
+               2025.3.1.1.25
+        （凌晨写的小作文奶妈你配看吗嘻嘻）
+有些情绪是该说给 懂得人听`;
+
+            const fpsDisplay = new FPSCounter(document.getElementById('fps-display'));
+
+            function animate(timestamp) {
+                fpsDisplay.update(timestamp);
+                requestAnimationFrame(animate);
+            }
+            requestAnimationFrame(animate);
+
+            // 创建光标元素
+            const cursor = document.createElement('div');
+            cursor.className = 'cursor';
+
+            const typingEffect = {
+                text: text,
+                targetElement: 'text-container',
+                minSpeed: 50,
+                maxSpeed: 200,
+                index: 0,
+                chars: text.split(''),
+                element: document.getElementById('text-container'),
+                cursor: cursor,
+
+                animateText() {
+                    if (this.index < this.chars.length) {
+                        // 更新文字
+                        this.element.innerHTML = 
+                            text.substring(0, this.index) + 
+                            `<span class="cursor"></span>`;
+
+                        this.index++;
+                        const randomSpeed = Math.floor(
+                            Math.random() * (this.maxSpeed - this.minSpeed + 1)
+                        ) + this.minSpeed;
+
+                        setTimeout(() => this.animateText(), randomSpeed);
+                    } else {
+
+                        this.element.innerHTML = text;
+                        const finishedCursor = this.element.querySelector('.cursor');
+                        if (finishedCursor) {
+                            finishedCursor.classList.add('finished');
+                            setTimeout(() => {
+                                finishedCursor.style.opacity = 0;
+                            }, 600);
+                        }
+                    }
+                }
+            };
+
+            // 延迟启动打字效果
+            setTimeout(() => typingEffect.animateText(), 1200);
+        }
+
+        init();
+    </script>
+</body>
+</html>
