@@ -1,77 +1,49 @@
 <!DOCTYPE html>
-<html>
+<html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <title>安全验证</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>输入密码跳转</title>
     <style>
-        /* 新增滑块相关样式 */
-        .slider-container {
-            background: #333;
-            height: 40px;
-            border-radius: 20px;
-            margin: 20px 0;
-            position: relative;
+        body {
+            background-color: black;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
         }
-
-        #slider {
-            width: 40px;
-            height: 40px;
-            background: #00ff88;
-            border-radius: 50%;
-            position: absolute;
-            left: 0;
-            transition: left 0.1s;
-            cursor: grab;
+        .container {
+            text-align: center;
         }
-
-        /* 原有样式保持不变 */
-        body { /* ... */ }
-        .container { /* ... */ }
-        .message { /* ... */ }
-        /* 其他样式保持不变 */
+        input[type="password"] {
+            margin-bottom: 10px;
+            padding: 5px;
+        }
+        button {
+            padding: 5px 10px;
+        }
     </style>
 </head>
 <body>
-    <!-- 页面结构保持不变 -->
+    <div class="container">
+        <h1>防君子不防小人的密码页面</h1>
+        <input type="password" id="password" placeholder="交出密码">
+        <br>
+        <button onclick="checkPassword()">开!</button>
+    </div>
+
     <script>
-        (function() {
-            // 新增滑块拖动逻辑
-            let isDragging = false;
-            const slider = document.getElementById('slider');
-            const container = slider.parentElement;
-            
-            slider.addEventListener('mousedown', (e) => {
-                isDragging = true;
-                startTime = new Date().getTime();
-                slider.style.cursor = 'grabbing';
-            });
-
-            document.addEventListener('mousemove', (e) => {
-                if (!isDragging) return;
-                
-                const rect = container.getBoundingClientRect();
-                let newLeft = e.clientX - rect.left - slider.offsetWidth/2;
-                newLeft = Math.max(0, Math.min(newLeft, rect.width - slider.offsetWidth));
-                slider.style.left = newLeft + 'px';
-            });
-
-            document.addEventListener('mouseup', () => {
-                if (!isDragging) return;
-                
-                isDragging = false;
-                slider.style.cursor = 'grab';
-                const duration = new Date().getTime() - startTime;
-                
-                // 验证条件：滑动时间超过800ms且滑块位置超过90%
-                if (duration > 800 && 
-                    slider.offsetLeft > (container.offsetWidth - slider.offsetWidth) * 0.9) {
-                    submitBtn.disabled = false;
-                    isHuman = true;
-                }
-            });
-
-            // 原有验证逻辑保持不变
-        })();
+        function checkPassword() {
+            var password = document.getElementById("password").value;
+            if (password === "250224") {
+                // 跳转
+                window.location.href = "250224.html";
+            } else {
+                alert("密码错误，我让你看了吗？");
+            }
+        }
     </script>
 </body>
 </html>
