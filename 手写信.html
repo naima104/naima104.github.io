@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>安全验证</title>
+    <style>
+        /* 页面基础 */
+        body {
+            background: #000;          /* 纯黑背景 */
+            margin: 0;                 /* 去除默认边距 */
+            display: flex;             /* 启用弹性布局 */
+            justify-content: center;   /* 水平居中 */
+            align-items: center;       /* 垂直居中 */
+            min-height: 100vh;        /* 最小高度撑满屏幕 */
+            font-family: Arial, sans-serif; /* 通用字体 */
+        }
+
+        /* 登录框容器 */
+        .container {
+            background: #111;         /* 深灰背景 */
+            padding: 2rem;             /* 内边距 */
+            border-radius: 8px;        /* 圆角 */
+            box-shadow: 0 0 20px rgba(0, 150, 255, 0.2); /* 特效 */
+            width: 320px;              /* 固定宽度 */
+            position: relative;        /* 相对定位 */
+        }
+
+        /* 提示信息样式 */
+        .message {
+            position: fixed;           /* 固定定位 */
+            top: 50%; left: 50%;       /* 居中定位 */
+            transform: translate(-50%, -50%); /* 精确居中 */
+            color: #00ff88;            /* 荧光绿文字 */
+            font-size: 1.5em;          /* 大号字体 */
+            opacity: 0;                /* 默认隐藏 */
+            transition: opacity 0.5s; /* 淡入淡出效果 */
+            pointer-events: none;      /* 禁用鼠标交互 */
+            background: rgba(0, 0, 0, 0.9); /* 半透明黑底 */
+            padding: 20px 40px;       /* 内边距 */
+            border-radius: 10px;       /* 圆角 */
+            border: 1px solid #00ff8888; /* 发光边框 */
+        }
+
+        /* 当显示提示时添加的类 */
+        .message.show {
+            opacity: 1;                /* 显示提示 */
+        }
+    </style>
+</head>
+<body>
+    <!-- 主界面 -->
+    <div class="container">
+        <div class="input-group">
+            <!-- 密码输入框 -->
+            <input type="password" id="authCode" placeholder="输入访问代码">
+        </div>
+        
+        <!-- 滑块验证区域 -->
+        <div class="slider-container">
+            <div class="slider" id="slider"></div>
+        </div>
+        
+        <!-- 提交按钮 -->
+        <button id="submitBtn" disabled>验证身份</button>
+    </div>
+
+    <!-- 提示信息 -->
+    <div id="message" class="message">好吧，我让你看了</div>
+
+    <script>
+        (function() {
+            // 获取页面元素
+            const slider = document.getElementById('slider');
+            const submitBtn = document.getElementById('submitBtn');
+            
+            // 验证相关变量
+            let startTime = 0;      // 记录滑动开始时间
+            let isHuman = false;    // 是否通过人机验证
+
+            /**************** 人机验证逻辑 ****************/
+            // 鼠标按下时记录开始时间
+            slider.addEventListener('mousedown', () => {
+                startTime = new Date().getTime();
+            });
+
+            // 鼠标松开时验证滑动时间
+            slider.addEventListener('mouseup', function() {
+                // 计算滑动持续时间
+                const duration = new Date().getTime() - startTime;
+                // 必须满足：滑动超过800ms 且 滑动到右侧
+                if (duration > 800 && this.offsetLeft > 200) {
+                    submitBtn.disabled = false;    // 启用提交按钮
+                    submitBtn.classList.add('active'); // 添加激活样式
+                    isHuman = true;              // 标记通过验证
+                }
+            });
+
+            /**************** 密码验证逻辑 ****************/
+            submitBtn.addEventListener('click', () => {
+                // 将密码拆分为ASCII码存储（250224的ASCII码）
+                const passwordCodes = [50, 53, 48, 50, 50, 52];
+                // 将ASCII码转换为真实密码
+                const realPassword = passwordCodes.map(code => 
+                    String.fromCharCode(code)
+                ).join('');
+
+                // 获取用户输入的密码
+                const userInput = document.getElementById('authCode').value;
+
+                // 双重验证：人机验证 + 密码匹配
+                if (isHuman && userInput === realPassword) {
+                    const message = document.getElementById('message');
+                    
+                    // 显示提示信息
+                    message.classList.add('show');
+                    
+                    // 2秒后执行跳转
+                    setTimeout(() => {
+                        message.classList.remove('show'); // 隐藏提示
+                        window.location = "250224.html";  // 跳转到目标页面
+                    }, 2000);
+                }
+            });
+        })();
+    </script>
+</body>
+</html>
