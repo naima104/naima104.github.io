@@ -5,80 +5,192 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>./index</title>
     <style>
-        /* 无限进步 */
+        .loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #1a1a1a;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+
+        .loader .spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #3498db;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loader.hidden {
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease-out;
+        }
+
         body {
             font-family: '微软雅黑', Arial, sans-serif;
             background-color: #1a1a1a;
+            margin: 0;
+            padding: 20px;
             color: #ffffff;
-            transition: background 0.3s, color 0.3s;
+            opacity: 0;
+            transition: opacity 0.3s ease-out;
         }
 
-        /* 无限进步 */
-        .theme-toggle {
-            position: fixed;
-            top: 20px;
-            left: 20px;
-            width: 40px;
+        body.visible {
+            opacity: 1;
+        }
+
+        h3 {
+            color: #ffffff;
+            margin-bottom: 30px;
+            font-size: 24px;
+        }
+
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        li {
+            margin: 10px 0;
+        }
+
+        a {
+            color: #3498db;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        a:hover {
+            color: #2980b9;
+        }
+
+        .info {
+            margin-top: 30px;
+            font-size: 14px;
+            color: #cccccc;
+        }
+
+        .contact {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #333333;
+        }
+
+        .contact h4 {
+            color: #ffffff;
+            margin-bottom: 15px;
+        }
+
+        .typewriter {
             height: 40px;
-            border-radius: 50%;
-            background: #3498db;
-            border: none;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.3s ease;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-            z-index: 1000;
+            margin: 20px 0;
+            text-align: center;
+            font-size: 18px;
         }
-        .theme-toggle::after {
-            content: '🌙';
-            font-size: 20px;
+        
+        .type-text {
+            color: #3498db;
+            border-right: 2px solid #3498db;
+            padding-right: 5px;
+            display: inline-block;
         }
-
-        /* 无限进步 */
-        body.light-theme {
-            background-color: #f5f5f5;
-            color: #333;
-        }
-        body.light-theme h3,
-        body.light-theme h4 {
-            color: #2c3e50;
-        }
-        body.light-theme .theme-toggle::after {
-            content: '☀️';
-        }
-        /* 无限进步 */
     </style>
 </head>
 <body>
-    <!-- 无限进步 -->
-    <button class="theme-toggle" aria-label="切换主题"></button>
+    <div class="loader">
+        <div class="spinner"></div>
+    </div>
 
-    <!-- 无限进步 -->
+    <h3>./index<br>欢迎访问我的网站</h3>
+
+    <div class="typewriter">
+        <span class="type-text" id="typing"></span>
+    </div>
+
+    <ul>
+        <li><a href="公告.html">公告</a></li>
+        <li><a href="https://m.bilibili.com/space/3546610954931052">B站主页</a></li>
+        <li><a href="好玩的.html">好玩的</a></li>
+        <li><a href="114.html">小黑子 你食补食油饼 一边玩去</a></li>
+    </ul>
+
+    <div class="contact">
+        <h4>联系方式</h4>
+        <ul>
+            <li><a href="tencent://message/?uin=3698088118&site=qq&menu=yes">QQ: 3698088118</a></li>
+            <li><a href="mailto:3698088118@qq.com">邮箱: 3698088118@qq.com</a></li>
+        </ul>
+    </div>
+
+    <div class="info">
+        没树枝就不要乱叫<br>
+        无限期断更中
+    </div>
 
     <script>
-        // 无限进步
-        const body = document.body;
-        const savedTheme = localStorage.getItem('theme');
-        
-        // 无限进步
-        if (!savedTheme) {
-            localStorage.setItem('theme', 'dark-theme');
-        } else if (savedTheme === 'light-theme') {
-            body.classList.add('light-theme');
+        const texts = [
+            "玩 phigros 玩的",
+            "玩 王者荣耀 玩的",
+            "玩 minecraft 玩的",
+            "玩 我在7年后等着你 玩的",
+            "玩 PVZ 玩的",
+            "玩 bilibili 玩的",
+            "玩 phira 玩的",
+            "无限进步!"
+        ];
+
+        const typingElement = document.getElementById('typing');
+        let index = 0;
+        let isDeleting = false;
+
+        function getRandomTime(min, max) {
+            return Math.random() * (max - min) + min;
         }
 
-        // 无限进步
-        document.querySelector('.theme-toggle').addEventListener('click', () => {
-            body.classList.toggle('light-theme');
-            const currentTheme = body.classList.contains('light-theme') 
-                ? 'light-theme' 
-                : 'dark-theme';
-            localStorage.setItem('theme', currentTheme);
-        });
+        async function typeEffect() {
+            const currentText = texts[index];
+            
+            if (!isDeleting) {
+                for (let i = 0; i <= currentText.length; i++) {
+                    typingElement.textContent = currentText.slice(0, i);
+                    await new Promise(resolve => 
+                        setTimeout(resolve, getRandomTime(50, 150))
+                    );
+                }
+                await new Promise(resolve => setTimeout(resolve, 1000));
+                isDeleting = true;
+            } else {
+                for (let i = currentText.length; i >= 0; i--) {
+                    typingElement.textContent = currentText.slice(0, i);
+                    await new Promise(resolve => 
+                        setTimeout(resolve, getRandomTime(30, 100))
+                    );
+                }
+                index = (index + 1) % texts.length;
+                isDeleting = false;
+            }
+            
+            requestAnimationFrame(typeEffect);
+        }
 
-        // 无限进步
+        window.addEventListener('load', function() {
+            document.querySelector('.loader').classList.add('hidden');
+            document.body.classList.add('visible');
+            typeEffect();
+        });
     </script>
 </body>
 </html>
