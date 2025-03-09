@@ -1,180 +1,84 @@
 <!DOCTYPE html>
-<html>
+<html lang="zh-CN">
 <head>
-    <title>25 02.27</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>./index</title>
     <style>
+        /* 无限进步 */
         body {
-            background-color: #2c3e50;
-            margin: 0;
-            overflow: hidden;
-            opacity: 0; 
-            transition: opacity 0.5s ease;
+            font-family: '微软雅黑', Arial, sans-serif;
+            background-color: #1a1a1a;
+            color: #ffffff;
+            transition: background 0.3s, color 0.3s;
         }
 
-        .typing-effect {
-            background-color: #34495e;
-            color: #ecf0f1;
-            padding: 40px;
-            border-radius: 20px;
-            border: 4px solid #2c3e50;
-            font-size: 36px;
-            line-height: 1.8;
-            white-space: pre-wrap;
-            word-wrap: break-word;
-            max-width: 800px;
-            margin: 30px auto; 
-            position: relative;
-            z-index: 2;
-            transform: scale(0.9); 
-            transition: all 0.8s cubic-bezier(0.68, -0.55, 0.27, 1.55);
-            opacity: 0; 
-        }
-
-        .cursor {
-            display: inline-block;
-            width: 3px;
-            height: 1.2em;
-            background: #ecf0f1;
-            margin-left: 2px;
-            vertical-align: middle;
-            animation: blink 0.8s infinite;
-        }
-
-        .cursor.finished {
-            animation: none;
-            width: 20px;
-            height: 2px;
-            margin-top: 12px;
-            opacity: 0;
-            transition: all 0.6s ease;
-        }
-
-        @keyframes blink {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0; }
-        }
-
-        .fps-display {
+        /* 无限进步 */
+        .theme-toggle {
             position: fixed;
-            bottom: 20px;
-            right: 20px;
-            color: rgba(255, 255, 255, 0.8);
-            font-family: Arial, sans-serif;
-            font-size: 18px;
-            background-color: rgba(0, 0, 0, 0.5);
-            padding: 8px 20px;
-            border-radius: 8px;
-            z-index: 100;
+            top: 20px;
+            left: 20px;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #3498db;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            z-index: 1000;
         }
+        .theme-toggle::after {
+            content: '🌙';
+            font-size: 20px;
+        }
+
+        /* 无限进步 */
+        body.light-theme {
+            background-color: #f5f5f5;
+            color: #333;
+        }
+        body.light-theme h3,
+        body.light-theme h4 {
+            color: #2c3e50;
+        }
+        body.light-theme .theme-toggle::after {
+            content: '☀️';
+        }
+        /* 无限进步 */
     </style>
 </head>
 <body>
-    <div class="typing-effect" id="text-container"></div>
-    <div class="fps-display" id="fps-display">FPS: 0</div>
+    <!-- 无限进步 -->
+    <button class="theme-toggle" aria-label="切换主题"></button>
+
+    <!-- 无限进步 -->
 
     <script>
-        class FPSCounter {
-            constructor(displayElement) {
-                this.fps = 0;
-                this.frameCount = 0;
-                this.lastTime = performance.now();
-                this.displayElement = displayElement;
-            }
-
-            update(currentTime) {
-                this.frameCount++;
-                if (currentTime - this.lastTime >= 1000) {
-                    this.fps = this.frameCount;
-                    this.frameCount = 0;
-                    this.lastTime = currentTime;
-                    this.displayElement.textContent = `FPS: ${this.fps}`;
-                }
-            }
+        // 无限进步
+        const body = document.body;
+        const savedTheme = localStorage.getItem('theme');
+        
+        // 无限进步
+        if (!savedTheme) {
+            localStorage.setItem('theme', 'dark-theme');
+        } else if (savedTheme === 'light-theme') {
+            body.classList.add('light-theme');
         }
 
-        function init() {
-            
-            setTimeout(() => {
-                document.body.style.opacity = 1;
-                const container = document.getElementById('text-container');
-                container.style.transform = 'scale(1)';
-                container.style.opacity = 1;
-            }, 1000);
+        // 无限进步
+        document.querySelector('.theme-toggle').addEventListener('click', () => {
+            body.classList.toggle('light-theme');
+            const currentTheme = body.classList.contains('light-theme') 
+                ? 'light-theme' 
+                : 'dark-theme';
+            localStorage.setItem('theme', currentTheme);
+        });
 
-            const text = `你问“想不想谈恋爱”时，  
-我好像听见心里炸开了一小簇烟花。  
-
-当然想啊。    
-想把“早安”“晚安”磨成细沙，  
-漏进彼此岁岁年年的缝隙里。  
-
-其实早就偷偷练习过答案——  
-怕说得太轻
-像敷衍，
-太重
-又像玩笑。    
-
-要不要试试看？  
-从共享一个未完成的黄昏开始。  
-
-**  
-笨拙但真诚的 奶妈  
-[上传日期]02.27`;
-
-            const fpsDisplay = new FPSCounter(document.getElementById('fps-display'));
-
-            function animate(timestamp) {
-                fpsDisplay.update(timestamp);
-                requestAnimationFrame(animate);
-            }
-            requestAnimationFrame(animate);
-
-            // 创建光标元素
-            const cursor = document.createElement('div');
-            cursor.className = 'cursor';
-            
-            const typingEffect = {
-                text: text,
-                targetElement: 'text-container',
-                minSpeed: 50,
-                maxSpeed: 200,
-                index: 0,
-                chars: text.split(''),
-                element: document.getElementById('text-container'),
-                cursor: cursor,
-                
-                animateText() {
-                    if (this.index < this.chars.length) {
-                        // 更新文字
-                        this.element.innerHTML = 
-                            text.substring(0, this.index) + 
-                            `<span class="cursor"></span>`;
-
-                        this.index++;
-                        const randomSpeed = Math.floor(
-                            Math.random() * (this.maxSpeed - this.minSpeed + 1)
-                        ) + this.minSpeed;
-                        
-                        setTimeout(() => this.animateText(), randomSpeed);
-                    } else {
-                        
-                        this.element.innerHTML = text;
-                        const finishedCursor = this.element.querySelector('.cursor');
-                        if (finishedCursor) {
-                            finishedCursor.classList.add('finished');
-                            setTimeout(() => {
-                                finishedCursor.style.opacity = 0;
-                            }, 600);
-                        }
-                    }
-                }
-            };
-            
-            // 延迟启动打字效果
-            setTimeout(() => typingEffect.animateText(), 1200);
-        }
-
-        init();
+        // 无限进步
     </script>
 </body>
 </html>
