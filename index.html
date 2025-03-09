@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>./index</title>
     <style>
-        /* 加载动画 */
         .loader {
             position: fixed;
             top: 0;
@@ -33,14 +32,12 @@
             100% { transform: rotate(360deg); }
         }
 
-        /* 隐藏加载动画 */
         .loader.hidden {
             opacity: 0;
             pointer-events: none;
             transition: opacity 0.3s ease-out;
         }
 
-        /* 页面内容 */
         body {
             font-family: '微软雅黑', Arial, sans-serif;
             background-color: #1a1a1a;
@@ -96,21 +93,38 @@
             color: #ffffff;
             margin-bottom: 15px;
         }
+
+        .typewriter {
+            height: 40px;
+            margin: 20px 0;
+            text-align: center;
+            font-size: 18px;
+        }
+
+        .type-text {
+            color: #3498db;
+            border-right: 2px solid #3498db;
+            padding-right: 5px;
+            display: inline-block;
+        }
     </style>
 </head>
 <body>
-    <!-- 加载动画 -->
     <div class="loader">
         <div class="spinner"></div>
     </div>
 
-    <!-- 页面内容 -->
-    <h3>./index
-欢迎访问我的网站</h3>
+    <h3>./index<br>欢迎访问我的网站</h3>
+
+    <div class="typewriter">
+        <span class="type-text" id="typing"></span>
+    </div>
 
     <ul>
         <li><a href="公告.html">公告</a></li>
         <li><a href="https://m.bilibili.com/space/3546610954931052">B站主页</a></li>
+        <li><a href="好玩的.html">好玩的</a></li>
+        <li><a href="114.html">小黑子 你食补食油饼 一边玩去</a></li>
     </ul>
 
     <div class="contact">
@@ -118,10 +132,6 @@
         <ul>
             <li><a href="tencent://message/?uin=3698088118&site=qq&menu=yes">QQ: 3698088118</a></li>
             <li><a href="mailto:3698088118@qq.com">邮箱: 3698088118@qq.com</a></li>
-        </ul>
- <li><a href="好玩的.html">好玩的</a></li>
-        </ul>
- <li><a href="114.html">小黑子 你食补食油饼 一边玩去</a></li>
         </ul>
     </div>
 
@@ -131,10 +141,55 @@
     </div>
 
     <script>
-        // 页面加载完成后隐藏加载动画
+        const texts = [
+            "玩 phigros 玩的",
+            "玩 王者荣耀 玩的",
+            "玩 minecraft 玩的",
+            "玩 我在7年后等着你 玩的",
+            "玩 PVZ 玩的",
+            "玩 bilibili 玩的",
+            "玩 phira 玩的",
+            "无限进步!"
+        ];
+
+        const typingElement = document.getElementById('typing');
+        let index = 0;
+        let isDeleting = false;
+
+        function getRandomTime(min, max) {
+            return Math.random() * (max - min) + min;
+        }
+
+        async function typeEffect() {
+            const currentText = texts[index];
+
+            if (!isDeleting) {
+                for (let i = 0; i <= currentText.length; i++) {
+                    typingElement.textContent = currentText.slice(0, i);
+                    await new Promise(resolve => 
+                        setTimeout(resolve, getRandomTime(50, 150))
+                    );
+                }
+                await new Promise(resolve => setTimeout(resolve, 1000));
+                isDeleting = true;
+            } else {
+                for (let i = currentText.length; i >= 0; i--) {
+                    typingElement.textContent = currentText.slice(0, i);
+                    await new Promise(resolve => 
+                        setTimeout(resolve, getRandomTime(30, 100))
+                    );
+                }
+                index = (index + 1) % texts.length;
+                isDeleting = false;
+            }
+
+            requestAnimationFrame(typeEffect);
+        }
+
         window.addEventListener('load', function() {
             document.querySelector('.loader').classList.add('hidden');
             document.body.classList.add('visible');
+            typeEffect();
         });
     </script>
 </body>
