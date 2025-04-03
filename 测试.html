@@ -1,10 +1,24 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>动态粒子系统</title>
+    <title>双模粒子系统</title>
     <style>
         body { margin: 0; overflow: hidden; background: #000; }
         canvas { display: block; }
+        #domContainer {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            display: none;
+        }
+        .dom-particle {
+            position: absolute;
+            border-radius: 50%;
+            will-change: transform;
+        }
         .panel {
             position: fixed;
             top: 10px;
@@ -13,168 +27,213 @@
             background: rgba(0,0,0,0.7);
             padding: 15px;
             border-radius: 8px;
-            font-family: Arial, sans-serif;
+            font-family: Arial;
         }
-        .slider-container { margin: 10px 0; }
-        input[type="range"] { width: 200px; }
+        .switch {
+            display: flex;
+            align-items: center;
+            margin: 10px 0;
+        }
+        .switch label {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+        }
+        .switch input { 
+            margin-right: 10px;
+            transform: scale(1.3);
+        }
+        .tooltip {
+            visibility: hidden;
+            background: #333;
+            color: #fff;
+            padding: 5px;
+            border-radius: 4px;
+            margin-left: 10px;
+        }
+        label:hover .tooltip {
+            visibility: visible;
+        }
     </style>
 </head>
 <body>
     <canvas id="canvas"></canvas>
+    <div id="domContainer"></div>
     <div class="panel">
-        <h2>粒子系统控制</h2>
-        <div class="slider-container">
-            <div>粒子数量: <span id="particleCount">0</span></div>
-            <input type="range" id="particleSlider" min="0" max="100000" value="0" step="1000">
+        <h3>粒子控制系统</h3>
+        
+        <div class="switch">
+            <label>
+                <input type="checkbox" id="renderMode" checked>
+                使用Canvas渲染
+                <span class="tooltip">关闭将使用DOM渲染，兼容性好但性能较低</span>
+            </label>
         </div>
+        
+        <div class="switch">
+            <label>
+                <input type="checkbox" id="hqMode">
+                超高清模式
+                <span class="tooltip">启用更高分辨率渲染（仅Canvas模式有效）</span>
+            </label>
+        </div>
+        
+        <div>粒子数量: <span id="count">0</span></div>
         <div>FPS: <span id="fps">0</span></div>
     </div>
 
 <script>
-class DynamicParticleSystem {
+class DualParticleSystem {
     constructor() {
+        // 初始化渲染元素
         this.canvas = document.getElementById('canvas');
         this.ctx = this.canvas.getContext('2d');
+        this.domContainer = document.getElementById('domContainer');
+        
+        // 状态控制
+        this.useCanvas = true;
+        this.hqMode = false;
         this.particles = [];
-        this.targetCount = 0;
-        this.currentCount = 0;
-        this.resize();
-        this.setupControls();
+        this.domParticles = [];
+        
+        // 性能监控
         this.lastTime = performance.now();
         this.frameCount = 0;
-        this.lastFpsUpdate = 0;
+        
+        this.init();
+    }
+
+    init() {
+        this.resize();
+        this.setupControls();
+        this.addParticles(1000); // 初始粒子
         this.animate();
     }
 
     resize() {
-        this.canvas.width = window.innerWidth;
-        this.canvas.height = window.innerHeight;
+        const dpr = this.hqMode ? devicePixelRatio : 1;
+        this.canvas.width = innerWidth * dpr;
+        this.canvas.height = innerHeight * dpr;
+        this.canvas.style.width = innerWidth + 'px';
+        this.canvas.style.height = innerHeight + 'px';
+        this.ctx.scale(dpr, dpr);
     }
 
     setupControls() {
-        const slider = document.getElementById('particleSlider');
-        const counter = document.getElementById('particleCount');
-        
-        slider.addEventListener('input', (e) => {
-            this.targetCount = parseInt(e.target.value);
-            counter.textContent = this.targetCount.toLocaleString();
+        // 渲染模式切换
+        document.getElementById('renderMode').addEventListener('change', (e) => {
+            this.useCanvas = e.target.checked;
+            this.canvas.style.display = this.useCanvas ? 'block' : 'none';
+            this.domContainer.style.display = this.useCanvas ? 'none' : 'block';
             
-            // 平滑过渡到目标数量
-            const diff = this.targetCount - this.currentCount;
-            this.addParticles(diff);
+            if (!this.useCanvas && this.domParticles.length === 0) {
+                this.createDomParticles();
+            }
+            
+            alert(`已切换到${this.useCanvas ? 'Canvas' : 'DOM'}渲染模式`);
+        });
+
+        // 超高清模式
+        document.getElementById('hqMode').addEventListener('change', (e) => {
+            this.hqMode = e.target.checked;
+            if (this.useCanvas) this.resize();
+            alert(`超高清模式${this.hqMode ? '已开启' : '已关闭'}`);
         });
     }
 
     addParticles(count) {
-        const { width, height } = this.canvas;
-        const colors = [
-            [255, 50, 50],   // 红
-            [50, 255, 50],   // 绿
-            [50, 50, 255],   // 蓝
-            [255, 255, 50],  // 黄
-            [255, 50, 255]   // 紫
-        ];
+        for (let i = 0; i < count; i++) {
+            const p = {
+                x: Math.random() * innerWidth,
+                y: Math.random() * innerHeight,
+                vx: (Math.random() - 0.5) * 2,
+                vy: (Math.random() - 0.5) * 2,
+                color: `hsl(${Math.random() * 360}, 100%, 50%)`,
+                size: Math.random() * 3 + 1
+            };
+            this.particles.push(p);
+            
+            if (!this.useCanvas) {
+                this.createDomParticle(p);
+            }
+        }
+        document.getElementById('count').textContent = this.particles.length;
+    }
 
-        // 批量添加粒子
-        const batchSize = Math.min(Math.abs(count), 5000); // 每批最多5000个
-        const isAdding = count > 0;
+    createDomParticles() {
+        this.domContainer.innerHTML = '';
+        this.domParticles = [];
+        this.particles.forEach(p => this.createDomParticle(p));
+    }
+
+    createDomParticle(p) {
+        const particle = document.createElement('div');
+        particle.className = 'dom-particle';
+        particle.style.width = `${p.size * 2}px`;
+        particle.style.height = `${p.size * 2}px`;
+        particle.style.backgroundColor = p.color;
+        particle.style.transform = `translate(${p.x - p.size}px, ${p.y - p.size}px)`;
+        this.domContainer.appendChild(particle);
+        this.domParticles.push(particle);
+        return particle;
+    }
+
+    update() {
+        const { innerWidth, innerHeight } = window;
         
-        if (isAdding) {
-            for (let i = 0; i < batchSize; i++) {
-                this.particles.push({
-                    x: Math.random() * width,
-                    y: Math.random() * height,
-                    vx: (Math.random() - 0.5) * 2,
-                    vy: (Math.random() - 0.5) * 2,
-                    color: colors[Math.floor(Math.random() * colors.length)],
-                    size: Math.random() * 2 + 1
-                });
+        this.particles.forEach((p, i) => {
+            // 更新位置
+            p.x += p.vx;
+            p.y += p.vy;
+            
+            // 边界检测
+            if (p.x < 0 || p.x > innerWidth) p.vx *= -0.9;
+            if (p.y < 0 || p.y > innerHeight) p.vy *= -0.9;
+            
+            // 更新DOM粒子
+            if (!this.useCanvas && this.domParticles[i]) {
+                this.domParticles[i].style.transform = 
+                    `translate(${p.x - p.size}px, ${p.y - p.size}px)`;
             }
-            this.currentCount += batchSize;
-        } else {
-            this.particles.length = Math.max(0, this.particles.length - batchSize);
-            this.currentCount = Math.max(0, this.currentCount - batchSize);
-        }
-
-        // 继续调整直到达到目标数量
-        if (this.currentCount !== this.targetCount) {
-            requestAnimationFrame(() => {
-                this.addParticles(this.targetCount - this.currentCount);
-            });
-        }
+        });
     }
 
-    update(delta) {
-        const width = this.canvas.width;
-        const height = this.canvas.height;
-
-        // 更新现有粒子
-        for (let i = 0; i < this.particles.length; i++) {
-            const p = this.particles[i];
-            
-            p.x += p.vx * delta;
-            p.y += p.vy * delta;
-            
-            // 边界反弹
-            if (p.x < 0 || p.x > width) {
-                p.vx *= -0.8;
-                p.x = Math.max(0, Math.min(width, p.x));
-            }
-            if (p.y < 0 || p.y > height) {
-                p.vy *= -0.8;
-                p.y = Math.max(0, Math.min(height, p.y));
-            }
-            
-            // 随机运动变化
-            p.vx += (Math.random() - 0.5) * 0.1;
-            p.vy += (Math.random() - 0.5) * 0.1;
-            
-            // 速度限制
-            const speed = Math.sqrt(p.vx*p.vx + p.vy*p.vy);
-            if (speed > 3) {
-                p.vx = p.vx / speed * 3;
-                p.vy = p.vy / speed * 3;
-            }
-        }
-    }
-
-    draw() {
-        // 星空拖尾效果
-        this.ctx.fillStyle = 'rgba(0, 0, 0, 0.08)';
+    drawCanvas() {
+        // 清屏（带透明度实现拖尾效果）
+        this.ctx.fillStyle = 'rgba(0, 0, 0, 0.1)';
         this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
-
-        // 批量绘制粒子
-        for (let i = 0; i < this.particles.length; i++) {
-            const p = this.particles[i];
-            this.ctx.fillStyle = `rgb(${p.color[0]},${p.color[1]},${p.color[2]})`;
+        
+        // 绘制所有粒子
+        this.particles.forEach(p => {
+            this.ctx.fillStyle = p.color;
             this.ctx.beginPath();
             this.ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
             this.ctx.fill();
-        }
+        });
     }
 
-    animate(currentTime) {
-        const delta = (currentTime - this.lastTime) / 16; // 转换为60fps基准
-        this.lastTime = currentTime;
+    animate() {
+        const now = performance.now();
+        const deltaTime = now - this.lastTime;
+        this.lastTime = now;
         this.frameCount++;
-
-        // 每秒更新FPS
-        if (currentTime - this.lastFpsUpdate >= 1000) {
-            document.getElementById('fps').textContent = Math.round(
-                this.frameCount * 1000 / (currentTime - this.lastFpsUpdate)
-            );
-            this.lastFpsUpdate = currentTime;
+        
+        // 更新FPS显示（每秒更新一次）
+        if (now % 1000 < deltaTime) {
+            document.getElementById('fps').textContent = 
+                Math.round(this.frameCount * 1000 / (now % 1000 + deltaTime));
             this.frameCount = 0;
         }
-
-        this.update(delta);
-        this.draw();
-        requestAnimationFrame(t => this.animate(t));
+        
+        this.update();
+        if (this.useCanvas) this.drawCanvas();
+        
+        requestAnimationFrame(() => this.animate());
     }
 }
 
 // 启动系统
-new DynamicParticleSystem();
+new DualParticleSystem();
 </script>
 </body>
 </html>
