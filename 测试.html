@@ -5,61 +5,110 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>点击生成小球</title>
     <style>
-        body{margin:0;overflow:hidden;background:#1a1a1a;color:#fff}
-        .container{position:relative;width:100vw;height:100vh}
-        .ball{position:absolute;width:20px;height:20px;border-radius:50%;transform:translate3d(0,0,0);will-change:transform}
-        .controls{position:fixed;top:10px;left:10px;background:rgba(0,0,0,0.7);padding:10px;border-radius:5px;transition:all 0.3s}
-        .controls.collapsed{height:40px;width:120px}
-        .controls.collapsed .stats,.controls.collapsed #resetBtn{display:none}
-        button{background:#4CAF50;border:0;color:#fff;padding:8px 16px;cursor:pointer}
-        #resetBtn{background:#f44336}
-        .stats{margin-top:10px}
+        body {
+            margin: 0;
+            overflow: hidden;
+            background: #1a1a1a;
+        }
+        .container {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+        }
+        .ball {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            transform: translate3d(-50%, -50%, 0); /* 修复定位问题 */
+            will-change: transform;
+        }
+        .controls {
+            position: fixed;
+            top: 10px;
+            left: 10px;
+            color: white;
+            padding: 10px;
+            background: rgba(0,0,0,0.7);
+        }
     </style>
 </head>
 <body>
     <div class="container" id="container"></div>
-    <div class="controls" id="controls">
-        <button class="toggle-btn" id="toggleBtn">≡</button>
-        <div>小球: <span id="ballCount">0</span>/1000</div>
-        <div class="stats">FPS: <span id="fps">0</span></div>
-        <button id="resetBtn">重置</button>
+    <div class="controls">
+        <div>小球数量: <span id="count">0</span>/1000</div>
+        <button onclick="clearBalls()">重置</button>
     </div>
 
     <script>
-(()=>{
-    const c=document.getElementById('container'),cs=document.getElementById('controls'),
-          bc=document.getElementById('ballCount'),fps=document.getElementById('fps'),
-          rs=document.getElementById('resetBtn'),tb=document.getElementById('toggleBtn'),
-          cfg={max:1000,size:20,spd:5,fric:0.98,grav:0.1};
-    let b=[],lt=0,fc=0,af=null,csd=0,st=performance.now();
+(function(){
+    const container = document.getElementById('container');
+    const countDisplay = document.getElementById('count');
+    let balls = [];
+    let frameId;
 
-    const init=()=>{
-        c.onclick=e=>{
-            if(b.length>=cfg.max) b.shift().el.remove();
-            const nb=Object.assign(document.createElement('div'),{className:'ball',
-                style:`background:hsl(${360*Math.random()},99%,50%)`});
-            c.append(nb);
-            b.push({el:nb,x:e.clientX,y:e.clientY,sx:(Math.random()-0.5)*cfg.spd,sy:(Math.random()-0.5)*cfg.spd});
-            bc.textContent=b.length;
-        };
-        rs.onclick=()=>{b.forEach(b=>b.el.remove());b=[];bc.textContent=0};
-        tb.onclick=()=>cs.classList.toggle('collapsed');
-        setInterval(()=>{fps.textContent=(fc*1e3/(performance.now()-lt)|0;fc=0;lt=performance.now()},1e3);
-        requestAnimationFrame(up);
-    };
-
-    const up=t=>{
-        const w=innerWidth,h=innerHeight,hs=cfg.size/2;
-        b.forEach(b=>{
-            b.sy+=cfg.grav;b.sx*=cfg.fric;b.sy*=cfg.fric;
-            if((b.x+=b.sx)<hs||b.x>w-hs) b.sx*=-1;
-            if((b.y+=b.sy)<hs||b.y>h-hs) b.sy*=-1;
-            b.el.style.transform=`translate3d(${b.x-hs}px,${b.y-hs}px,0)`;
+    // 点击事件处理
+    container.onclick = function(e) {
+        if(balls.length >= 1000) {
+            const oldBall = balls.shift();
+            oldBall.element.remove();
+        }
+        
+        // 创建新小球
+        const newBall = document.createElement('div');
+        newBall.className = 'ball';
+        newBall.style.backgroundColor = `hsl(${Math.random()*360}, 100%, 50%)`;
+        
+        // 初始位置设为点击坐标
+        newBall.style.left = e.clientX + 'px';
+        newBall.style.top = e.clientY + 'px';
+        
+        container.appendChild(newBall);
+        balls.push({
+            element: newBall,
+            x: e.clientX,
+            y: e.clientY,
+            speedX: (Math.random()-0.5)*5,
+            speedY: (Math.random()-0.5)*5
         });
-        fc++;af=requestAnimationFrame(up);
+        
+        countDisplay.textContent = balls.length;
+        
+        // 启动动画循环
+        if(!frameId) {
+            animate();
+        }
     };
 
-    init();
+    // 动画循环
+    function animate() {
+        const width = window.innerWidth;
+        const height = window.innerHeight;
+        
+        balls.forEach(ball => {
+            // 边界检测
+            if(ball.x < 10 || ball.x > width-10) ball.speedX *= -1;
+            if(ball.y < 10 || ball.y > height-10) ball.speedY *= -1;
+            
+            // 更新位置
+            ball.x += ball.speedX;
+            ball.y += ball.speedY;
+            
+            // 应用动画
+            ball.element.style.transform = `translate3d(${ball.x}px, ${ball.y}px, 0)`;
+        });
+        
+        frameId = requestAnimationFrame(animate);
+    }
+
+    // 清空小球
+    window.clearBalls = function() {
+        balls.forEach(b => b.element.remove());
+        balls = [];
+        countDisplay.textContent = 0;
+        cancelAnimationFrame(frameId);
+        frameId = null;
+    };
 })();
     </script>
 </body>
