@@ -1,184 +1,180 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>千万级粒子测试项目</title>
+    <title>动态粒子系统</title>
     <style>
-        body { margin: 0; overflow: hidden; }
+        body { margin: 0; overflow: hidden; background: #000; }
         canvas { display: block; }
-        .gui {
+        .panel {
             position: fixed;
-            top: 20px;
-            left: 20px;
+            top: 10px;
+            left: 10px;
             color: white;
             background: rgba(0,0,0,0.7);
             padding: 15px;
-            border-radius: 10px;
+            border-radius: 8px;
             font-family: Arial, sans-serif;
         }
+        .slider-container { margin: 10px 0; }
+        input[type="range"] { width: 200px; }
     </style>
 </head>
 <body>
     <canvas id="canvas"></canvas>
-    <div class="gui">
-        <div>粒子数量: 10,000,000</div>
+    <div class="panel">
+        <h2>粒子系统控制</h2>
+        <div class="slider-container">
+            <div>粒子数量: <span id="particleCount">0</span></div>
+            <input type="range" id="particleSlider" min="0" max="100000" value="0" step="1000">
+        </div>
         <div>FPS: <span id="fps">0</span></div>
     </div>
 
 <script>
-class StarField {
+class DynamicParticleSystem {
     constructor() {
         this.canvas = document.getElementById('canvas');
         this.ctx = this.canvas.getContext('2d');
+        this.particles = [];
+        this.targetCount = 0;
+        this.currentCount = 0;
         this.resize();
-        this.mouse = { x: 0, y: 0, active: false };
-        this.init();
-        this.bindEvents();
-        this.animate(0);
-    }
-
-    init() {
-        // 初始化10M粒子 (优化内存结构)
-        this.PARTICLE_COUNT = 10_000_000;
-        this.pos = new Float32Array(this.PARTICLE_COUNT * 2); // x,y
-        this.vel = new Float32Array(this.PARTICLE_COUNT * 2); // vx,vy
-        this.hue = new Uint16Array(this.PARTICLE_COUNT);     // 色相
-        this.brightness = new Uint8Array(this.PARTICLE_COUNT);// 亮度
-
-        const { width, height } = this.canvas;
-        for(let i = 0; i < this.PARTICLE_COUNT; i++) {
-            const idx = i * 2;
-            this.pos[idx] = Math.random() * width;
-            this.pos[idx+1] = Math.random() * height;
-            this.vel[idx] = (Math.random() - 0.5) * 2;
-            this.vel[idx+1] = (Math.random() - 0.5) * 2;
-            this.hue[i] = Math.random() * 360;
-            this.brightness[i] = Math.random() * 50 + 50;
-        }
-
-        // 创建离屏Canvas加速渲染
-        this.offscreen = document.createElement('canvas');
-        this.offscreenCtx = this.offscreen.getContext('2d');
-        this.resize();
+        this.setupControls();
+        this.lastTime = performance.now();
+        this.frameCount = 0;
+        this.lastFpsUpdate = 0;
+        this.animate();
     }
 
     resize() {
         this.canvas.width = window.innerWidth;
         this.canvas.height = window.innerHeight;
-        this.offscreen.width = this.canvas.width;
-        this.offscreen.height = this.canvas.height;
     }
 
-    bindEvents() {
-        window.addEventListener('resize', () => this.resize());
-        this.canvas.addEventListener('mousemove', e => {
-            this.mouse.x = e.clientX;
-            this.mouse.y = e.clientY;
-            this.mouse.active = true;
+    setupControls() {
+        const slider = document.getElementById('particleSlider');
+        const counter = document.getElementById('particleCount');
+        
+        slider.addEventListener('input', (e) => {
+            this.targetCount = parseInt(e.target.value);
+            counter.textContent = this.targetCount.toLocaleString();
+            
+            // 平滑过渡到目标数量
+            const diff = this.targetCount - this.currentCount;
+            this.addParticles(diff);
         });
-        this.canvas.addEventListener('mouseleave', () => this.mouse.active = false);
+    }
+
+    addParticles(count) {
+        const { width, height } = this.canvas;
+        const colors = [
+            [255, 50, 50],   // 红
+            [50, 255, 50],   // 绿
+            [50, 50, 255],   // 蓝
+            [255, 255, 50],  // 黄
+            [255, 50, 255]   // 紫
+        ];
+
+        // 批量添加粒子
+        const batchSize = Math.min(Math.abs(count), 5000); // 每批最多5000个
+        const isAdding = count > 0;
+        
+        if (isAdding) {
+            for (let i = 0; i < batchSize; i++) {
+                this.particles.push({
+                    x: Math.random() * width,
+                    y: Math.random() * height,
+                    vx: (Math.random() - 0.5) * 2,
+                    vy: (Math.random() - 0.5) * 2,
+                    color: colors[Math.floor(Math.random() * colors.length)],
+                    size: Math.random() * 2 + 1
+                });
+            }
+            this.currentCount += batchSize;
+        } else {
+            this.particles.length = Math.max(0, this.particles.length - batchSize);
+            this.currentCount = Math.max(0, this.currentCount - batchSize);
+        }
+
+        // 继续调整直到达到目标数量
+        if (this.currentCount !== this.targetCount) {
+            requestAnimationFrame(() => {
+                this.addParticles(this.targetCount - this.currentCount);
+            });
+        }
     }
 
     update(delta) {
         const width = this.canvas.width;
         const height = this.canvas.height;
-        const mouseX = this.mouse.x;
-        const mouseY = this.mouse.y;
 
-        // 批量更新粒子状态
-        for(let i = 0; i < this.PARTICLE_COUNT; i++) {
-            const idx = i * 2;
-            let x = this.pos[idx];
-            let y = this.pos[idx+1];
-            let vx = this.vel[idx];
-            let vy = this.vel[idx+1];
-
-            // 鼠标互动
-            if(this.mouse.active) {
-                const dx = x - mouseX;
-                const dy = y - mouseY;
-                const dist = dx*dx + dy*dy;
-                if(dist < 10000) { // 100px半径
-                    const angle = Math.atan2(dy, dx);
-                    const force = 3000 / dist;
-                    vx += Math.cos(angle) * force * delta;
-                    vy += Math.sin(angle) * force * delta;
-                }
-            }
-
+        // 更新现有粒子
+        for (let i = 0; i < this.particles.length; i++) {
+            const p = this.particles[i];
+            
+            p.x += p.vx * delta;
+            p.y += p.vy * delta;
+            
             // 边界反弹
-            if(x < 0 || x > width) vx *= -0.9;
-            if(y < 0 || y > height) vy *= -0.9;
-
-            // 更新位置和颜色
-            this.pos[idx] = x + vx;
-            this.pos[idx+1] = y + vy;
-            this.vel[idx] = vx * 0.99;
-            this.vel[idx+1] = vy * 0.99;
-            this.hue[i] = (this.hue[i] + Math.sqrt(vx*vx + vy*vy)*0.2) % 360;
+            if (p.x < 0 || p.x > width) {
+                p.vx *= -0.8;
+                p.x = Math.max(0, Math.min(width, p.x));
+            }
+            if (p.y < 0 || p.y > height) {
+                p.vy *= -0.8;
+                p.y = Math.max(0, Math.min(height, p.y));
+            }
+            
+            // 随机运动变化
+            p.vx += (Math.random() - 0.5) * 0.1;
+            p.vy += (Math.random() - 0.5) * 0.1;
+            
+            // 速度限制
+            const speed = Math.sqrt(p.vx*p.vx + p.vy*p.vy);
+            if (speed > 3) {
+                p.vx = p.vx / speed * 3;
+                p.vy = p.vy / speed * 3;
+            }
         }
     }
 
     draw() {
-        // 使用离屏Canvas加速渲染
-        const imageData = this.offscreenCtx.createImageData(
-            this.canvas.width, this.canvas.height
-        );
-        const data = imageData.data;
+        // 星空拖尾效果
+        this.ctx.fillStyle = 'rgba(0, 0, 0, 0.08)';
+        this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
 
-        // 添加残影效果
-        this.offscreenCtx.globalCompositeOperation = 'source-over';
-        this.offscreenCtx.fillStyle = 'rgba(0, 0, 0, 0.1)';
-        this.offscreenCtx.fillRect(0, 0, this.canvas.width, this.canvas.height);
-
-        // 绘制粒子
-        for(let i = 0; i < this.PARTICLE_COUNT; i += 100) { // 显示1%粒子
-            const idx = i * 2;
-            const x = this.pos[idx] | 0;
-            const y = this.pos[idx+1] | 0;
-            if(x >= 0 && x < this.canvas.width && y >= 0 && y < this.canvas.height) {
-                const pixelIdx = (y * this.canvas.width + x) * 4;
-                const hue = this.hue[i];
-                const brightness = this.brightness[i];
-
-                // HSL转RGB
-                const c = (1 - Math.abs(2 * brightness/255 - 1)) * 255;
-                const x = c * (1 - Math.abs((hue / 60) % 2 - 1));
-                const m = brightness - c/2;
-
-                let r, g, b;
-                if(hue < 60) [r,g,b] = [c,x,0];
-                else if(hue < 120) [r,g,b] = [x,c,0];
-                else if(hue < 180) [r,g,b] = [0,c,x];
-                else if(hue < 240) [r,g,b] = [0,x,c];
-                else if(hue < 300) [r,g,b] = [x,0,c];
-                else [r,g,b] = [c,0,x];
-
-                data[pixelIdx] = r + m;
-                data[pixelIdx+1] = g + m;
-                data[pixelIdx+2] = b + m;
-                data[pixelIdx+3] = 255;
-            }
+        // 批量绘制粒子
+        for (let i = 0; i < this.particles.length; i++) {
+            const p = this.particles[i];
+            this.ctx.fillStyle = `rgb(${p.color[0]},${p.color[1]},${p.color[2]})`;
+            this.ctx.beginPath();
+            this.ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+            this.ctx.fill();
         }
-
-        this.offscreenCtx.putImageData(imageData, 0, 0);
-        this.ctx.drawImage(this.offscreen, 0, 0);
     }
 
-    animate(timestamp) {
-        const delta = timestamp - (this.lastTime || timestamp);
-        this.lastTime = timestamp;
+    animate(currentTime) {
+        const delta = (currentTime - this.lastTime) / 16; // 转换为60fps基准
+        this.lastTime = currentTime;
+        this.frameCount++;
 
-        this.update(delta / 16);
+        // 每秒更新FPS
+        if (currentTime - this.lastFpsUpdate >= 1000) {
+            document.getElementById('fps').textContent = Math.round(
+                this.frameCount * 1000 / (currentTime - this.lastFpsUpdate)
+            );
+            this.lastFpsUpdate = currentTime;
+            this.frameCount = 0;
+        }
+
+        this.update(delta);
         this.draw();
-
-        // 更新FPS显示
-        document.getElementById('fps').textContent = (1000 / delta).toFixed(1);
-        requestAnimationFrame((t) => this.animate(t));
+        requestAnimationFrame(t => this.animate(t));
     }
 }
 
 // 启动系统
-const universe = new StarField();
+new DynamicParticleSystem();
 </script>
 </body>
 </html>
