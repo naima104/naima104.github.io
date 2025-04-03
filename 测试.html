@@ -26,7 +26,8 @@
             border-radius: 50%;
             background-color: rgba(255, 255, 255, 0.5);
             pointer-events: none;
-            transform: translate3d(0, 0, 0); /* 启用硬件加速 */
+            transform: translate3d(0, 0, 0);
+            will-change: transform;
         }
 
         .controls {
@@ -37,6 +38,34 @@
             padding: 10px;
             border-radius: 5px;
             z-index: 100;
+            width: 200px;
+            transition: all 0.3s ease;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+        }
+
+        .controls.collapsed {
+            height: 40px;
+            width: 120px;
+        }
+
+        .controls.collapsed .stats,
+        .controls.collapsed #resetBtn,
+        .controls.collapsed .ball-info {
+            display: none;
+        }
+
+        .toggle-btn {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            padding: 2px 5px;
+            z-index: 101;
         }
 
         button {
@@ -51,6 +80,7 @@
             margin: 4px 2px;
             cursor: pointer;
             border-radius: 4px;
+            transition: background-color 0.3s;
         }
 
         button:hover {
@@ -68,37 +98,128 @@
         .stats {
             margin-top: 10px;
             font-size: 14px;
+            transition: opacity 0.3s ease;
         }
+
+        .ball-info {
+            margin: 5px 0;
+            font-size: 12px;
+            color: #ccc;
+        }
+
+        .slider-container {
+            margin: 10px 0;
+        }
+
+        .slider-label {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 12px;
+        }
+
+        input[type="range"] {
+            width: 100%;
+            height: 5px;
+            -webkit-appearance: none;
+            background: #444;
+            border-radius: 5px;
+            outline: none;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 15px;
+            height: 15px;
+            background: #4CAF50;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+        .performance-warning {
+            position: fixed;
+            bottom: 10px;
+            left: 10px;
+            background-color: rgba(255, 165, 0, 0.8);
+            padding: 8px 12px;
+            border-radius: 5px;
+            font-size: 12px;
+            display: none;
+            z-index: 100;
+        }
+.ripple-effect {
+    position: absolute;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, 0.3);
+    transform: translate3d(-50%, -50%, 0);
+    pointer-events: none;
+    animation: ripple 1s ease-out forwards;
+}
+
+@keyframes ripple {
+    0% {
+        transform: translate3d(-50%, -50%, 0) scale(0);
+        opacity: 1;
+    }
+    100% {
+        transform: translate3d(-50%, -50%, 0) scale(3);
+        opacity: 0;
+    }
+}
+
+/* 重力效果小球样式 */
+.ball.gravity {
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+}
     </style>
 </head>
 <body>
     <div class="container" id="container"></div>
-    <div class="controls">
-        <div>小球数量: <span id="ballCount">0</span>/<span id="maxBalls">100</span></div>
+    <div class="controls" id="controls">
+        <button class="toggle-btn" id="toggleBtn">≡</button>
+        <div>小球数量: <span id="ballCount">0</span>/<span id="maxBalls">1000</span></div>
+        <div class="ball-info">点击任意位置添加小球</div>
         <div class="stats">
-            FPS: <span id="fps">0</span><br>
-            内存使用: <span id="memory">0</span> MB
+            <div>FPS: <span id="fps">0</span></div>
+            <div>内存: <span id="memory">0</span> MB</div>
+            <div>速度: <span id="speed">5</span></div>
+            <div class="slider-container">
+                <label class="slider-label">小球速度: <span id="speedValue">5</span></label>
+                <input type="range" id="speedSlider" min="1" max="20" value="5">
+            </div>
         </div>
-        <button id="resetBtn">重置</button>
+        <button id="resetBtn">重置所有小球</button>
+    </div>
+    <div class="performance-warning" id="perfWarning">
+        注意: 小球数量过多可能导致性能下降
     </div>
 
     <script>
         // 性能优化版本
         (function() {
-            // 使用requestAnimationFrame进行动画循环
+            // DOM元素
             const container = document.getElementById('container');
+            const controls = document.getElementById('controls');
+            const toggleBtn = document.getElementById('toggleBtn');
             const ballCountEl = document.getElementById('ballCount');
             const maxBallsEl = document.getElementById('maxBalls');
             const fpsEl = document.getElementById('fps');
             const memoryEl = document.getElementById('memory');
             const resetBtn = document.getElementById('resetBtn');
+            const speedEl = document.getElementById('speed');
+            const speedSlider = document.getElementById('speedSlider');
+            const speedValue = document.getElementById('speedValue');
+            const perfWarning = document.getElementById('perfWarning');
             
             // 配置参数
             const config = {
-                maxBalls: 100,
+                maxBalls: 1000,
                 ballSize: 20,
-                ballSpeed: 5,
-                useLocalStorage: true
+                baseSpeed: 5,
+                useLocalStorage: true,
+                showStats: true,
+                performanceThreshold: 30 // FPS低于此值显示警告
             };
             
             maxBallsEl.textContent = config.maxBalls;
@@ -107,8 +228,10 @@
             let balls = [];
             let lastTime = performance.now();
             let frameCount = 0;
-            let fps = 0;
+            let fps = 60;
             let animationId = null;
+            let currentSpeed = config.baseSpeed;
+            let isRunning = true;
             
             // 初始化
             function init() {
@@ -123,13 +246,23 @@
                 // 添加事件监听器
                 container.addEventListener('click', handleClick);
                 resetBtn.addEventListener('click', reset);
+                toggleBtn.addEventListener('click', toggleControls);
+                speedSlider.addEventListener('input', updateSpeed);
                 
                 // 添加性能监控
                 setInterval(updateStats, 1000);
+                
+                // 初始化速度显示
+                updateSpeedDisplay();
+                
+                // 添加窗口resize事件
+                window.addEventListener('resize', handleResize);
             }
             
             // 动画循环
             function animate() {
+                if (!isRunning) return;
+                
                 updateBalls();
                 frameCount++;
                 animationId = requestAnimationFrame(animate);
@@ -141,168 +274,179 @@
                 const height = window.innerHeight;
                 const halfBallSize = config.ballSize / 2;
                 
-                for (let i = 0; i < balls.length; i++) {
+                // 使用for循环而不是forEach，性能更好
+                for (let i = 0, len = balls.length; i < len; i++) {
                     const ball = balls[i];
                     
                     // 检查边界碰撞
                     if (ball.x <= halfBallSize || ball.x >= width - halfBallSize) {
                         ball.speedX = -ball.speedX;
+                        // 确保小球不会卡在边界
+                        ball.x = Math.max(halfBallSize, Math.min(width - halfBallSize, ball.x));
                     }
                     if (ball.y <= halfBallSize || ball.y >= height - halfBallSize) {
                         ball.speedY = -ball.speedY;
+                        ball.y = Math.max(halfBallSize, Math.min(height - halfBallSize, ball.y));
                     }
                     
                     // 更新位置
                     ball.x += ball.speedX;
                     ball.y += ball.speedY;
                     
-                    // 应用变换
+                    // 应用变换 - 使用transform性能更好
                     ball.element.style.transform = `translate3d(${ball.x - halfBallSize}px, ${ball.y - halfBallSize}px, 0)`;
                 }
             }
             
-            // 点击处理
-            function handleClick(e) {
-                if (balls.length >= config.maxBalls) {
-                    removeOldestBall();
-                }
-                
-                createBall(e.clientX, e.clientY);
-                
-                // 保存到本地存储
-                if (config.useLocalStorage) {
-                    saveBallsToStorage();
-                }
+            // 点击处理函数
+function handleClick(e) {
+    // 如果达到最大小球数量，先移除最早的小球
+    if (balls.length >= config.maxBalls) {
+        removeOldestBall();
+    }
+    
+    // 创建新小球
+    const newBall = createBall(e.clientX, e.clientY);
+    
+    // 添加物理效果 - 重力模拟
+    if (config.enableGravity) {
+        applyGravityEffect(newBall);
+    }
+    
+    // 添加点击特效 - 波纹扩散
+    if (config.enableClickEffect) {
+        createClickEffect(e.clientX, e.clientY);
+    }
+    
+    // 保存到本地存储
+    if (config.useLocalStorage) {
+        saveBallsToStorage();
+    }
+    
+    // 性能优化：当小球数量多时降低更新频率
+    if (balls.length > 500) {
+        config.updateInterval = 32; // 约30fps
+    } else if (balls.length > 300) {
+        config.updateInterval = 24; // 约40fps
+    } else {
+        config.updateInterval = 16; // 约60fps
+    }
+}
+
+// 创建点击波纹特效
+function createClickEffect(x, y) {
+    const ripple = document.createElement('div');
+    ripple.className = 'ripple-effect';
+    ripple.style.left = (x - 25) + 'px';
+    ripple.style.top = (y - 25) + 'px';
+    container.appendChild(ripple);
+    
+    // 动画结束后移除
+    setTimeout(() => {
+        ripple.remove();
+    }, 1000);
+}
+
+// 应用重力效果
+function applyGravityEffect(ball) {
+    const gravity = 0.1;
+    const friction = 0.99;
+    
+    // 更新速度函数
+    const updateVelocity = () => {
+        ball.speedY += gravity;
+        ball.speedX *= friction;
+        ball.speedY *= friction;
+        
+        // 当小球几乎静止时停止更新
+        if (Math.abs(ball.speedX) < 0.01 && Math.abs(ball.speedY) < 0.5) {
+            return;
+        }
+        
+        requestAnimationFrame(updateVelocity);
+    };
+    
+    updateVelocity();
+}
+
+// 移除最早的小球（优化版）
+function removeOldestBall() {
+    if (balls.length === 0) return;
+    
+    // 性能优化：当小球很多时使用更高效的查找方法
+    let oldestIndex = 0;
+    if (balls.length > 300) {
+        // 使用指针法查找，减少比较次数
+        let oldestTime = balls[0].createdAt;
+        for (let i = 1; i < balls.length; i++) {
+            if (balls[i].createdAt < oldestTime) {
+                oldestTime = balls[i].createdAt;
+                oldestIndex = i;
             }
-            
-            // 创建新小球
-            function createBall(x, y) {
-                const ball = document.createElement('div');
-                ball.className = 'ball';
-                container.appendChild(ball);
-                
-                // 随机颜色
-                const hue = Math.random() * 360;
-                ball.style.backgroundColor = `hsl(${hue}, 100%, 50%)`;
-                
-                // 初始位置和速度
-                const speedX = (Math.random() - 0.5) * config.ballSpeed;
-                const speedY = (Math.random() - 0.5) * config.ballSpeed;
-                
-                // 存储球的状态
-                const ballObj = {
-                    element: ball,
-                    x: x,
-                    y: y,
-                    speedX: speedX,
-                    speedY: speedY,
-                    color: hue,
-                    createdAt: Date.now()
-                };
-                
-                balls.push(ballObj);
-                updateBallCount();
-                
-                return ballObj;
+            // 提前退出优化
+            if (oldestTime === 0) break; // 0是最小可能值
+        }
+    } else {
+        // 少量小球时直接遍历
+        for (let i = 1; i < balls.length; i++) {
+            if (balls[i].createdAt < balls[oldestIndex].createdAt) {
+                oldestIndex = i;
             }
+        }
+    }
+    
+    // 移除小球
+    const [removedBall] = balls.splice(oldestIndex, 1);
+    removedBall.element.remove();
+    updateBallCount();
+    
+    // 回收内存
+    if (balls.length % 50 === 0) {
+        cleanupMemory();
+    }
+}
+
+// 内存清理
+function cleanupMemory() {
+    // 移除DOM中不存在的球
+    balls = balls.filter(ball => document.body.contains(ball.element));
+    
+    // 强制垃圾回收（非标准方法，仅在某些浏览器有效）
+    if (window.gc) {
+        window.gc();
+    }
+}
+
+// 保存小球状态到本地存储（优化版）
+function saveBallsToStorage() {
+    // 节流处理：避免频繁保存
+    if (!this.saveThrottle) {
+        this.saveThrottle = setTimeout(() => {
+            // 只保存必要属性
+            const savedBalls = balls.map(ball => ({
+                x: ball.x,
+                y: ball.y,
+                speedX: ball.speedX,
+                speedY: ball.speedY,
+                color: ball.color,
+                saturation: ball.saturation,
+                lightness: ball.lightness,
+                createdAt: Date.now() // 更新时间为当前时间
+            }));
             
-            // 移除最早的小球
-            function removeOldestBall() {
-                if (balls.length === 0) return;
-                
-                // 找到最早创建的小球
-                let oldestIndex = 0;
-                for (let i = 1; i < balls.length; i++) {
-                    if (balls[i].createdAt < balls[oldestIndex].createdAt) {
-                        oldestIndex = i;
-                    }
-                }
-                
-                // 移除
-                const [oldestBall] = balls.splice(oldestIndex, 1);
-                oldestBall.element.remove();
-                updateBallCount();
-            }
-            
-            // 重置所有小球
-            function reset() {
-                // 取消动画循环
-                cancelAnimationFrame(animationId);
-                
-                // 移除所有小球
-                for (const ball of balls) {
-                    ball.element.remove();
-                }
-                balls = [];
-                updateBallCount();
-                
-                // 清除本地存储
-                if (config.useLocalStorage) {
-                    localStorage.removeItem('savedBalls');
-                }
-                
-                // 重新开始动画循环
-                animate();
-            }
-            
-            // 更新小球计数显示
-            function updateBallCount() {
-                ballCountEl.textContent = balls.length;
-            }
-            
-            // 保存小球到本地存储
-            function saveBallsToStorage() {
-                const savedBalls = balls.map(ball => ({
-                    x: ball.x,
-                    y: ball.y,
-                    speedX: ball.speedX,
-                    speedY: ball.speedY,
-                    color: ball.color
-                }));
-                
+            try {
+                // 使用压缩算法减少存储空间
+                const compressed = LZString.compressToUTF16(JSON.stringify(savedBalls));
+                localStorage.setItem('savedBalls_v2', compressed);
+            } catch (e) {
+                console.error('存储失败:', e);
+                // 回退到普通存储方式
                 localStorage.setItem('savedBalls', JSON.stringify(savedBalls));
             }
             
-            // 从本地存储加载小球
-            function loadBallsFromStorage() {
-                const savedBalls = localStorage.getItem('savedBalls');
-                if (savedBalls) {
-                    try {
-                        const parsedBalls = JSON.parse(savedBalls);
-                        for (const ballData of parsedBalls) {
-                            createBall(ballData.x, ballData.y);
-                            // 更新最后创建的小球的状态
-                            const lastBall = balls[balls.length - 1];
-                            lastBall.speedX = ballData.speedX;
-                            lastBall.speedY = ballData.speedY;
-                            lastBall.color = ballData.color;
-                            lastBall.element.style.backgroundColor = `hsl(${ballData.color}, 100%, 50%)`;
-                        }
-                    } catch (e) {
-                        console.error('Failed to load balls from storage:', e);
-                    }
-                }
-            }
-            
-            // 更新统计信息
-            function updateStats() {
-                // 计算FPS
-                const now = performance.now();
-                fps = Math.round(frameCount * 1000 / (now - lastTime));
-                fpsEl.textContent = fps;
-                frameCount = 0;
-                lastTime = now;
-                
-                // 估算内存使用
-                if (window.performance && window.performance.memory) {
-                    const usedMB = (window.performance.memory.usedJSHeapSize / (1024 * 1024)).toFixed(2);
-                    memoryEl.textContent = usedMB;
-                }
-            }
-            
-            // 启动应用
-            init();
-        })();
-    </script>
-</body>
-</html>
+            this.saveThrottle = null;
+        }, 500); // 最多每500ms保存一次
+    }
+}
+
+    <script>
