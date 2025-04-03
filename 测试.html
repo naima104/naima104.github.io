@@ -2,267 +2,307 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="/." content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="naima的个人主页">
-    <title>./index</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>点击生成小球</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        :root {
-            --bg-dark: #1a1a1a;
-            --text-light: #ffffff;
-            --primary-blue: #3498db;
-            --secondary-blue: #2980b9;
-            --border-dark: #333333;
-            --text-gray: #cccccc;
-        }
-
-        .loader {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: var(--bg-dark);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 9999;
-            transition: opacity 0.5s ease, visibility 0.5s;
-        }
-
-        .loader.hidden {
-            opacity: 0;
-            visibility: hidden;
-            pointer-events: none;
-        }
-
-        .spinner {
-            width: 50px;
-            height: 50px;
-            border: 5px solid rgba(243, 243, 243, 0.2);
-            border-top: 5px solid var(--primary-blue);
-            border-radius: 50%;
-            animation: spin 1s cubic-bezier(0.65, 0.05, 0.36, 1) infinite;
-            will-change: transform;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
         body {
-            font-family: 'Microsoft YaHei', 'Segoe UI', system-ui, sans-serif;
-            background-color: var(--bg-dark);
-            color: var(--text-light);
-            line-height: 1.6;
-            min-height: 100vh;
-            opacity: 0;
-            transition: opacity 0.5s ease;
-            padding: 0;
+            margin: 0;
+            overflow: hidden;
+            background-color: #1a1a1a;
+            font-family: Arial, sans-serif;
+            color: white;
         }
 
-        body.visible {
-            opacity: 1;
-        }
-
-        .main-container {
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 2rem 1.5rem;
-        }
-
-        .page-title {
-            font-size: clamp(1.8rem, 5vw, 2.5rem);
-            margin-bottom: 1.8rem;
-            line-height: 1.3;
-            color: var(--text-light);
-        }
-
-        .typewriter-container {
-            min-height: 60px;
-            margin: 2.5rem 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .typewriter-text {
-            font-size: clamp(1.1rem, 3vw, 1.4rem);
-            color: var(--primary-blue);
-            border-right: 2px solid var(--primary-blue);
-            padding-right: 8px;
-            height: 1.4em;
-            display: inline-block;
-            animation: blink-caret 0.75s step-end infinite;
-        }
-
-        @keyframes blink-caret {
-            from, to { border-color: transparent; }
-            50% { border-color: var(--primary-blue); }
-        }
-
-        .nav-links {
-            margin: 2rem 0;
-        }
-
-        .nav-links li {
-            margin: 1.2rem 0;
+        .container {
             position: relative;
+            width: 100vw;
+            height: 100vh;
         }
 
-        .nav-links a {
-            color: var(--primary-blue);
-            text-decoration: none;
-            font-size: 1.1rem;
-            transition: all 0.3s ease;
-            padding: 0.3rem 0;
-            display: inline-block;
+        .ball {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.5);
+            pointer-events: none;
+            transform: translate3d(0, 0, 0); /* 启用硬件加速 */
         }
 
-        .nav-links a:hover {
-            color: var(--secondary-blue);
-            transform: translateX(5px);
+        .controls {
+            position: fixed;
+            top: 10px;
+            left: 10px;
+            background-color: rgba(0, 0, 0, 0.7);
+            padding: 10px;
+            border-radius: 5px;
+            z-index: 100;
         }
 
-        .contact-section {
-            margin-top: 3rem;
-            padding-top: 2rem;
-            border-top: 1px solid var(--border-dark);
-        }
-
-        .contact-title {
-            font-size: 1.3rem;
-            margin-bottom: 1.5rem;
-            color: var(--text-light);
-        }
-
-        .footer-info {
-            margin-top: 3rem;
-            color: var(--text-gray);
+        button {
+            background-color: #4CAF50;
+            border: none;
+            color: white;
+            padding: 8px 16px;
             text-align: center;
-            font-size: 0.9rem;
-            line-height: 1.5;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 14px;
+            margin: 4px 2px;
+            cursor: pointer;
+            border-radius: 4px;
         }
 
-        @media (max-width: 600px) {
-            .main-container {
-                padding: 1.5rem 1rem;
-            }
-            
-            .nav-links li {
-                margin: 1rem 0;
-            }
-            
-            .typewriter-container {
-                margin: 2rem 0;
-            }
+        button:hover {
+            background-color: #45a049;
+        }
+
+        #resetBtn {
+            background-color: #f44336;
+        }
+
+        #resetBtn:hover {
+            background-color: #d32f2f;
+        }
+
+        .stats {
+            margin-top: 10px;
+            font-size: 14px;
         }
     </style>
 </head>
 <body>
-    <div class="loader" id="pageLoader">
-        <div class="spinner"></div>
+    <div class="container" id="container"></div>
+    <div class="controls">
+        <div>小球数量: <span id="ballCount">0</span>/<span id="maxBalls">100</span></div>
+        <div class="stats">
+            FPS: <span id="fps">0</span><br>
+            内存使用: <span id="memory">0</span> MB
+        </div>
+        <button id="resetBtn">重置</button>
     </div>
 
-    <main class="main-container">
-        <h1 class="page-title">./index<br>欢迎访问我的网站</h1>
-
-        <div class="typewriter-container">
-            <span class="typewriter-text" id="typingText"></span>
-        </div>
-
-        <nav class="nav-links">
-            <ul>
-                <li><a href="公告.html">公告</a></li>
-                <li><a href="https://m.bilibili.com/space/3546610954931052" target="_blank" rel="noopener noreferrer">B站主页</a></li>
-                <li><a href="好玩的.html">好玩的</a></li>
-                <li><a href="114.html">小黑子 你食补食油饼 一边玩去</a></li>
-            </ul>
-        </nav>
-
-        <section class="contact-section">
-            <h2 class="contact-title">联系方式</h2>
-            <ul class="nav-links">
-                <li><a href="tencent://message/?uin=3698088118&site=qq&menu=yes">QQ: 3698088118</a></li>
-                <li><a href="mailto:3698088118@qq.com">邮箱: 3698088118@qq.com</a></li>
-            </ul>
-        </section>
-
-        <div class="footer-info">
-            没树枝就不要乱叫<br>
-            无限期断更中
-        </div>
-    </main>
-
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const loader = document.getElementById('pageLoader');
-            const minLoadTime = 800;
-            const loadStartTime = performance.now();
+        // 性能优化版本
+        (function() {
+            // 使用requestAnimationFrame进行动画循环
+            const container = document.getElementById('container');
+            const ballCountEl = document.getElementById('ballCount');
+            const maxBallsEl = document.getElementById('maxBalls');
+            const fpsEl = document.getElementById('fps');
+            const memoryEl = document.getElementById('memory');
+            const resetBtn = document.getElementById('resetBtn');
             
-            setTimeout(function() {
-                loader.classList.add('hidden');
-                document.body.classList.add('visible');
-                initTypewriterEffect();
-            }, Math.max(0, minLoadTime - (performance.now() - loadStartTime)));
-        });
-
-        function initTypewriterEffect() {
-            const typingElement = document.getElementById('typingText');
-            const texts = [
-                "玩 Phigros 玩的",
-                "玩 王者荣耀 玩的",
-                "玩 Minecraft 玩的",
-                "玩 我在7年后等着你 玩的",
-                "玩 PVZ 玩的",
-                "玩 忍3 玩的",
-                "玩 出生未来 玩的",
-                "无限进步！"
-            ];
+            // 配置参数
+            const config = {
+                maxBalls: 100,
+                ballSize: 20,
+                ballSpeed: 5,
+                useLocalStorage: true
+            };
             
-            let currentIndex = 0;
-            let isDeleting = false;
-            let currentText = '';
-            let typingSpeed = 100;
-            let deletingSpeed = 50;
-            let pauseTime = 1500;
+            maxBallsEl.textContent = config.maxBalls;
             
-            function type() {
-                const fullText = texts[currentIndex];
+            // 状态变量
+            let balls = [];
+            let lastTime = performance.now();
+            let frameCount = 0;
+            let fps = 0;
+            let animationId = null;
+            
+            // 初始化
+            function init() {
+                // 从本地存储加载小球
+                if (config.useLocalStorage) {
+                    loadBallsFromStorage();
+                }
                 
-                if (isDeleting) {
-                    currentText = fullText.substring(0, currentText.length - 1);
-                    typingElement.textContent = currentText;
+                // 开始动画循环
+                animate();
+                
+                // 添加事件监听器
+                container.addEventListener('click', handleClick);
+                resetBtn.addEventListener('click', reset);
+                
+                // 添加性能监控
+                setInterval(updateStats, 1000);
+            }
+            
+            // 动画循环
+            function animate() {
+                updateBalls();
+                frameCount++;
+                animationId = requestAnimationFrame(animate);
+            }
+            
+            // 更新所有小球位置
+            function updateBalls() {
+                const width = window.innerWidth;
+                const height = window.innerHeight;
+                const halfBallSize = config.ballSize / 2;
+                
+                for (let i = 0; i < balls.length; i++) {
+                    const ball = balls[i];
                     
-                    if (currentText === '') {
-                        isDeleting = false;
-                        currentIndex = (currentIndex + 1) % texts.length;
-                        setTimeout(type, 300);
-                    } else {
-                        setTimeout(type, deletingSpeed + Math.random() * 50);
+                    // 检查边界碰撞
+                    if (ball.x <= halfBallSize || ball.x >= width - halfBallSize) {
+                        ball.speedX = -ball.speedX;
                     }
-                } else {
-                    currentText = fullText.substring(0, currentText.length + 1);
-                    typingElement.textContent = currentText;
+                    if (ball.y <= halfBallSize || ball.y >= height - halfBallSize) {
+                        ball.speedY = -ball.speedY;
+                    }
                     
-                    if (currentText === fullText) {
-                        isDeleting = true;
-                        setTimeout(type, pauseTime);
-                    } else {
-                        const speedVariation = Math.random() * 50;
-                        setTimeout(type, typingSpeed + speedVariation);
+                    // 更新位置
+                    ball.x += ball.speedX;
+                    ball.y += ball.speedY;
+                    
+                    // 应用变换
+                    ball.element.style.transform = `translate3d(${ball.x - halfBallSize}px, ${ball.y - halfBallSize}px, 0)`;
+                }
+            }
+            
+            // 点击处理
+            function handleClick(e) {
+                if (balls.length >= config.maxBalls) {
+                    removeOldestBall();
+                }
+                
+                createBall(e.clientX, e.clientY);
+                
+                // 保存到本地存储
+                if (config.useLocalStorage) {
+                    saveBallsToStorage();
+                }
+            }
+            
+            // 创建新小球
+            function createBall(x, y) {
+                const ball = document.createElement('div');
+                ball.className = 'ball';
+                container.appendChild(ball);
+                
+                // 随机颜色
+                const hue = Math.random() * 360;
+                ball.style.backgroundColor = `hsl(${hue}, 100%, 50%)`;
+                
+                // 初始位置和速度
+                const speedX = (Math.random() - 0.5) * config.ballSpeed;
+                const speedY = (Math.random() - 0.5) * config.ballSpeed;
+                
+                // 存储球的状态
+                const ballObj = {
+                    element: ball,
+                    x: x,
+                    y: y,
+                    speedX: speedX,
+                    speedY: speedY,
+                    color: hue,
+                    createdAt: Date.now()
+                };
+                
+                balls.push(ballObj);
+                updateBallCount();
+                
+                return ballObj;
+            }
+            
+            // 移除最早的小球
+            function removeOldestBall() {
+                if (balls.length === 0) return;
+                
+                // 找到最早创建的小球
+                let oldestIndex = 0;
+                for (let i = 1; i < balls.length; i++) {
+                    if (balls[i].createdAt < balls[oldestIndex].createdAt) {
+                        oldestIndex = i;
+                    }
+                }
+                
+                // 移除
+                const [oldestBall] = balls.splice(oldestIndex, 1);
+                oldestBall.element.remove();
+                updateBallCount();
+            }
+            
+            // 重置所有小球
+            function reset() {
+                // 取消动画循环
+                cancelAnimationFrame(animationId);
+                
+                // 移除所有小球
+                for (const ball of balls) {
+                    ball.element.remove();
+                }
+                balls = [];
+                updateBallCount();
+                
+                // 清除本地存储
+                if (config.useLocalStorage) {
+                    localStorage.removeItem('savedBalls');
+                }
+                
+                // 重新开始动画循环
+                animate();
+            }
+            
+            // 更新小球计数显示
+            function updateBallCount() {
+                ballCountEl.textContent = balls.length;
+            }
+            
+            // 保存小球到本地存储
+            function saveBallsToStorage() {
+                const savedBalls = balls.map(ball => ({
+                    x: ball.x,
+                    y: ball.y,
+                    speedX: ball.speedX,
+                    speedY: ball.speedY,
+                    color: ball.color
+                }));
+                
+                localStorage.setItem('savedBalls', JSON.stringify(savedBalls));
+            }
+            
+            // 从本地存储加载小球
+            function loadBallsFromStorage() {
+                const savedBalls = localStorage.getItem('savedBalls');
+                if (savedBalls) {
+                    try {
+                        const parsedBalls = JSON.parse(savedBalls);
+                        for (const ballData of parsedBalls) {
+                            createBall(ballData.x, ballData.y);
+                            // 更新最后创建的小球的状态
+                            const lastBall = balls[balls.length - 1];
+                            lastBall.speedX = ballData.speedX;
+                            lastBall.speedY = ballData.speedY;
+                            lastBall.color = ballData.color;
+                            lastBall.element.style.backgroundColor = `hsl(${ballData.color}, 100%, 50%)`;
+                        }
+                    } catch (e) {
+                        console.error('Failed to load balls from storage:', e);
                     }
                 }
             }
             
-            setTimeout(type, 500);
-        }
+            // 更新统计信息
+            function updateStats() {
+                // 计算FPS
+                const now = performance.now();
+                fps = Math.round(frameCount * 1000 / (now - lastTime));
+                fpsEl.textContent = fps;
+                frameCount = 0;
+                lastTime = now;
+                
+                // 估算内存使用
+                if (window.performance && window.performance.memory) {
+                    const usedMB = (window.performance.memory.usedJSHeapSize / (1024 * 1024)).toFixed(2);
+                    memoryEl.textContent = usedMB;
+                }
+            }
+            
+            // 启动应用
+            init();
+        })();
     </script>
 </body>
 </html>
