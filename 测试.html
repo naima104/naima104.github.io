@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>千万级粒子系统</title>
+    <title>千万粒子系统</title>
     <style>
         body { margin: 0; overflow: hidden; background: #000; }
         canvas { display: block; }
-        .panel {
+        .control-panel {
             position: fixed;
             top: 10px;
             left: 10px;
@@ -26,19 +26,33 @@
             cursor: pointer;
         }
         button:disabled {
-            background: #cccccc;
+            background: #666;
             cursor: not-allowed;
+        }
+        .switch {
+            display: flex;
+            align-items: center;
+            margin: 10px 0;
         }
         .status {
             margin: 10px 0;
             font-size: 14px;
         }
+        .tooltip {
+            display: none;
+            background: #333;
+            color: #fff;
+            padding: 5px;
+            border-radius: 4px;
+            margin-top: 5px;
+        }
+        label:hover .tooltip { display: block; }
     </style>
 </head>
 <body>
     <canvas id="canvas"></canvas>
-    <div class="panel">
-        <h3>粒子系统控制台</h3>
+    <div class="control-panel">
+        <h3>粒子系统控制</h3>
         
         <div class="status">
             <div>粒子数量: <span id="count">0</span>/<span id="maxCount">1,000,000</span></div>
@@ -49,14 +63,23 @@
         <button id="millionBtn">加载100万粒子</button>
         <button id="tenMillionBtn">加载1000万粒子</button>
         <button id="resetBtn">重置系统</button>
+        
+        <div class="switch">
+            <label>
+                <input type="checkbox" id="hqToggle">
+                超高清模式
+                <div class="tooltip">启用更高分辨率渲染(消耗更多显存)</div>
+            </label>
+        </div>
     </div>
 
 <script>
-class MegaParticleSystem {
+class UltraParticleSystem {
     constructor() {
         // 系统配置
         this.MAX_PARTICLES = 10_000_000;
-        this.PARTICLES_PER_FRAME = 50_000; // 每帧加载量
+        this.PARTICLES_PER_FRAME = 50_000;
+        this.DISPLAY_PARTICLES = 500_000; // 最大显示粒子数
         
         // 渲染元素
         this.canvas = document.getElementById('canvas');
@@ -67,6 +90,7 @@ class MegaParticleSystem {
         this.colors = new Uint32Array(this.MAX_PARTICLES);
         this.activeCount = 0;
         this.isLoading = false;
+        this.hqMode = false;
         
         // 性能监控
         this.lastTime = performance.now();
@@ -78,19 +102,21 @@ class MegaParticleSystem {
     init() {
         this.resize();
         this.setupControls();
-        
-        // 默认加载100万粒子
-        this.startLoading(1_000_000);
-        
+        this.startLoading(1_000_000); // 默认加载100万
         this.animate();
     }
 
     resize() {
-        this.canvas.width = window.innerWidth;
-        this.canvas.height = window.innerHeight;
+        const dpr = this.hqMode ? window.devicePixelRatio : 1;
+        this.canvas.width = window.innerWidth * dpr;
+        this.canvas.height = window.innerHeight * dpr;
+        this.canvas.style.width = window.innerWidth + 'px';
+        this.canvas.style.height = window.innerHeight + 'px';
+        this.ctx.scale(dpr, dpr);
     }
 
     setupControls() {
+        // 粒子数量控制
         document.getElementById('millionBtn').addEventListener('click', () => {
             this.startLoading(1_000_000);
         });
@@ -104,6 +130,13 @@ class MegaParticleSystem {
             document.getElementById('count').textContent = '0';
             document.getElementById('maxCount').textContent = '1,000,000';
             document.getElementById('loadProgress').textContent = '0';
+        });
+        
+        // 超高清模式切换
+        document.getElementById('hqToggle').addEventListener('change', (e) => {
+            this.hqMode = e.target.checked;
+            this.resize();
+            console.log(`超高清模式 ${this.hqMode ? '启用' : '禁用'}`);
         });
     }
 
@@ -146,11 +179,11 @@ class MegaParticleSystem {
             // 位置和速度 (x, y, vx, vy)
             this.particles[idx] = Math.random() * this.canvas.width;
             this.particles[idx+1] = Math.random() * this.canvas.height;
-            this.particles[idx+2] = (Math.random() - 0.5) * 0.2; // 降低速度
+            this.particles[idx+2] = (Math.random() - 0.5) * 0.2;
             this.particles[idx+3] = (Math.random() - 0.5) * 0.2;
             
             // 颜色 (存储为32位ARGB)
-            const hue = (i * 137.508) % 360; // 黄金角度分布
+            const hue = (i * 137.508) % 360;
             this.colors[i] = this.hslToRgb(hue, 0.8, 0.6);
         }
         
@@ -174,7 +207,7 @@ class MegaParticleSystem {
         
         const m = l - c / 2;
         return (
-            (255 << 24) | // Alpha
+            (255 << 24) | 
             (Math.round((r + m) * 255) << 16) |
             (Math.round((g + m) * 255) << 8) |
             Math.round((b + m) * 255)
@@ -185,6 +218,7 @@ class MegaParticleSystem {
         const width = this.canvas.width;
         const height = this.canvas.height;
         
+        // 使用SIMD-like批处理
         for (let i = 0; i < this.activeCount; i++) {
             const idx = i * 4;
             
@@ -213,16 +247,18 @@ class MegaParticleSystem {
         const imageData = this.ctx.getImageData(0, 0, this.canvas.width, this.canvas.height);
         const data = imageData.data;
         
-        // 只绘制可见区域的粒子
-        const visibleParticles = Math.min(this.activeCount, 500_000); // 限制绘制数量保持流畅
-        for (let i = 0; i < visibleParticles; i++) {
-            const idx = i * 4;
-            const x = Math.floor(this.particles[idx]);
-            const y = Math.floor(this.particles[idx+1]);
+        // 限制绘制数量保持性能
+        const drawCount = Math.min(this.activeCount, this.DISPLAY_PARTICLES);
+        const step = Math.max(1, Math.floor(this.activeCount / this.DISPLAY_PARTICLES));
+        
+        for (let i = 0; i < drawCount; i++) {
+            const srcIdx = Math.floor(i * step) * 4;
+            const x = Math.floor(this.particles[srcIdx]);
+            const y = Math.floor(this.particles[srcIdx+1]);
             
             if (x >= 0 && x < this.canvas.width && y >= 0 && y < this.canvas.height) {
                 const pixelIdx = (y * this.canvas.width + x) * 4;
-                const color = this.colors[i];
+                const color = this.colors[Math.floor(i * step)];
                 
                 data[pixelIdx] = (color >> 16) & 0xff;   // R
                 data[pixelIdx+1] = (color >> 8) & 0xff;  // G
@@ -240,7 +276,7 @@ class MegaParticleSystem {
         this.lastTime = now;
         this.frameCount++;
         
-        // 更新FPS显示（每秒更新）
+        // 更新FPS显示
         if (this.frameCount % 10 === 0) {
             document.getElementById('fps').textContent = 
                 Math.round(1000 / deltaTime);
@@ -254,7 +290,7 @@ class MegaParticleSystem {
 }
 
 // 启动系统
-new MegaParticleSystem();
+new UltraParticleSystem();
 </script>
 </body>
 </html>
