@@ -110,7 +110,7 @@
         </div>
 
         <footer>
-            注意：请在专业人员指导下进行测试，操作风险需自行承担
+            naima制作
         </footer>
     </div>
 
@@ -123,7 +123,7 @@
 
         // 取消操作处理
         function handleCancel() {
-            if(confirm('确认要放弃压力测试吗？')) {
+            if(confirm('难道,你真的要放弃吗？我遵循你的选择。')) {
                 window.removeEventListener('beforeunload', handleBeforeUnload);
                 window.location.href = 'about:blank';
             }
@@ -131,11 +131,11 @@
 
         // 确认进入测试
         function handleProceed() {
-            if(confirm('最后一次警告：该测试可能导致数据丢失！\n确定继续吗？')) {
+            if(confirm('最后一次警告：该测试可能导致浏览器崩溃！\n确定继续吗？')) {
                 // 记录用户确认操作
                 sessionStorage.setItem('stressTestConfirmed', 'true');
                 // 跳转到测试页面
-                window.location.href = 'stress-test.html';
+                window.location.href = '压力测试.html';
             }
         }
 
