@@ -1,7 +1,56 @@
-<html>
-      <hand>
-      </hand>
-      <body>
-              <li><a href="公告.html">公告</a></li>
-     </body>
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>项目列表</title>
+    <style>
+        :root {
+            --primary-color: #ffffff;
+            --secondary-color: #cccccc;
+            --hover-color: #4a90e2;
+        }
+
+        body {
+            margin: 0;
+            padding: 20px;
+            background-color: #000000;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+        }
+
+        .nav-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            max-width: 300px;
+        }
+
+        .nav-item {
+            margin: 8px 0;
+        }
+
+        .nav-link {
+            display: block;
+            padding: 12px 20px;
+            color: var(--primary-color);
+            text-decoration: none;
+            border-radius: 6px;
+            transition: 
+                background-color 0.3s ease,
+                color 0.3s ease;
+        }
+
+        .nav-link:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: var(--hover-color);
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <ul class="nav-list">
+            <li class="nav-item"><a href="公告.html" class="nav-link">测试(公告</a></li>
+        </ul>
+    </nav>
+</body>
 </html>
