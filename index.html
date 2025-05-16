@@ -117,29 +117,71 @@
             <li><span><a href="mailto:3698088118@qq.com">邮箱: 3698088118@qq.com</a></span></li>
         </ul>
     </div>
-
     <script>
+        const randomChars = '@!~#%?/_*';
+
         function animateText() {
-            const revealElements = document.querySelectorAll('.reveal-text span');
-            let delay = 0;
+            const elements = document.querySelectorAll('.reveal-text');
             
-            revealElements.forEach((span, index) => {
+            elements.forEach(element => {
+                const originalHTML = element.innerHTML;
+                const tempDiv = document.createElement('div');
+                tempDiv.innerHTML = originalHTML;
+                const textNodes = [...tempDiv.childNodes];
+                
+                let fullText = '';
+                textNodes.forEach(node => {
+                    if (node.nodeType === Node.TEXT_NODE) {
+                        fullText += node.textContent;
+                    } else if (node.nodeType === Node.ELEMENT_NODE) {
+                        fullText += node.outerHTML;
+                    }
+                });
+
+                const chars = fullText.split('').map(char => {
+                    return char === ' ' ? '&nbsp;' : char;
+                });
+
+                element.innerHTML = chars.map(char => 
+                    `<span style="opacity:1">${randomChars[Math.floor(Math.random()*randomChars.length)]}</span>`
+                ).join('');
+
+                const spans = element.querySelectorAll('span');
+                const originalChars = chars;
+
+                let currentIndex = 0;
+                const interval = 200;
+                const totalDuration = 3000;
+
+                const animation = setInterval(() => {
+                    if(currentIndex >= spans.length) {
+                        clearInterval(animation);
+                        element.innerHTML = originalHTML;
+                        return;
+                    }
+
+                    spans[currentIndex].style.transform = 'translateY(-8px)';
+                    spans[currentIndex].style.opacity = '0';
+
+                    setTimeout(() => {
+                        spans[currentIndex].innerHTML = originalChars[currentIndex];
+                        spans[currentIndex].style.transform = 'translateY(0)';
+                        spans[currentIndex].style.opacity = '1';
+                    }, 100);
+
+                    currentIndex++;
+                }, interval);
+
                 setTimeout(() => {
-                    span.style.animationDelay = `${delay}s`;
-                    span.style.animationDuration = '0.2s';
-                }, delay * 200);
-                
-                delay += 0.2;
-                
-                if (delay > 3) {
-                    delay = 0;
-                }
+                    clearInterval(animation);
+                    element.innerHTML = originalHTML;
+                }, totalDuration);
             });
         }
 
         const texts = [
             "玩 phigros 玩的",
-            "玩 ba 玩的",
+            "玩 ba 玩的", 
             "玩 minecraft 玩的",
             "玩 我在7年后等着你 玩的",
             "玩 PVZ 玩的",
