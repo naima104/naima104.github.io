@@ -13,8 +13,6 @@
             --text-color: #ffffff;
             --secondary-text: #cccccc;
             --border-color: #333333;
-            --music-player-bg: #2a2a2a;
-            --music-player-accent: #4CAF50;
         }
 
         * {
@@ -152,171 +150,22 @@
         }
 
         .age-display {
-            background-color: rgba(0, 0, 0, 0.3);
-            padding: 10px 15px;
-            border-radius: 20px;
+            background: linear-gradient(135deg, rgba(52, 152, 219, 0.2), rgba(41, 128, 185, 0.2));
+            padding: 15px;
+            border-radius: 10px;
             margin: 20px 0;
             text-align: center;
-            font-size: 16px;
+            font-size: 18px;
             border: 1px solid var(--primary-color);
-            box-shadow: 0 0 10px rgba(52, 152, 219, 0.3);
+            box-shadow: 0 0 15px rgba(52, 152, 219, 0.3);
+            backdrop-filter: blur(5px);
         }
 
-        .music-player {
-            background-color: var(--music-player-bg);
-            border-radius: 10px;
-            padding: 15px;
-            margin: 30px 0;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-            border: 1px solid var(--border-color);
-        }
-
-        .music-player h4 {
-            margin-top: 0;
-            margin-bottom: 15px;
-            color: var(--music-player-accent);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        .music-player h4::after {
-            content: "♪";
+        .age-display span {
+            font-family: monospace;
             font-size: 20px;
-        }
-
-        .player-controls {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-top: 15px;
-        }
-
-        .play-btn {
-            background-color: var(--music-player-accent);
-            color: white;
-            border: none;
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            font-size: 16px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: transform 0.2s, box-shadow 0.2s;
-        }
-
-        .play-btn:hover {
-            transform: scale(1.05);
-            box-shadow: 0 0 10px rgba(76, 175, 80, 0.5);
-        }
-
-        .progress-container {
-            flex-grow: 1;
-            margin: 0 15px;
-            height: 6px;
-            background-color: #444;
-            border-radius: 3px;
-            cursor: pointer;
-            position: relative;
-        }
-
-        .progress-bar {
-            height: 100%;
-            background-color: var(--music-player-accent);
-            border-radius: 3px;
-            width: 0%;
-            position: relative;
-        }
-
-        .progress-bar::after {
-            content: '';
-            position: absolute;
-            right: -5px;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 10px;
-            height: 10px;
-            background-color: white;
-            border-radius: 50%;
-            opacity: 0;
-            transition: opacity 0.2s;
-        }
-
-        .progress-container:hover .progress-bar::after {
-            opacity: 1;
-        }
-
-        .time-display {
-            font-size: 12px;
-            color: var(--secondary-text);
-            min-width: 80px;
-            text-align: center;
-        }
-
-        .song-info {
-            display: flex;
-            align-items: center;
-            margin-bottom: 15px;
-        }
-
-        .song-cover {
-            width: 60px;
-            height: 60px;
-            border-radius: 5px;
-            background-color: #333;
-            margin-right: 15px;
-            overflow: hidden;
-            position: relative;
-        }
-
-        .song-cover img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .song-details {
-            flex-grow: 1;
-        }
-
-        .song-title {
-            font-size: 16px;
-            margin: 0 0 5px 0;
-            color: white;
-        }
-
-        .song-artist {
-            font-size: 14px;
-            margin: 0;
-            color: var(--secondary-text);
-        }
-
-        .volume-control {
-            display: flex;
-            align-items: center;
-            margin-top: 10px;
-        }
-
-        .volume-icon {
-            margin-right: 10px;
-            color: var(--secondary-text);
-        }
-
-        .volume-slider {
-            flex-grow: 1;
-            height: 4px;
-            background-color: #444;
-            border-radius: 2px;
-            cursor: pointer;
-        }
-
-        .volume-progress {
-            height: 100%;
-            background-color: var(--music-player-accent);
-            border-radius: 2px;
-            width: 80%;
+            color: #4CAF50;
+            text-shadow: 0 0 8px rgba(76, 175, 80, 0.5);
         }
 
         @keyframes reveal {
@@ -358,14 +207,13 @@
                 height: 15px;
             }
 
-            .music-player {
+            .age-display {
+                font-size: 16px;
                 padding: 12px;
             }
-
-            .song-cover {
-                width: 50px;
-                height: 50px;
-                margin-right: 12px;
+            
+            .age-display span {
+                font-size: 18px;
             }
         }
 
@@ -389,35 +237,11 @@
 
             .age-display {
                 font-size: 14px;
-                padding: 8px 12px;
-            }
-
-            .music-player {
                 padding: 10px;
             }
-
-            .song-cover {
-                width: 40px;
-                height: 40px;
-            }
-
-            .song-title {
-                font-size: 14px;
-            }
-
-            .song-artist {
-                font-size: 12px;
-            }
-
-            .play-btn {
-                width: 35px;
-                height: 35px;
-                font-size: 14px;
-            }
-
-            .time-display {
-                font-size: 11px;
-                min-width: 70px;
+            
+            .age-display span {
+                font-size: 16px;
             }
         }
 
@@ -450,38 +274,11 @@
         <h3 class="reveal-text"><span>./index</span><br><span>欢迎访问我的网站</span></h3>
 
         <div class="age-display" id="ageDisplay">
-            我已经活了 <span id="hoursAlive">0</span> 小时
+            我已经活了 <span id="hoursAlive">0.0000000000</span> 小时
         </div>
 
         <div class="typewriter">
             <span class="type-text" id="typing"></span>
-        </div>
-
-        <div class="music-player">
-            <h4>音乐播放器</h4>
-            <div class="song-info">
-                <div class="song-cover">
-                    <img id="songCover" src="https://p2.music.126.net/4HGEnXVexEfBACKi8Qlz2w==/109951165136101673.jpg" alt="歌曲封面">
-                </div>
-                <div class="song-details">
-                    <p class="song-title" id="songTitle">起风了</p>
-                    <p class="song-artist" id="songArtist">买辣椒也用券</p>
-                </div>
-            </div>
-            <div class="progress-container" id="progressContainer">
-                <div class="progress-bar" id="progressBar"></div>
-            </div>
-            <div class="player-controls">
-                <span class="time-display" id="currentTime">0:00</span>
-                <button class="play-btn" id="playBtn">▶</button>
-                <span class="time-display" id="duration">3:27</span>
-            </div>
-            <div class="volume-control">
-                <span class="volume-icon">🔊</span>
-                <div class="volume-slider" id="volumeSlider">
-                    <div class="volume-progress" id="volumeProgress"></div>
-                </div>
-            </div>
         </div>
 
         <ul class="reveal-text">
@@ -501,368 +298,290 @@
             </ul>
         </div>
     </div>
-    <script>
-        const randomChars = '@!~#%?/_*';
-        let animationFrameId = null;
-        let typingTimeout = null;
-        let ageUpdateInterval = null;
-        let audioContext = null;
-        let audioElement = null;
-        let isPlaying = false;
-        let updateInterval = null;
+<script>
+    const randomChars = '@!~#%?/_*';
+    let animationFrameId = null;
+    let typingTimeout = null;
+    let ageUpdateInterval = null;
 
-        class LeafFall {
-            constructor() {
-                this.leaves = [];
+    class LeafFall {
+        constructor() {
+            this.leaves = [];
+            this.maxLeaves = 20;
+            this.lastLeafTime = 0;
+            this.leafInterval = 500;
+            this.animationId = null;
+            this.lastFrameTime = 0;
+            this.frameInterval = 1000 / 30;
+            
+            this.adjustForScreenSize();
+            window.addEventListener('resize', this.adjustForScreenSize.bind(this));
+        }
+        
+        adjustForScreenSize() {
+            if (window.innerWidth < 768) {
+                this.maxLeaves = 12;
+            } else if (window.innerWidth < 480) {
+                this.maxLeaves = 8;
+            } else {
                 this.maxLeaves = 20;
-                this.lastLeafTime = 0;
-                this.leafInterval = 500;
-                this.animationId = null;
-                this.lastFrameTime = 0;
-                this.frameInterval = 1000 / 30;
-                
-                this.adjustForScreenSize();
-                window.addEventListener('resize', this.adjustForScreenSize.bind(this));
-            }
-            
-            adjustForScreenSize() {
-                if (window.innerWidth < 768) {
-                    this.maxLeaves = 12;
-                } else if (window.innerWidth < 480) {
-                    this.maxLeaves = 8;
-                } else {
-                    this.maxLeaves = 20;
-                }
-            }
-            
-            createLeaf() {
-                if (this.leaves.length >= this.maxLeaves) return;
-                
-                const leaf = document.createElement('div');
-                const leafType = Math.floor(Math.random() * 3) + 1;
-                leaf.className = `leaf leaf-${leafType}`;
-                
-                const size = 15 + Math.random() * 10;
-                leaf.style.width = `${size}px`;
-                leaf.style.height = `${size}px`;
-                
-                leaf.style.left = `${Math.random() * window.innerWidth}px`;
-                leaf.style.top = `-30px`;
-                
-                const rotation = Math.random() * 360;
-                leaf.style.transform = `rotate(${rotation}deg)`;
-                
-                const fallSpeed = 1 + Math.random() * 2;
-                const swayAmount = 50 + Math.random() * 100;
-                const swaySpeed = 0.5 + Math.random() * 1;
-                
-                document.body.appendChild(leaf);
-                
-                this.leaves.push({
-                    element: leaf,
-                    startTime: Date.now(),
-                    fallSpeed,
-                    swayAmount,
-                    swaySpeed,
-                    startX: parseFloat(leaf.style.left),
-                    opacity: 0.5 + Math.random() * 0.5
-                });
-            }
-            
-            updateLeaves(timestamp) {
-                if (!this.lastFrameTime) this.lastFrameTime = timestamp;
-                const deltaTime = timestamp - this.lastFrameTime;
-                
-                if (deltaTime < this.frameInterval) {
-                    this.animationId = requestAnimationFrame(this.updateLeaves.bind(this));
-                    return;
-                }
-                
-                this.lastFrameTime = timestamp;
-                
-                if (Date.now() - this.lastLeafTime > this.leafInterval && 
-                    this.leaves.length < this.maxLeaves) {
-                    this.createLeaf();
-                    this.lastLeafTime = Date.now();
-                    this.leafInterval = 300 + Math.random() * 700;
-                }
-                
-                for (let i = this.leaves.length - 1; i >= 0; i--) {
-                    const leaf = this.leaves[i];
-                    const elapsed = (Date.now() - leaf.startTime) / 1000;
-                    
-                    const progress = Math.min(elapsed / leaf.fallSpeed, 1);
-                    
-                    const yPos = progress * (window.innerHeight + 30);
-                    leaf.element.style.top = `${yPos}px`;
-                    
-                    const xOffset = Math.sin(elapsed * leaf.swaySpeed) * leaf.swayAmount;
-                    leaf.element.style.left = `${leaf.startX + xOffset}px`;
-                    
-                    const rotation = elapsed * 50;
-                    leaf.element.style.transform = `rotate(${rotation}deg)`;
-                    
-                    if (progress >= 1) {
-                        leaf.element.remove();
-                        this.leaves.splice(i, 1);
-                    }
-                }
-                
-                this.animationId = requestAnimationFrame(this.updateLeaves.bind(this));
-            }
-            
-            start() {
-                if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-                    return;
-                }
-                
-                for (let i = 0; i < Math.min(5, this.maxLeaves); i++) {
-                    setTimeout(() => this.createLeaf(), i * 300);
-                }
-                
-                this.animationId = requestAnimationFrame(this.updateLeaves.bind(this));
-            }
-            
-            stop() {
-                if (this.animationId) {
-                    cancelAnimationFrame(this.animationId);
-                    this.animationId = null;
-                }
-                
-                this.leaves.forEach(leaf => leaf.element.remove());
-                this.leaves = [];
             }
         }
-
-        const leafFall = new LeafFall();
-
-        function animateText() {
-            const elements = document.querySelectorAll('.reveal-text');
-
-            elements.forEach(element => {
-                const originalHTML = element.innerHTML;
-                const tempDiv = document.createElement('div');
-                tempDiv.innerHTML = originalHTML;
-                const textNodes = [...tempDiv.childNodes];
-
-                let fullText = '';
-                textNodes.forEach(node => {
-                    if (node.nodeType === Node.TEXT_NODE) {
-                        fullText += node.textContent;
-                    } else if (node.nodeType === Node.ELEMENT_NODE) {
-                        fullText += node.outerHTML;
-                    }
-                });
-
-                const chars = fullText.split('').map(char => {
-                    return char === ' ' ? '&nbsp;' : char;
-                });
-
-                element.innerHTML = chars.map(char => 
-                    `<span style="opacity:1">${randomChars[Math.floor(Math.random()*randomChars.length)]}</span>`
-                ).join('');
-
-                const spans = element.querySelectorAll('span');
-                const originalChars = chars;
-
-                let currentIndex = 0;
-                const interval = 200;
-                const totalDuration = 3000;
-
-                const animation = setInterval(() => {
-                    if(currentIndex >= spans.length) {
-                        clearInterval(animation);
-                        element.innerHTML = originalHTML;
-                        return;
-                    }
-
-                    spans[currentIndex].style.transform = 'translateY(-8px)';
-                    spans[currentIndex].style.opacity = '0';
-
-                    setTimeout(() => {
-                        spans[currentIndex].innerHTML = originalChars[currentIndex];
-                        spans[currentIndex].style.transform = 'translateY(0)';
-                        spans[currentIndex].style.opacity = '1';
-                    }, 100);
-
-                    currentIndex++;
-                }, interval);
-
-                setTimeout(() => {
-                    clearInterval(animation);
-                    element.innerHTML = originalHTML;
-                }, totalDuration);
+        
+        createLeaf() {
+            if (this.leaves.length >= this.maxLeaves) return;
+            
+            const leaf = document.createElement('div');
+            const leafType = Math.floor(Math.random() * 3) + 1;
+            leaf.className = `leaf leaf-${leafType}`;
+            
+            const size = 15 + Math.random() * 10;
+            leaf.style.width = `${size}px`;
+            leaf.style.height = `${size}px`;
+            
+            leaf.style.left = `${Math.random() * window.innerWidth}px`;
+            leaf.style.top = `-30px`;
+            
+            const rotation = Math.random() * 360;
+            leaf.style.transform = `rotate(${rotation}deg)`;
+            
+            const fallSpeed = 1 + Math.random() * 2;
+            const swayAmount = 50 + Math.random() * 100;
+            const swaySpeed = 0.5 + Math.random() * 1;
+            
+            document.body.appendChild(leaf);
+            
+            this.leaves.push({
+                element: leaf,
+                startTime: Date.now(),
+                fallSpeed,
+                swayAmount,
+                swaySpeed,
+                startX: parseFloat(leaf.style.left),
+                opacity: 0.5 + Math.random() * 0.5
             });
         }
+        
+        updateLeaves(timestamp) {
+            if (!this.lastFrameTime) this.lastFrameTime = timestamp;
+            const deltaTime = timestamp - this.lastFrameTime;
+            
+            if (deltaTime < this.frameInterval) {
+                this.animationId = requestAnimationFrame(this.updateLeaves.bind(this));
+                return;
+            }
+            
+            this.lastFrameTime = timestamp;
+            
+            if (Date.now() - this.lastLeafTime > this.leafInterval && 
+                this.leaves.length < this.maxLeaves) {
+                this.createLeaf();
+                this.lastLeafTime = Date.now();
+                this.leafInterval = 300 + Math.random() * 700;
+            }
+            
+            for (let i = this.leaves.length - 1; i >= 0; i--) {
+                const leaf = this.leaves[i];
+                const elapsed = (Date.now() - leaf.startTime) / 1000;
+                
+                const progress = Math.min(elapsed / leaf.fallSpeed, 1);
+                
+                const yPos = progress * (window.innerHeight + 30);
+                leaf.element.style.top = `${yPos}px`;
+                
+                const xOffset = Math.sin(elapsed * leaf.swaySpeed) * leaf.swayAmount;
+                leaf.element.style.left = `${leaf.startX + xOffset}px`;
+                
+                const rotation = elapsed * 50;
+                leaf.element.style.transform = `rotate(${rotation}deg)`;
+                
+                if (progress >= 1) {
+                    leaf.element.remove();
+                    this.leaves.splice(i, 1);
+                }
+            }
+            
+            this.animationId = requestAnimationFrame(this.updateLeaves.bind(this));
+        }
+        
+        start() {
+            if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                return;
+            }
+            
+            for (let i = 0; i < Math.min(5, this.maxLeaves); i++) {
+                setTimeout(() => this.createLeaf(), i * 300);
+            }
+            
+            this.animationId = requestAnimationFrame(this.updateLeaves.bind(this));
+        }
+        
+        stop() {
+            if (this.animationId) {
+                cancelAnimationFrame(this.animationId);
+                this.animationId = null;
+            }
+            
+            this.leaves.forEach(leaf => leaf.element.remove());
+            this.leaves = [];
+        }
+    }
 
-        const texts = [
-            "玩 phigros 玩的",
-            "玩 ba 玩的", 
-            "玩 minecraft 玩的",
-            "玩 我在7年后等着你 玩的",
-            "玩 PVZ 玩的",
-            "无限进步!"
-        ];
+    const leafFall = new LeafFall();
 
-        const typingElement = document.getElementById('typing');
-        let index = 0;
-        let isDeleting = false;
+    function animateText() {
+        const elements = document.querySelectorAll('.reveal-text');
 
-        function getRandomTime(min, max) {
-            return Math.random() * (max - min) + min;
+        elements.forEach(element => {
+            const originalHTML = element.innerHTML;
+            const tempDiv = document.createElement('div');
+            tempDiv.innerHTML = originalHTML;
+            const textNodes = [...tempDiv.childNodes];
+
+            let fullText = '';
+            textNodes.forEach(node => {
+                if (node.nodeType === Node.TEXT_NODE) {
+                    fullText += node.textContent;
+                } else if (node.nodeType === Node.ELEMENT_NODE) {
+                    fullText += node.outerHTML;
+                }
+            });
+
+            const chars = fullText.split('').map(char => {
+                return char === ' ' ? '&nbsp;' : char;
+            });
+
+            element.innerHTML = chars.map(char => 
+                `<span style="opacity:1">${randomChars[Math.floor(Math.random()*randomChars.length)]}</span>`
+            ).join('');
+
+            const spans = element.querySelectorAll('span');
+            const originalChars = chars;
+
+            let currentIndex = 0;
+            const interval = 200;
+            const totalDuration = 3000;
+
+            const animation = setInterval(() => {
+                if(currentIndex >= spans.length) {
+                    clearInterval(animation);
+                    element.innerHTML = originalHTML;
+                    return;
+                }
+
+                spans[currentIndex].style.transform = 'translateY(-8px)';
+                spans[currentIndex].style.opacity = '0';
+
+                setTimeout(() => {
+                    spans[currentIndex].innerHTML = originalChars[currentIndex];
+                    spans[currentIndex].style.transform = 'translateY(0)';
+                    spans[currentIndex].style.opacity = '1';
+                }, 100);
+
+                currentIndex++;
+            }, interval);
+
+            setTimeout(() => {
+                clearInterval(animation);
+                element.innerHTML = originalHTML;
+            }, totalDuration);
+        });
+    }
+
+    const texts = [
+        "玩 phigros 玩的",
+        "玩 ba 玩的", 
+        "玩 minecraft 玩的",
+        "玩 我在7年后等着你 玩的",
+        "玩 PVZ 玩的",
+        "无限进步!"
+    ];
+
+    const typingElement = document.getElementById('typing');
+    let index = 0;
+    let isDeleting = false;
+
+    function getRandomTime(min, max) {
+        return Math.random() * (max - min) + min;
+    }
+
+    function typeEffect() {
+        if (typingTimeout) {
+            clearTimeout(typingTimeout);
         }
 
-        function typeEffect() {
+        const currentText = texts[index];
+        let currentLength = typingElement.textContent.length;
+
+        if (!isDeleting && currentLength < currentText.length) {
+            typingElement.textContent = currentText.substring(0, currentLength + 1);
+            typingTimeout = setTimeout(typeEffect, getRandomTime(50, 150));
+        } else if (!isDeleting && currentLength === currentText.length) {
+            isDeleting = true;
+            typingTimeout = setTimeout(typeEffect, 1000);
+        } else if (isDeleting && currentLength > 0) {
+            typingElement.textContent = currentText.substring(0, currentLength - 1);
+            typingTimeout = setTimeout(typeEffect, getRandomTime(30, 100));
+        } else {
+            isDeleting = false;
+            index = (index + 1) % texts.length;
+            typingTimeout = setTimeout(typeEffect, 500);
+        }
+    }
+
+    function updateAge() {
+        const birthDate = new Date(2010, 11, 8);
+        const now = new Date();
+        const diffMs = now - birthDate;
+        const diffHours = (diffMs / (1000 * 60 * 60)).toFixed(10);
+        document.getElementById('hoursAlive').textContent = diffHours;
+    }
+
+    function handleVisibilityChange() {
+        if (document.hidden) {
             if (typingTimeout) {
                 clearTimeout(typingTimeout);
             }
-
-            const currentText = texts[index];
-            let currentLength = typingElement.textContent.length;
-
-            if (!isDeleting && currentLength < currentText.length) {
-                typingElement.textContent = currentText.substring(0, currentLength + 1);
-                typingTimeout = setTimeout(typeEffect, getRandomTime(50, 150));
-            } else if (!isDeleting && currentLength === currentText.length) {
-                isDeleting = true;
-                typingTimeout = setTimeout(typeEffect, 1000);
-            } else if (isDeleting && currentLength > 0) {
-                typingElement.textContent = currentText.substring(0, currentLength - 1);
-                typingTimeout = setTimeout(typeEffect, getRandomTime(30, 100));
-            } else {
-                isDeleting = false;
-                index = (index + 1) % texts.length;
-                typingTimeout = setTimeout(typeEffect, 500);
+            if (animationFrameId) {
+                cancelAnimationFrame(animationFrameId);
             }
-        }
-
-        function updateAge() {
-            const birthDate = new Date(2010, 11, 8);
-            const now = new Date();
-            const diffMs = now - birthDate;
-            const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
-            document.getElementById('hoursAlive').textContent = diffHours;
-        }
-
-        function initMusicPlayer() {
-            const playBtn = document.getElementById('playBtn');
-            const progressBar = document.getElementById('progressBar');
-            const progressContainer = document.getElementById('progressContainer');
-            const currentTimeDisplay = document.getElementById('currentTime');
-            const durationDisplay = document.getElementById('duration');
-            const volumeSlider = document.getElementById('volumeSlider');
-            const volumeProgress = document.getElementById('volumeProgress');
-
-            audioElement = new Audio('https://music.163.com/song/media/outer/url?id=1330348068.mp3');
-            audioElement.volume = 0.8;
-
-            playBtn.addEventListener('click', () => {
-                if (isPlaying) {
-                    audioElement.pause();
-                    playBtn.textContent = '▶';
-                } else {
-                    audioElement.play();
-                    playBtn.textContent = '❚❚';
-                }
-                isPlaying = !isPlaying;
-            });
-
-            audioElement.addEventListener('timeupdate', () => {
-                const currentTime = audioElement.currentTime;
-                const duration = audioElement.duration;
-                const progressPercent = (currentTime / duration) * 100;
-                progressBar.style.width = `${progressPercent}%`;
-
-                currentTimeDisplay.textContent = formatTime(currentTime);
-                if (duration) {
-                    durationDisplay.textContent = formatTime(duration);
-                }
-            });
-
-            progressContainer.addEventListener('click', (e) => {
-                const width = progressContainer.clientWidth;
-                const clickX = e.offsetX;
-                const duration = audioElement.duration;
-                audioElement.currentTime = (clickX / width) * duration;
-            });
-
-            volumeSlider.addEventListener('click', (e) => {
-                const width = volumeSlider.clientWidth;
-                const clickX = e.offsetX;
-                const volume = clickX / width;
-                audioElement.volume = volume;
-                volumeProgress.style.width = `${volume * 100}%`;
-            });
-
-            audioElement.addEventListener('ended', () => {
-                playBtn.textContent = '▶';
-                isPlaying = false;
-                progressBar.style.width = '0%';
-                currentTimeDisplay.textContent = '0:00';
-            });
-
-            function formatTime(seconds) {
-                const minutes = Math.floor(seconds / 60);
-                const secs = Math.floor(seconds % 60);
-                return `${minutes}:${secs < 10 ? '0' : ''}${secs}`;
+            if (ageUpdateInterval) {
+                clearInterval(ageUpdateInterval);
             }
-        }
-
-        function handleVisibilityChange() {
-            if (document.hidden) {
-                if (typingTimeout) {
-                    clearTimeout(typingTimeout);
-                }
-                if (animationFrameId) {
-                    cancelAnimationFrame(animationFrameId);
-                }
-                if (ageUpdateInterval) {
-                    clearInterval(ageUpdateInterval);
-                }
-                if (updateInterval) {
-                    clearInterval(updateInterval);
-                }
-                leafFall.stop();
-                if (audioElement) {
-                    audioElement.pause();
-                }
-            } else {
-                if (!typingElement.textContent) {
-                    typeEffect();
-                }
-                ageUpdateInterval = setInterval(updateAge, 100);
-                leafFall.start();
-                if (isPlaying && audioElement) {
-                    audioElement.play();
-                }
-            }
-        }
-
-        function init() {
-            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-                animateText();
-                typeEffect();
-                leafFall.start();
-            } else {
-                typingElement.style.borderRight = 'none';
-                typingElement.textContent = texts[0];
-            }
-
-            updateAge();
-            ageUpdateInterval = setInterval(updateAge, 100);
-            initMusicPlayer();
-
-            document.addEventListener('visibilitychange', handleVisibilityChange);
-            window.matchMedia('(prefers-reduced-motion: reduce)').addEventListener('change', () => {
-                window.location.reload();
-            });
-        }
-
-        if ('requestIdleCallback' in window) {
-            window.requestIdleCallback(init, { timeout: 2000 });
+            leafFall.stop();
         } else {
-            window.addEventListener('load', init);
+            if (!typingElement.textContent) {
+                typeEffect();
+            }
+            ageUpdateInterval = setInterval(updateAge, 10);
+            leafFall.start();
         }
-    </script>
+    }
+
+    function init() {
+        if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+            animateText();
+            typeEffect();
+            leafFall.start();
+        } else {
+            typingElement.style.borderRight = 'none';
+            typingElement.textContent = texts[0];
+        }
+
+        updateAge();
+        ageUpdateInterval = setInterval(updateAge, 10);
+
+        document.addEventListener('visibilitychange', handleVisibilityChange);
+        window.matchMedia('(prefers-reduced-motion: reduce)').addEventListener('change', () => {
+            window.location.reload();
+        });
+    }
+
+    if ('requestIdleCallback' in window) {
+        window.requestIdleCallback(init, { timeout: 2000 });
+    } else {
+        window.addEventListener('load', init);
+    }
+</script>
 </body>
 </html>
