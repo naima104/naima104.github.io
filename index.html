@@ -1,1 +1,245 @@
- 
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, minimum-scale=1.0">
+    <meta name="HandheldFriendly" content="true">
+    <title>./index</title>
+    <style>
+        :root {
+            --primary-color: #3498db;
+            --primary-hover: #2980b9;
+            --bg-color: #1a1a1a;
+            --text-color: #ffffff;
+            --secondary-text: #cccccc;
+            --border-color: #333333;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: '微软雅黑', Arial, sans-serif;
+            background-color: var(--bg-color);
+            margin: 0;
+            padding: 20px;
+            color: var(--text-color);
+            line-height: 1.6;
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            position: relative;
+            z-index: 1;
+            background-color: rgba(26, 26, 26, 0.85);
+            border-radius: 8px;
+        }
+
+        h3 {
+            color: var(--text-color);
+            margin-bottom: 30px;
+            font-size: clamp(20px, 4vw, 24px);
+            text-shadow: 0 0 5px rgba(255,255,255,0.3);
+            line-height: 1.4;
+        }
+
+        ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        li {
+            margin: 15px 0;
+            padding: 0;
+        }
+
+        a {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 500;
+            text-shadow: 0 0 3px rgba(52, 152, 219, 0.3);
+            transition: color 0.3s ease;
+            display: inline-block;
+            padding: 5px 0;
+            word-break: break-all;
+        }
+
+        a:hover {
+            color: var(--primary-hover);
+            text-shadow: 0 0 5px rgba(52, 152, 219, 0.4);
+        }
+
+        .contact {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .typewriter {
+            height: 60px;
+            margin: 30px 0;
+            text-align: center;
+            font-size: clamp(16px, 3vw, 18px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .type-text {
+            color: white;
+            border-right: 2px solid white;
+            padding-right: 5px;
+            display: inline-block;
+            min-height: 1.2em;
+            text-shadow: 0 0 5px rgba(255,255,255,0.5);
+        }
+
+        .age-display {
+            margin: 20px 0;
+            text-align: center;
+            font-size: 18px;
+        }
+
+        .age-display span {
+            font-family: monospace;
+            font-size: 20px;
+            color: white;
+            text-shadow: 0 0 8px rgba(255,255,255,0.7);
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 15px;
+            }
+            
+            .container {
+                padding: 10px;
+            }
+            
+            .typewriter {
+                height: 50px;
+                margin: 20px 0;
+            }
+            
+            .age-display span {
+                font-size: 18px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 10px;
+            }
+            
+            .typewriter {
+                height: 40px;
+            }
+            
+            .age-display span {
+                font-size: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h3>./index<br>欢迎访问我的网站</h3>
+
+        <div class="age-display">
+            年龄: <span id="hoursAlive">0.0000000000</span> 小时
+        </div>
+
+        <div class="typewriter">
+            <span class="type-text" id="typing"></span>
+        </div>
+
+        <ul>
+            <li><a href="公告.html">公告</a></li>
+            <li><a href="https://m.bilibili.com/space/3546610954931052">B站主页</a></li>
+            <li><a href="压力确认页.html">乐迪的起飞神器</a></li>
+            <li><a href="114.html">小黑子 你食补食油饼 一边玩去</a></li>
+            <li><a href="项目.html">我的项目</a></li>
+            <li><a href="http://naima.back1.idcfengye.com/">内网穿透测试！！！仅为测试不要来压力我的A5</a></li>
+        </ul>
+
+        <div class="contact">
+            <h4>联系方式</h4>
+            <ul>
+                <li><a href="tencent://message/?uin=3698088118&site=qq&menu=yes">QQ: 3698088118</a></li>
+                <li><a href="mailto:3698088118@qq.com">邮箱: 3698088118@qq.com</a></li>
+            </ul>
+        </div>
+    </div>
+<script>
+    let ageUpdateRAF = null;
+    const birthDate = new Date(2010, 11, 8);
+    let baseHours = (Date.now() - birthDate) / (1000 * 60 * 60);
+    
+    function updateAge() {
+        const diffHours = baseHours + (performance.now() / (1000 * 60 * 60 * 1000));
+        document.getElementById('hoursAlive').textContent = diffHours.toFixed(16);
+        ageUpdateRAF = requestAnimationFrame(updateAge);
+    }
+
+    const TEXTS = [
+        "玩 phigros 玩的",
+        "玩 ba 玩的", 
+        "玩 minecraft 玩的",
+        "看 jm 看的",
+        "玩 PVZ 玩的",
+        "无限进步!"
+    ];
+    let typingTimeout = null;
+    let currentTextIndex = 0;
+    let isDeleting = false;
+
+    function typeEffect() {
+        clearTimeout(typingTimeout);
+        
+        const typingElement = document.getElementById('typing');
+        const currentText = TEXTS[currentTextIndex];
+        const currentLength = typingElement.textContent.length;
+        
+        if (!isDeleting && currentLength < currentText.length) {
+            typingElement.textContent = currentText.substring(0, currentLength + 1);
+            typingTimeout = setTimeout(typeEffect, 50 + Math.random() * 100);
+        } 
+        else if (!isDeleting && currentLength === currentText.length) {
+            isDeleting = true;
+            typingTimeout = setTimeout(typeEffect, 1000);
+        } 
+        else if (isDeleting && currentLength > 0) {
+            typingElement.textContent = currentText.substring(0, currentLength - 1);
+            typingTimeout = setTimeout(typeEffect, 30 + Math.random() * 70);
+        } 
+        else {
+            isDeleting = false;
+            currentTextIndex = (currentTextIndex + 1) % TEXTS.length;
+            typingTimeout = setTimeout(typeEffect, 500);
+        }
+    }
+
+    function handleVisibilityChange() {
+        if (document.hidden) {
+            cancelAnimationFrame(ageUpdateRAF);
+            baseHours += performance.now() / (1000 * 60 * 60 * 1000);
+            clearTimeout(typingTimeout);
+        } else {
+            ageUpdateRAF = requestAnimationFrame(updateAge);
+            typingTimeout = setTimeout(typeEffect, 100);
+        }
+    }
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    updateAge();
+    typeEffect();
+</script>
+</body>
+</html>
