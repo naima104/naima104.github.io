@@ -178,74 +178,27 @@
         </div>
     </div>
 <script>
-    let typingTimeout = null;
-    let ageUpdateInterval = null;
-    let currentTextIndex = 0;
-    let isDeleting = false;
-
-    const TEXTS = [
-        "玩 phigros 玩的",
-        "玩 ba 玩的", 
-        "玩 minecraft 玩的",
-        "玩 我在7年后等着你 玩的",
-        "玩 PVZ 玩的",
-        "无限进步!"
-    ];
-
-    function typeEffect() {
-        clearTimeout(typingTimeout);
-        
-        const typingElement = document.getElementById('typing');
-        const currentText = TEXTS[currentTextIndex];
-        const currentLength = typingElement.textContent.length;
-        
-        if (!isDeleting && currentLength < currentText.length) {
-            typingElement.textContent = currentText.substring(0, currentLength + 1);
-            typingTimeout = setTimeout(typeEffect, 50 + Math.random() * 100);
-        } 
-        else if (!isDeleting && currentLength === currentText.length) {
-            isDeleting = true;
-            typingTimeout = setTimeout(typeEffect, 1000);
-        } 
-        else if (isDeleting && currentLength > 0) {
-            typingElement.textContent = currentText.substring(0, currentLength - 1);
-            typingTimeout = setTimeout(typeEffect, 30 + Math.random() * 70);
-        } 
-        else {
-            isDeleting = false;
-            currentTextIndex = (currentTextIndex + 1) % TEXTS.length;
-            typingTimeout = setTimeout(typeEffect, 500);
-        }
-    }
+    let ageUpdateRAF = null;
+    const birthDate = new Date(2010, 11, 8);
+    let baseHours = (Date.now() - birthDate) / (1000 * 60 * 60);
 
     function updateAge() {
-        const birthDate = new Date(2010, 11, 8);
-        const diffHours = ((Date.now() - birthDate) / (1000 * 60 * 60)).toFixed(10);
-        document.getElementById('hoursAlive').textContent = diffHours;
+        const diffHours = baseHours + (performance.now() / (1000 * 60 * 60 * 1000));
+        document.getElementById('hoursAlive').textContent = diffHours.toFixed(16);
+        ageUpdateRAF = requestAnimationFrame(updateAge);
     }
 
     function handleVisibilityChange() {
         if (document.hidden) {
-            clearTimeout(typingTimeout);
-            clearInterval(ageUpdateInterval);
+            cancelAnimationFrame(ageUpdateRAF);
+            baseHours += performance.now() / (1000 * 60 * 60 * 1000);
         } else {
-            typingTimeout = setTimeout(typeEffect, 500);
-            ageUpdateInterval = setInterval(updateAge, 10);
+            ageUpdateRAF = requestAnimationFrame(updateAge);
         }
     }
 
-    function init() {
-        updateAge();
-        ageUpdateInterval = setInterval(updateAge, 10);
-        typingTimeout = setTimeout(typeEffect, 1000);
-        document.addEventListener('visibilitychange', handleVisibilityChange);
-    }
-
-    if (document.readyState === 'complete') {
-        init();
-    } else {
-        window.addEventListener('load', init);
-    }
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    updateAge();
 </script>
 </body>
 </html>
