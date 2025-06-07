@@ -31,29 +31,6 @@
             position: relative;
         }
 
-        .leaf {
-            position: absolute;
-            width: 20px;
-            height: 20px;
-            background-size: contain;
-            background-repeat: no-repeat;
-            z-index: 0;
-            pointer-events: none;
-            opacity: 0.8;
-        }
-
-        .leaf-1 {
-            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path fill="%2357A639" d="M10,2c0,0-8,6-8,12s3,4,3,4s5-2,5-6s0-10,0-10z"/></svg>');
-        }
-
-        .leaf-2 {
-            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path fill="%2368B643" d="M10,2c0,0,8,6,8,12s-3,4-3,4s-5-2-5-6s0-10,0-10z"/></svg>');
-        }
-
-        .leaf-3 {
-            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path fill="%23448C2E" d="M10,2c0,0-4,8-4,14s2,2,2,2s6-4,6-8s-4-8-4-8z"/></svg>');
-        }
-
         .container {
             max-width: 800px;
             margin: 0 auto;
@@ -99,23 +76,10 @@
             text-shadow: 0 0 5px rgba(52, 152, 219, 0.4);
         }
 
-        .info {
-            margin-top: 30px;
-            font-size: 14px;
-            color: var(--secondary-text);
-            text-shadow: 0 0 2px rgba(204,204,204,0.2);
-        }
-
         .contact {
             margin-top: 30px;
             padding-top: 20px;
             border-top: 1px solid var(--border-color);
-        }
-
-        .contact h4 {
-            color: var(--text-color);
-            margin-bottom: 15px;
-            font-size: 18px;
         }
 
         .typewriter {
@@ -129,50 +93,25 @@
         }
 
         .type-text {
-            color: var(--primary-color);
-            border-right: 2px solid var(--primary-color);
+            color: white;
+            border-right: 2px solid white;
             padding-right: 5px;
             display: inline-block;
             min-height: 1.2em;
-        }
-
-        .reveal-text {
-            display: inline-block;
-            overflow: hidden;
-            position: relative;
-        }
-
-        .reveal-text span {
-            display: inline-block;
-            opacity: 0;
-            transform: translateY(20px);
-            animation: reveal 0.2s forwards;
+            text-shadow: 0 0 5px rgba(255,255,255,0.5);
         }
 
         .age-display {
-            background: linear-gradient(135deg, rgba(52, 152, 219, 0.2), rgba(41, 128, 185, 0.2));
-            padding: 15px;
-            border-radius: 10px;
             margin: 20px 0;
             text-align: center;
             font-size: 18px;
-            border: 1px solid var(--primary-color);
-            box-shadow: 0 0 15px rgba(52, 152, 219, 0.3);
-            backdrop-filter: blur(5px);
         }
 
         .age-display span {
             font-family: monospace;
             font-size: 20px;
-            color: #4CAF50;
-            text-shadow: 0 0 8px rgba(76, 175, 80, 0.5);
-        }
-
-        @keyframes reveal {
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            color: white;
+            text-shadow: 0 0 8px rgba(255,255,255,0.7);
         }
 
         @media (max-width: 768px) {
@@ -184,32 +123,9 @@
                 padding: 10px;
             }
             
-            h3 {
-                margin-bottom: 20px;
-            }
-            
-            li {
-                margin: 12px 0;
-            }
-            
             .typewriter {
                 height: 50px;
                 margin: 20px 0;
-            }
-            
-            .contact {
-                margin-top: 25px;
-                padding-top: 15px;
-            }
-
-            .leaf {
-                width: 15px;
-                height: 15px;
-            }
-
-            .age-display {
-                font-size: 16px;
-                padding: 12px;
             }
             
             .age-display span {
@@ -226,269 +142,48 @@
                 height: 40px;
             }
             
-            a {
-                font-size: 15px;
-            }
-
-            .leaf {
-                width: 12px;
-                height: 12px;
-            }
-
-            .age-display {
-                font-size: 14px;
-                padding: 10px;
-            }
-            
             .age-display span {
                 font-size: 16px;
-            }
-        }
-
-        @media (hover: none) {
-            a {
-                padding: 8px 0;
-            }
-        }
-
-        @media (prefers-reduced-motion: reduce) {
-            .reveal-text span {
-                animation: none;
-                opacity: 1;
-                transform: none;
-            }
-            
-            .type-text {
-                border-right: none;
-                animation: none;
-            }
-
-            .leaf {
-                display: none;
             }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h3 class="reveal-text"><span>./index</span><br><span>欢迎访问我的网站</span></h3>
+        <h3>./index<br>欢迎访问我的网站</h3>
 
-        <div class="age-display" id="ageDisplay">
-            我已经活了 <span id="hoursAlive">0.0000000000</span> 小时
+        <div class="age-display">
+            年龄: <span id="hoursAlive">0.0000000000</span> 小时
         </div>
 
         <div class="typewriter">
             <span class="type-text" id="typing"></span>
         </div>
 
-        <ul class="reveal-text">
-            <li><span><a href="公告.html">公告</a></span></li>
-            <li><span><a href="https://m.bilibili.com/space/3546610954931052">B站主页</a></span></li>
-            <li><span><a href="压力确认页.html">乐迪的起飞神器</a></span></li>
-            <li><span><a href="114.html">小黑子 你食补食油饼 一边玩去</a></span></li>
-            <li><span><a href="项目.html">我的项目</a></span></li>
-            <li><span><a href="http://naima.back1.idcfengye.com/">内网穿透测试！！！仅为测试不要来压力我的A5</a></span></li>
+        <ul>
+            <li><a href="公告.html">公告</a></li>
+            <li><a href="https://m.bilibili.com/space/3546610954931052">B站主页</a></li>
+            <li><a href="压力确认页.html">乐迪的起飞神器</a></li>
+            <li><a href="114.html">小黑子 你食补食油饼 一边玩去</a></li>
+            <li><a href="项目.html">我的项目</a></li>
+            <li><a href="http://naima.back1.idcfengye.com/">内网穿透测试！！！仅为测试不要来压力我的A5</a></li>
         </ul>
 
-        <div class="contact reveal-text">
-            <h4><span>联系方式</span></h4>
+        <div class="contact">
+            <h4>联系方式</h4>
             <ul>
-                <li><span><a href="tencent://message/?uin=3698088118&site=qq&menu=yes">QQ: 3698088118</a></span></li>
-                <li><span><a href="mailto:3698088118@qq.com">邮箱: 3698088118@qq.com</a></span></li>
+                <li><a href="tencent://message/?uin=3698088118&site=qq&menu=yes">QQ: 3698088118</a></li>
+                <li><a href="mailto:3698088118@qq.com">邮箱: 3698088118@qq.com</a></li>
             </ul>
         </div>
     </div>
 <script>
-    const randomChars = '@!~#%?/_*';
-    let animationFrameId = null;
     let typingTimeout = null;
     let ageUpdateInterval = null;
+    let currentTextIndex = 0;
+    let isDeleting = false;
 
-    class LeafFall {
-        constructor() {
-            this.leaves = [];
-            this.maxLeaves = 20;
-            this.lastLeafTime = 0;
-            this.leafInterval = 500;
-            this.animationId = null;
-            this.lastFrameTime = 0;
-            this.frameInterval = 1000 / 30;
-            
-            this.adjustForScreenSize();
-            window.addEventListener('resize', this.adjustForScreenSize.bind(this));
-        }
-        
-        adjustForScreenSize() {
-            if (window.innerWidth < 768) {
-                this.maxLeaves = 12;
-            } else if (window.innerWidth < 480) {
-                this.maxLeaves = 8;
-            } else {
-                this.maxLeaves = 20;
-            }
-        }
-        
-        createLeaf() {
-            if (this.leaves.length >= this.maxLeaves) return;
-            
-            const leaf = document.createElement('div');
-            const leafType = Math.floor(Math.random() * 3) + 1;
-            leaf.className = `leaf leaf-${leafType}`;
-            
-            const size = 15 + Math.random() * 10;
-            leaf.style.width = `${size}px`;
-            leaf.style.height = `${size}px`;
-            
-            leaf.style.left = `${Math.random() * window.innerWidth}px`;
-            leaf.style.top = `-30px`;
-            
-            const rotation = Math.random() * 360;
-            leaf.style.transform = `rotate(${rotation}deg)`;
-            
-            const fallSpeed = 1 + Math.random() * 2;
-            const swayAmount = 50 + Math.random() * 100;
-            const swaySpeed = 0.5 + Math.random() * 1;
-            
-            document.body.appendChild(leaf);
-            
-            this.leaves.push({
-                element: leaf,
-                startTime: Date.now(),
-                fallSpeed,
-                swayAmount,
-                swaySpeed,
-                startX: parseFloat(leaf.style.left),
-                opacity: 0.5 + Math.random() * 0.5
-            });
-        }
-        
-        updateLeaves(timestamp) {
-            if (!this.lastFrameTime) this.lastFrameTime = timestamp;
-            const deltaTime = timestamp - this.lastFrameTime;
-            
-            if (deltaTime < this.frameInterval) {
-                this.animationId = requestAnimationFrame(this.updateLeaves.bind(this));
-                return;
-            }
-            
-            this.lastFrameTime = timestamp;
-            
-            if (Date.now() - this.lastLeafTime > this.leafInterval && 
-                this.leaves.length < this.maxLeaves) {
-                this.createLeaf();
-                this.lastLeafTime = Date.now();
-                this.leafInterval = 300 + Math.random() * 700;
-            }
-            
-            for (let i = this.leaves.length - 1; i >= 0; i--) {
-                const leaf = this.leaves[i];
-                const elapsed = (Date.now() - leaf.startTime) / 1000;
-                
-                const progress = Math.min(elapsed / leaf.fallSpeed, 1);
-                
-                const yPos = progress * (window.innerHeight + 30);
-                leaf.element.style.top = `${yPos}px`;
-                
-                const xOffset = Math.sin(elapsed * leaf.swaySpeed) * leaf.swayAmount;
-                leaf.element.style.left = `${leaf.startX + xOffset}px`;
-                
-                const rotation = elapsed * 50;
-                leaf.element.style.transform = `rotate(${rotation}deg)`;
-                
-                if (progress >= 1) {
-                    leaf.element.remove();
-                    this.leaves.splice(i, 1);
-                }
-            }
-            
-            this.animationId = requestAnimationFrame(this.updateLeaves.bind(this));
-        }
-        
-        start() {
-            if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-                return;
-            }
-            
-            for (let i = 0; i < Math.min(5, this.maxLeaves); i++) {
-                setTimeout(() => this.createLeaf(), i * 300);
-            }
-            
-            this.animationId = requestAnimationFrame(this.updateLeaves.bind(this));
-        }
-        
-        stop() {
-            if (this.animationId) {
-                cancelAnimationFrame(this.animationId);
-                this.animationId = null;
-            }
-            
-            this.leaves.forEach(leaf => leaf.element.remove());
-            this.leaves = [];
-        }
-    }
-
-    const leafFall = new LeafFall();
-
-    function animateText() {
-        const elements = document.querySelectorAll('.reveal-text');
-
-        elements.forEach(element => {
-            const originalHTML = element.innerHTML;
-            const tempDiv = document.createElement('div');
-            tempDiv.innerHTML = originalHTML;
-            const textNodes = [...tempDiv.childNodes];
-
-            let fullText = '';
-            textNodes.forEach(node => {
-                if (node.nodeType === Node.TEXT_NODE) {
-                    fullText += node.textContent;
-                } else if (node.nodeType === Node.ELEMENT_NODE) {
-                    fullText += node.outerHTML;
-                }
-            });
-
-            const chars = fullText.split('').map(char => {
-                return char === ' ' ? '&nbsp;' : char;
-            });
-
-            element.innerHTML = chars.map(char => 
-                `<span style="opacity:1">${randomChars[Math.floor(Math.random()*randomChars.length)]}</span>`
-            ).join('');
-
-            const spans = element.querySelectorAll('span');
-            const originalChars = chars;
-
-            let currentIndex = 0;
-            const interval = 200;
-            const totalDuration = 3000;
-
-            const animation = setInterval(() => {
-                if(currentIndex >= spans.length) {
-                    clearInterval(animation);
-                    element.innerHTML = originalHTML;
-                    return;
-                }
-
-                spans[currentIndex].style.transform = 'translateY(-8px)';
-                spans[currentIndex].style.opacity = '0';
-
-                setTimeout(() => {
-                    spans[currentIndex].innerHTML = originalChars[currentIndex];
-                    spans[currentIndex].style.transform = 'translateY(0)';
-                    spans[currentIndex].style.opacity = '1';
-                }, 100);
-
-                currentIndex++;
-            }, interval);
-
-            setTimeout(() => {
-                clearInterval(animation);
-                element.innerHTML = originalHTML;
-            }, totalDuration);
-        });
-    }
-
-    const texts = [
+    const TEXTS = [
         "玩 phigros 玩的",
         "玩 ba 玩的", 
         "玩 minecraft 玩的",
@@ -497,88 +192,57 @@
         "无限进步!"
     ];
 
-    const typingElement = document.getElementById('typing');
-    let index = 0;
-    let isDeleting = false;
-
-    function getRandomTime(min, max) {
-        return Math.random() * (max - min) + min;
-    }
-
     function typeEffect() {
-        if (typingTimeout) {
-            clearTimeout(typingTimeout);
-        }
-
-        const currentText = texts[index];
-        let currentLength = typingElement.textContent.length;
-
+        clearTimeout(typingTimeout);
+        
+        const typingElement = document.getElementById('typing');
+        const currentText = TEXTS[currentTextIndex];
+        const currentLength = typingElement.textContent.length;
+        
         if (!isDeleting && currentLength < currentText.length) {
             typingElement.textContent = currentText.substring(0, currentLength + 1);
-            typingTimeout = setTimeout(typeEffect, getRandomTime(50, 150));
-        } else if (!isDeleting && currentLength === currentText.length) {
+            typingTimeout = setTimeout(typeEffect, 50 + Math.random() * 100);
+        } 
+        else if (!isDeleting && currentLength === currentText.length) {
             isDeleting = true;
             typingTimeout = setTimeout(typeEffect, 1000);
-        } else if (isDeleting && currentLength > 0) {
+        } 
+        else if (isDeleting && currentLength > 0) {
             typingElement.textContent = currentText.substring(0, currentLength - 1);
-            typingTimeout = setTimeout(typeEffect, getRandomTime(30, 100));
-        } else {
+            typingTimeout = setTimeout(typeEffect, 30 + Math.random() * 70);
+        } 
+        else {
             isDeleting = false;
-            index = (index + 1) % texts.length;
+            currentTextIndex = (currentTextIndex + 1) % TEXTS.length;
             typingTimeout = setTimeout(typeEffect, 500);
         }
     }
 
     function updateAge() {
         const birthDate = new Date(2010, 11, 8);
-        const now = new Date();
-        const diffMs = now - birthDate;
-        const diffHours = (diffMs / (1000 * 60 * 60)).toFixed(10);
+        const diffHours = ((Date.now() - birthDate) / (1000 * 60 * 60)).toFixed(10);
         document.getElementById('hoursAlive').textContent = diffHours;
     }
 
     function handleVisibilityChange() {
         if (document.hidden) {
-            if (typingTimeout) {
-                clearTimeout(typingTimeout);
-            }
-            if (animationFrameId) {
-                cancelAnimationFrame(animationFrameId);
-            }
-            if (ageUpdateInterval) {
-                clearInterval(ageUpdateInterval);
-            }
-            leafFall.stop();
+            clearTimeout(typingTimeout);
+            clearInterval(ageUpdateInterval);
         } else {
-            if (!typingElement.textContent) {
-                typeEffect();
-            }
+            typingTimeout = setTimeout(typeEffect, 500);
             ageUpdateInterval = setInterval(updateAge, 10);
-            leafFall.start();
         }
     }
 
     function init() {
-        if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-            animateText();
-            typeEffect();
-            leafFall.start();
-        } else {
-            typingElement.style.borderRight = 'none';
-            typingElement.textContent = texts[0];
-        }
-
         updateAge();
         ageUpdateInterval = setInterval(updateAge, 10);
-
+        typingTimeout = setTimeout(typeEffect, 1000);
         document.addEventListener('visibilitychange', handleVisibilityChange);
-        window.matchMedia('(prefers-reduced-motion: reduce)').addEventListener('change', () => {
-            window.location.reload();
-        });
     }
 
-    if ('requestIdleCallback' in window) {
-        window.requestIdleCallback(init, { timeout: 2000 });
+    if (document.readyState === 'complete') {
+        init();
     } else {
         window.addEventListener('load', init);
     }
