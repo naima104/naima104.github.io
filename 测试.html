@@ -181,24 +181,32 @@
     let ageUpdateRAF = null;
     const birthDate = new Date(2010, 11, 8);
     let baseHours = (Date.now() - birthDate) / (1000 * 60 * 60);
-
+    
     function updateAge() {
         const diffHours = baseHours + (performance.now() / (1000 * 60 * 60 * 1000));
         document.getElementById('hoursAlive').textContent = diffHours.toFixed(16);
         ageUpdateRAF = requestAnimationFrame(updateAge);
     }
 
-    function handleVisibilityChange() {
-        if (document.hidden) {
-            cancelAnimationFrame(ageUpdateRAF);
-            baseHours += performance.now() / (1000 * 60 * 60 * 1000);
-        } else {
-            ageUpdateRAF = requestAnimationFrame(updateAge);
-        }
-    }
+    const TEXTS = [
+        "玩 phigros 玩的",
+        "玩 ba 玩的", 
+        "玩 minecraft 玩的",
+        "看 jm 看的",
+        "玩 PVZ 玩的",
+        "无限进步!"
+    ];
+    let typingTimeout = null;
+    let currentTextIndex = 0;
+    let isDeleting = false;
 
-    document.addEventListener('visibilitychange', handleVisibilityChange);
-    updateAge();
-</script>
+    function typeEffect() {
+        clearTimeout(typingTimeout);
+        
+        const typingElement = document.getElementById('typing');
+        const currentText = TEXTS[currentTextIndex];
+        const currentLength = typingElement.textContent.length;
+        
+        if (!isDeleting && currentLength 
 </body>
 </html>
