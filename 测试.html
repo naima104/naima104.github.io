@@ -207,6 +207,39 @@
         const currentText = TEXTS[currentTextIndex];
         const currentLength = typingElement.textContent.length;
         
-        if (!isDeleting && currentLength 
+        if (!isDeleting && currentLength < currentText.length) {
+            typingElement.textContent = currentText.substring(0, currentLength + 1);
+            typingTimeout = setTimeout(typeEffect, 50 + Math.random() * 100);
+        } 
+        else if (!isDeleting && currentLength === currentText.length) {
+            isDeleting = true;
+            typingTimeout = setTimeout(typeEffect, 1000);
+        } 
+        else if (isDeleting && currentLength > 0) {
+            typingElement.textContent = currentText.substring(0, currentLength - 1);
+            typingTimeout = setTimeout(typeEffect, 30 + Math.random() * 70);
+        } 
+        else {
+            isDeleting = false;
+            currentTextIndex = (currentTextIndex + 1) % TEXTS.length;
+            typingTimeout = setTimeout(typeEffect, 500);
+        }
+    }
+
+    function handleVisibilityChange() {
+        if (document.hidden) {
+            cancelAnimationFrame(ageUpdateRAF);
+            baseHours += performance.now() / (1000 * 60 * 60 * 1000);
+            clearTimeout(typingTimeout);
+        } else {
+            ageUpdateRAF = requestAnimationFrame(updateAge);
+            typingTimeout = setTimeout(typeEffect, 100);
+        }
+    }
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    updateAge();
+    typeEffect();
+</script>
 </body>
 </html>
