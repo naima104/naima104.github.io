@@ -118,16 +118,16 @@
             body {
                 padding: 15px;
             }
-            
+
             .container {
                 padding: 10px;
             }
-            
+
             .typewriter {
                 height: 50px;
                 margin: 20px 0;
             }
-            
+
             .age-display span {
                 font-size: 18px;
             }
@@ -137,11 +137,11 @@
             body {
                 padding: 10px;
             }
-            
+
             .typewriter {
                 height: 40px;
             }
-            
+
             .age-display span {
                 font-size: 16px;
             }
@@ -153,7 +153,7 @@
         <h3>./index<br>欢迎访问我的网站</h3>
 
         <div class="age-display">
-            年龄: <span id="hoursAlive">0.0000000000</span> 小时
+            年龄: <span id="yearsAlive">0.0000000000</span> 年
         </div>
 
         <div class="typewriter">
@@ -180,11 +180,16 @@
 <script>
     let ageUpdateRAF = null;
     const birthDate = new Date(2010, 11, 8);
-    let baseHours = (Date.now() - birthDate) / (1000 * 60 * 60);
     
+    const DAYS_PER_YEAR = 365.2425;
+    const MS_PER_YEAR = DAYS_PER_YEAR * 24 * 60 * 60 * 1000;
+    
+    let baseTime = Date.now() - birthDate;
+
     function updateAge() {
-        const diffHours = baseHours + (performance.now() / (1000 * 60 * 60 * 1000));
-        document.getElementById('hoursAlive').textContent = diffHours.toFixed(16);
+        const totalMs = baseTime + performance.now();
+        const years = totalMs / MS_PER_YEAR;
+        document.getElementById('yearsAlive').textContent = years.toFixed(16);
         ageUpdateRAF = requestAnimationFrame(updateAge);
     }
 
@@ -202,11 +207,11 @@
 
     function typeEffect() {
         clearTimeout(typingTimeout);
-        
+
         const typingElement = document.getElementById('typing');
         const currentText = TEXTS[currentTextIndex];
         const currentLength = typingElement.textContent.length;
-        
+
         if (!isDeleting && currentLength < currentText.length) {
             typingElement.textContent = currentText.substring(0, currentLength + 1);
             typingTimeout = setTimeout(typeEffect, 50 + Math.random() * 100);
@@ -229,9 +234,10 @@
     function handleVisibilityChange() {
         if (document.hidden) {
             cancelAnimationFrame(ageUpdateRAF);
-            baseHours += performance.now() / (1000 * 60 * 60 * 1000);
+            baseTime += performance.now();
             clearTimeout(typingTimeout);
         } else {
+            baseTime = Date.now() - birthDate;
             ageUpdateRAF = requestAnimationFrame(updateAge);
             typingTimeout = setTimeout(typeEffect, 100);
         }
