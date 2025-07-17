@@ -21,7 +21,6 @@
 
         body {
             font-family: '微软雅黑', Arial, sans-serif;
-            background-color: var(--bg-color);
             margin: 0;
             padding: 20px;
             color: var(--text-color);
@@ -29,6 +28,72 @@
             min-height: 100vh;
             overflow-x: hidden;
             position: relative;
+        }
+
+        .bg-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+
+        .bg-layer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-size: cover;
+            background-position: center;
+            opacity: 0;
+            filter: blur(5px);
+            transition: opacity 0.5s ease, filter 0.5s ease;
+        }
+
+        .bg-layer.active {
+            opacity: 0.7;
+            filter: blur(0);
+        }
+
+        .bg-toggle {
+            position: fixed;
+            top: 15px;
+            left: 15px;
+            z-index: 100;
+            background: rgba(0, 0, 0, 0.5);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            transition: all 0.3s ease;
+        }
+
+        .bg-toggle:hover {
+            background: rgba(0, 0, 0, 0.7);
+            transform: scale(1.1);
+        }
+
+        .bg-toggle:active {
+            transform: scale(0.9);
+        }
+
+        .api-info {
+            position: fixed;
+            bottom: 10px;
+            left: 0;
+            width: 100%;
+            text-align: center;
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.6);
+            z-index: 99;
         }
 
         .container {
@@ -118,16 +183,16 @@
             body {
                 padding: 15px;
             }
-            
+
             .container {
                 padding: 10px;
             }
-            
+
             .typewriter {
                 height: 50px;
                 margin: 20px 0;
             }
-            
+
             .age-display span {
                 font-size: 18px;
             }
@@ -137,11 +202,11 @@
             body {
                 padding: 10px;
             }
-            
+
             .typewriter {
                 height: 40px;
             }
-            
+
             .age-display span {
                 font-size: 16px;
             }
@@ -149,11 +214,20 @@
     </style>
 </head>
 <body>
+    <div class="bg-container">
+        <div class="bg-layer" id="bg1"></div>
+        <div class="bg-layer" id="bg2"></div>
+    </div>
+
+    <button class="bg-toggle" id="bgToggle">↻</button>
+
+    <div class="api-info" id="apiInfo">正在加载背景API...</div>
+
     <div class="container">
         <h3>./index<br>欢迎访问我的网站</h3>
 
         <div class="age-display">
-            年龄: <span id="hoursAlive">0.0000000000</span> 小时
+            年龄: <span id="yearsAlive">0.0000000000</span> 年
         </div>
 
         <div class="typewriter">
@@ -177,69 +251,143 @@
             </ul>
         </div>
     </div>
-<script>
-    let ageUpdateRAF = null;
-    const birthDate = new Date(2010, 11, 8);
-    let baseHours = (Date.now() - birthDate) / (1000 * 60 * 60);
-    
-    function updateAge() {
-        const diffHours = baseHours + (performance.now() / (1000 * 60 * 60 * 1000));
-        document.getElementById('hoursAlive').textContent = diffHours.toFixed(16);
-        ageUpdateRAF = requestAnimationFrame(updateAge);
-    }
 
-    const TEXTS = [
-        "玩 phigros 玩的",
-        "玩 ba 玩的", 
-        "玩 minecraft 玩的",
-        "看 jm 看的",
-        "玩 PVZ 玩的",
-        "无限进步!"
-    ];
-    let typingTimeout = null;
-    let currentTextIndex = 0;
-    let isDeleting = false;
+    <script>
+        let ageUpdateRAF = null;
+        const birthDate = new Date(2010, 11, 8);
 
-    function typeEffect() {
-        clearTimeout(typingTimeout);
-        
-        const typingElement = document.getElementById('typing');
-        const currentText = TEXTS[currentTextIndex];
-        const currentLength = typingElement.textContent.length;
-        
-        if (!isDeleting && currentLength < currentText.length) {
-            typingElement.textContent = currentText.substring(0, currentLength + 1);
-            typingTimeout = setTimeout(typeEffect, 50 + Math.random() * 100);
-        } 
-        else if (!isDeleting && currentLength === currentText.length) {
-            isDeleting = true;
-            typingTimeout = setTimeout(typeEffect, 1000);
-        } 
-        else if (isDeleting && currentLength > 0) {
-            typingElement.textContent = currentText.substring(0, currentLength - 1);
-            typingTimeout = setTimeout(typeEffect, 30 + Math.random() * 70);
-        } 
-        else {
-            isDeleting = false;
-            currentTextIndex = (currentTextIndex + 1) % TEXTS.length;
-            typingTimeout = setTimeout(typeEffect, 500);
-        }
-    }
+        const DAYS_PER_YEAR = 365.2425;
+        const MS_PER_YEAR = DAYS_PER_YEAR * 24 * 60 * 60 * 1000;
 
-    function handleVisibilityChange() {
-        if (document.hidden) {
-            cancelAnimationFrame(ageUpdateRAF);
-            baseHours += performance.now() / (1000 * 60 * 60 * 1000);
-            clearTimeout(typingTimeout);
-        } else {
+        let baseTime = Date.now() - birthDate;
+
+        function updateAge() {
+            const totalMs = baseTime + performance.now();
+            const years = totalMs / MS_PER_YEAR;
+            document.getElementById('yearsAlive').textContent = years.toFixed(16);
             ageUpdateRAF = requestAnimationFrame(updateAge);
-            typingTimeout = setTimeout(typeEffect, 100);
         }
-    }
 
-    document.addEventListener('visibilitychange', handleVisibilityChange);
-    updateAge();
-    typeEffect();
-</script>
+        const TEXTS = [
+            "玩 phigros 玩的",
+            "玩 ba 玩的", 
+            "玩 minecraft 玩的",
+            "看 jm 看的",
+            "玩 PVZ 玩的",
+            "无限进步!"
+        ];
+        let typingTimeout = null;
+        let currentTextIndex = 0;
+        let isDeleting = false;
+
+        function typeEffect() {
+            clearTimeout(typingTimeout);
+
+            const typingElement = document.getElementById('typing');
+            const currentText = TEXTS[currentTextIndex];
+            const currentLength = typingElement.textContent.length;
+
+            if (!isDeleting && currentLength < currentText.length) {
+                typingElement.textContent = currentText.substring(0, currentLength + 1);
+                typingTimeout = setTimeout(typeEffect, 50 + Math.random() * 100);
+            } 
+            else if (!isDeleting && currentLength === currentText.length) {
+                isDeleting = true;
+                typingTimeout = setTimeout(typeEffect, 1000);
+            } 
+            else if (isDeleting && currentLength > 0) {
+                typingElement.textContent = currentText.substring(0, currentLength - 1);
+                typingTimeout = setTimeout(typeEffect, 30 + Math.random() * 70);
+            } 
+            else {
+                isDeleting = false;
+                currentTextIndex = (currentTextIndex + 1) % TEXTS.length;
+                typingTimeout = setTimeout(typeEffect, 500);
+            }
+        }
+
+        function handleVisibilityChange() {
+            if (document.hidden) {
+                cancelAnimationFrame(ageUpdateRAF);
+                baseTime += performance.now();
+                clearTimeout(typingTimeout);
+            } else {
+                baseTime = Date.now() - birthDate;
+                ageUpdateRAF = requestAnimationFrame(updateAge);
+                typingTimeout = setTimeout(typeEffect, 100);
+            }
+        }
+
+        document.addEventListener('visibilitychange', handleVisibilityChange);
+        updateAge();
+        typeEffect();
+
+        const bg1 = document.getElementById('bg1');
+        const bg2 = document.getElementById('bg2');
+        const bgToggle = document.getElementById('bgToggle');
+        const apiInfo = document.getElementById('apiInfo');
+        
+        let currentBg = bg1;
+        let nextBg = bg2;
+        let isBgPaused = false;
+        let currentImageUrl = '';
+        
+        function detectDeviceType() {
+            const userAgent = navigator.userAgent;
+            if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(userAgent)) {
+                return 'mobile';
+            }
+            return 'desktop';
+        }
+        
+        async function fetchImageUrl() {
+            const deviceType = detectDeviceType();
+            const apiUrl = `https://www.loliapi.com/acg/${deviceType === 'mobile' ? 'm' : ''}pc/`;
+            
+            try {
+                const response = await fetch(apiUrl);
+                if (!response.ok) throw new Error('API请求失败');
+                
+                const imageUrl = response.url;
+                apiInfo.textContent = `API: ${apiUrl}`;
+                return imageUrl;
+            } catch (error) {
+                console.error('获取背景失败:', error);
+                return deviceType === 'mobile' ? 
+                    'https://via.placeholder.com/1080x1920/333/666?text=Mobile+BG' : 
+                    'https://via.placeholder.com/1920x1080/333/666?text=Desktop+BG';
+            }
+        }
+        
+        async function switchBackground() {
+            if (isBgPaused) return;
+            
+            const imageUrl = await fetchImageUrl();
+            currentImageUrl = imageUrl;
+            
+            const img = new Image();
+            img.onload = function() {
+                nextBg.style.backgroundImage = `url(${imageUrl})`;
+                currentBg.classList.remove('active');
+                nextBg.classList.add('active');
+                
+                [currentBg, nextBg] = [nextBg, currentBg];
+            };
+            img.src = imageUrl;
+        }
+        
+        async function initBackground() {
+            await switchBackground();
+            setInterval(switchBackground, 30000);
+        }
+        
+        bgToggle.addEventListener('click', function() {
+            isBgPaused = !isBgPaused;
+            this.textContent = isBgPaused ? '▶' : '↻';
+            if (!isBgPaused) switchBackground();
+        });
+        
+        initBackground();
+    </script>
 </body>
 </html>
