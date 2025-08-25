@@ -1,412 +1,81 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, minimum-scale=1.0">
-    <meta name="HandheldFriendly" content="true">
-    <title>./index</title>
-    <style>
-        :root {
-            --primary-color: #3498db;
-            --primary-hover: #2980b9;
-            --bg-color: #1a1a1a;
-            --text-color: #ffffff;
-            --secondary-text: #cccccc;
-            --border-color: #333333;
-            --transition-overlay: rgba(0, 0, 0, 0.9);
-            --switch-bg-off: #555555;
-            --switch-bg-on: #4cd964;
-            --switch-knob: #ffffff;
-        }
-
-        :root.light-mode {
-            --primary-color: #1a73e8;
-            --primary-hover: #0d62c9;
-            --bg-color: #f5f5f5;
-            --text-color: #333333;
-            --secondary-text: #666666;
-            --border-color: #dddddd;
-            --transition-overlay: rgba(255, 255, 255, 0.9);
-            --switch-bg-off: #cccccc;
-            --switch-bg-on: #4cd964;
-            --switch-knob: #ffffff;
-        }
-
-        * {
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: '小黑子', Arial, sans-serif;
-            background-color: var(--bg-color);
-            margin: 0;
-            padding: 20px;
-            color: var(--text-color);
-            line-height: 1.6;
-            min-height: 100vh;
-            overflow-x: hidden;
-            position: relative;
-            transition: background-color 0.3s ease, color 0.3s ease;
-        }
-
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 20px;
-            position: relative;
-            z-index: 1;
-            background-color: rgba(26, 26, 26, 0.85);
-            border-radius: 8px;
-            transition: background-color 0.3s ease;
-        }
-
-        .light-mode .container {
-            background-color: rgba(245, 245, 245, 0.85);
-        }
-
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-        }
-
-        h3 {
-            color: var(--text-color);
-            margin-bottom: 30px;
-            font-size: clamp(20px, 4vw, 24px);
-            text-shadow: 0 0 5px rgba(255,255,255,0.3);
-            line-height: 1.4;
-            transition: color 0.3s ease, text-shadow 0.3s ease;
-            flex: 1;
-        }
-
-        .light-mode h3 {
-            text-shadow: 0 0 5px rgba(0,0,0,0.1);
-        }
-
-        ul {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-        }
-
-        li {
-            margin: 15px 0;
-            padding: 0;
-        }
-
-        a {
-            color: var(--primary-color);
-            text-decoration: none;
-            font-weight: 500;
-            text-shadow: 0 0 3px rgba(52, 152, 219, 0.3);
-            transition: color 0.3s ease;
-            display: inline-block;
-            padding: 5px 0;
-            word-break: break-all;
-        }
-
-        a:hover {
-            color: var(--primary-hover);
-            text-shadow: 0 0 5px rgba(52, 152, 219, 0.4);
-        }
-
-        .contact {
-            margin-top: 30px;
-            padding-top: 20px;
-            border-top: 1px solid var(--border-color);
-            transition: border-color 0.3s ease;
-        }
-
-        .typewriter {
-            height: 60px;
-            margin: 30px 0;
-            text-align: center;
-            font-size: clamp(16px, 3vw, 18px);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .type-text {
-            color: var(--text-color);
-            border-right: 2px solid var(--text-color);
-            padding-right: 5px;
-            display: inline-block;
-            min-height: 1.2em;
-            text-shadow: 0 0 5px rgba(255,255,255,0.5);
-            transition: color 0.3s ease, border-color 0.3s ease, text-shadow 0.3s ease;
-        }
-
-        .light-mode .type-text {
-            text-shadow: 0 0 5px rgba(0,0,0,0.2);
-        }
-
-        .age-display {
-            margin: 20px 0;
-            text-align: center;
-            font-size: 18px;
-        }
-
-        .age-display span {
-            font-family: monospace;
-            font-size: 20px;
-            color: var(--text-color);
-            text-shadow: 0 0 8px rgba(255,255,255,0.7);
-            transition: color 0.3s ease, text-shadow 0.3s ease;
-        }
-
-        .light-mode .age-display span {
-            text-shadow: 0 0 8px rgba(0,0,0,0.2);
-        }
-
-        .theme-switch {
-            position: relative;
-            display: inline-block;
-            width: 50px;
-            height: 26px;
-            margin-left: 15px;
-            flex-shrink: 0;
-            margin-top: 5px;
-        }
-
-        .theme-switch input {
-            opacity: 0;
-            width: 0;
-            height: 0;
-        }
-
-        .slider {
-            position: absolute;
-            cursor: pointer;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-color: var(--switch-bg-off);
-            transition: .4s;
-            border-radius: 34px;
-            box-shadow: inset 0 1px 3px rgba(0,0,0,0.2);
-        }
-
-        .slider:before {
-            position: absolute;
-            content: "";
-            height: 22px;
-            width: 22px;
-            left: 2px;
-            bottom: 2px;
-            background-color: var(--switch-knob);
-            transition: .4s;
-            border-radius: 50%;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.3);
-        }
-
-        input:checked + .slider {
-            background-color: var(--switch-bg-on);
-        }
-
-        input:checked + .slider:before {
-            transform: translateX(24px);
-        }
-
-        .transition-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: var(--transition-overlay);
-            z-index: 999;
-            pointer-events: none;
-            opacity: 0;
-            transition: opacity 0.5s ease;
-        }
-
-        @media (max-width: 768px) {
-            body {
-                padding: 15px;
-            }
-
-            .container {
-                padding: 10px;
-            }
-
-            .typewriter {
-                height: 50px;
-                margin: 20px 0;
-            }
-
-            .age-display span {
-                font-size: 18px;
-            }
-        }
-
-        @media (max-width: 480px) {
-            body {
-                padding: 10px;
-            }
-
-            .typewriter {
-                height: 40px;
-            }
-
-            .age-display span {
-                font-size: 16px;
-            }
-            
-            .theme-switch {
-                width: 42px;
-                height: 22px;
-            }
-            
-            .slider:before {
-                height: 18px;
-                width: 18px;
-            }
-            
-            input:checked + .slider:before {
-                transform: translateX(20px);
-            }
-        }
-    </style>
+<head prefix="og: http://ogp.me/ns# fb: http://ogp.me/ns/fb# website: http://ogp.me/ns/website#">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0">
+    <meta name="description" content="点击/触摸屏幕，即可与初音未来的动态图形一起演奏音乐的互动内容。">
+    <meta name="twitter:site" content="@daniwell_aidn">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content="https://aidn.jp/shared/img/og/mikutap.png">
+    <meta property="og:locale" content="zh_CN">
+    <meta property="og:title" content="初音未来音乐点击">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://aidn.jp/mikutap/">
+    <meta property="og:image" content="https://aidn.jp/shared/img/og/mikutap.png">
+    <meta property="og:site_name" content="ADN">
+    <meta property="og:description" content="点击/触摸屏幕，即可与初音未来的动态图形一起演奏音乐的互动内容。">
+    <meta property="fb:app_id" content="260132667518211">
+    <title>初音未来音乐点击</title>
+    <link rel="apple-touch-icon" href="icon.png">
+    <link href="https://fonts.googleapis.com/css?family=Quick&sand:400" rel="stylesheet">
+    <link charset="UTF-8" href="_Shared/sp/css/common.css" rel="stylesheet">
+    <link charset="utf-8" href="css/mikutap.css" rel="stylesheet">
+    <script charset="utf-8" src="https://cdn.jsdelivr.net/npm/jquery@2.1.4/dist/jquery.min.js" type="text/javascript"></script>
+    <script charset="utf-8" src="https://cdn.jsdelivr.net/npm/pixi.js@4.0.0/bin/pixi.min.js" type="text/javascript"></script>
+    <script charset="utf-8" src="https://cdn.jsdelivr.net/npm/gsap@1.19.1/src/minified/TweenMax.min.js" type="text/javascript"></script>
+    <script charset="utf-8" src="./shared/js/common.js" type="text/javascript"></script>
+    <script charset="utf-8" src="js/mikutap.js" type="text/javascript"></script>
 </head>
 <body>
-    <div class="transition-overlay"></div>
-    <div class="container">
-        <div class="header">
-            <h3>./index<br>欢迎访问我的网站</h3>
-            <label class="theme-switch">
-                <input type="checkbox">
-                <span class="slider"></span>
-            </label>
+    <div id="view">
+        <div id="scene_top">
+            <h1>初音未来音乐点击</h1>
+            <div id="mg">
+                <p class="atten">非常抱歉，</p>
+                <p>您的设备或浏览器不受支持。</p>
+            </div>
+            <div class="bk">
+                <p id="bt_start"><a href="">开始</a></p>
+            </div>
+            <div>
+                <p id="bt_about"><a href="">关于</a></p>
+            </div>
+            <div class="bk">
+                <p class="attention">请尽情享受。</p>
+            </div>
+            <p class="title">分享：</p>
+            <p class="con">
+                <span class="sns" id="bt_tw"><img src="./shared/img/sns/twitter_w.png" alt="推特"></span>
+                <span class="sns" id="bt_fb"><img src="./shared/img/sns/facebook_w.png" alt="分享"></span>
+                <span class="sns" id="bt_gp"><img src="./shared/img/sns/google_w.png" alt="谷歌+"></span>
+            </p>
         </div>
-
-        <div class="age-display">
-            年龄: <span id="yearsAlive">0.0000000000</span> 年
+        <div id="scene_loading">
+            <hr size="1" color="#fff">
         </div>
-
-        <div class="typewriter">
-            <span class="type-text" id="typing"></span>
+        <div id="scene_main">
+            <div class="set">
+                <p class="attention">点击 & 拖拽 或 按下任意键！</p>
+                <p id="bt_feedback"><a href="">反馈：开启</a></p>
+                <p id="bt_backtrack"><a href="">回溯：开启</a></p>
+            </div>
         </div>
-
-        <ul>
-            <li><a href="公告.html">公告</a></li>
-            <li><a href="https://m.bilibili.com/space/3546610954931052">B站主页</a></li>
-            <li><a href="压力确认页.html">乐迪的起飞神器</a></li>
-            <li><a href="114.html">小黑子 你食补食油饼 一边玩去</a></li>
-            <li><a href="项目.html">我的项目</a></li>
-            <li><a href="http://naima.back1.idcfengye.com/">内网穿透测试！！！仅为测试不要来压力我的A5</a></li>
-        </ul>
-
-        <div class="contact">
-            <h4>联系方式</h4>
-            <ul>
-                <li><a href="tencent://message/?uin=3698088118&site=qq&menu=yes">QQ: 3698088118</a></li>
-                <li><a href="mailto:3698088118@qq.com">邮箱: 3698088118@qq.com</a></li>
-            </ul>
+        <div id="about_cover">
+            <div id="about">
+                <div id="about-in">
+                    <p class="close"><span id="bt_close"></span></p>
+                    <p class="con">角色设计：<a href="https://ec.crypton.co.jp/pages/prod/vocaloid/mikuvdx" target="_blank">初音未来</a></p>
+                    <p class="con">创作：<a href="./daniwell/" target="_blank">daniwell</a> (<a href="https://twitter.com/daniwell_aidn" target="_blank">推特</a>)</p>
+                    <p class="link">灵感来自：<a href="http://batatap.com/" target="_blank">Patatap</a><br>(很棒的网站！)</p>
+                    <p class="link">该内容为国内汉化，原版内容：<a href="https://aidn.jp/mikutap/" target="_blank">https://aidn.jp/mikutap/</a><br>(国内可能无法访问）</p>
+          
+                </div>
+            </div>
         </div>
+        <div id="bt_back"></div>
+        <div id="bt_fs"></div>
     </div>
-
-<script>
-    let ageUpdateRAF = null;
-    const birthDate = new Date(2010, 11, 8);
-
-    const DAYS_PER_YEAR = 365.2425;
-    const MS_PER_YEAR = DAYS_PER_YEAR * 24 * 60 * 60 * 1000;
-
-    let baseTime = Date.now() - birthDate;
-
-    function updateAge() {
-        const totalMs = baseTime + performance.now();
-        const years = totalMs / MS_PER_YEAR;
-        document.getElementById('yearsAlive').textContent = years.toFixed(16);
-        ageUpdateRAF = requestAnimationFrame(updateAge);
-    }
-
-    const TEXTS = [
-        "玩 phigros 玩的",
-        "玩 ba 玩的", 
-        "玩 minecraft 玩的",
-        "看 jm 看的",
-        "玩 PVZ 玩的",
-        "无限进步!"
-    ];
-    let typingTimeout = null;
-    let currentTextIndex = 0;
-    let isDeleting = false;
-
-    function typeEffect() {
-        clearTimeout(typingTimeout);
-
-        const typingElement = document.getElementById('typing');
-        const currentText = TEXTS[currentTextIndex];
-        const currentLength = typingElement.textContent.length;
-
-        if (!isDeleting && currentLength < currentText.length) {
-            typingElement.textContent = currentText.substring(0, currentLength + 1);
-            typingTimeout = setTimeout(typeEffect, 50 + Math.random() * 100);
-        } 
-        else if (!isDeleting && currentLength === currentText.length) {
-            isDeleting = true;
-            typingTimeout = setTimeout(typeEffect, 1000);
-        } 
-        else if (isDeleting && currentLength > 0) {
-            typingElement.textContent = currentText.substring(0, currentLength - 1);
-            typingTimeout = setTimeout(typeEffect, 30 + Math.random() * 70);
-        } 
-        else {
-            isDeleting = false;
-            currentTextIndex = (currentTextIndex + 1) % TEXTS.length;
-            typingTimeout = setTimeout(typeEffect, 500);
-        }
-    }
-
-    function handleVisibilityChange() {
-        if (document.hidden) {
-            cancelAnimationFrame(ageUpdateRAF);
-            baseTime += performance.now();
-            clearTimeout(typingTimeout);
-        } else {
-            baseTime = Date.now() - birthDate;
-            ageUpdateRAF = requestAnimationFrame(updateAge);
-            typingTimeout = setTimeout(typeEffect, 100);
-        }
-    }
-
-    document.addEventListener('visibilitychange', handleVisibilityChange);
-    updateAge();
-    typeEffect();
-
-    const themeSwitch = document.querySelector('.theme-switch input');
-    const overlay = document.querySelector('.transition-overlay');
-    let isDarkMode = true;
-
-    const savedTheme = localStorage.getItem('theme');
-    if (savedTheme === 'light-mode') {
-        document.documentElement.classList.add('light-mode');
-        themeSwitch.checked = true;
-        isDarkMode = false;
-    }
-
-    themeSwitch.addEventListener('change', () => {
-        overlay.style.opacity = '1';
-        
-        setTimeout(() => {
-            if (isDarkMode) {
-                document.documentElement.classList.add('light-mode');
-                localStorage.setItem('theme', 'light-mode');
-            } else {
-                document.documentElement.classList.remove('light-mode');
-                localStorage.setItem('theme', 'dark-mode');
-            }
-            isDarkMode = !isDarkMode;
-            
-            setTimeout(() => {
-                overlay.style.opacity = '0';
-            }, 300);
-        }, 100);
-    });
-</script>
 </body>
 </html>
