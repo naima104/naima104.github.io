@@ -62,13 +62,17 @@
         <div id="errorMsg" class="error">密码错误，我让你看了吗！</div>
     </div>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
     <script>
+        const PASSWORD_HASH = 'a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3';
+
         function checkPassword() {
             const password = document.getElementById('password').value;
             const errorMsg = document.getElementById('errorMsg');
             
-            if (password === '0805') {
-                // 密码正确时跳转
+            const inputHash = CryptoJS.SHA256(password).toString();
+            
+            if (inputHash === PASSWORD_HASH) {
                 window.location.href = '？.html';
             } else {
                 errorMsg.style.display = 'block';
@@ -79,7 +83,6 @@
             }
         }
 
-        // 回车键提交
         document.getElementById('password').addEventListener('keypress', function(e) {
             if (e.key === 'Enter') {
                 checkPassword();
