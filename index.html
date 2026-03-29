@@ -176,69 +176,182 @@
             </ul>
         </div>
     </div>
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>./index</title>
+    <style>
+        :root {
+            --bg: #0a0a0a;
+            --main: #ffffff;
+            --dim: #666666;
+            --accent: #3498db;
+        }
+
+        body {
+            font-family: -apple-system, "Noto Sans SC", sans-serif;
+            background-color: var(--bg);
+            color: var(--main);
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .container {
+            width: 80%;
+            max-width: 400px;
+            text-align: center;
+        }
+
+        h3 {
+            font-weight: 400;
+            letter-spacing: 2px;
+            margin-bottom: 8px;
+        }
+
+        .age-display {
+            font-size: 12px;
+            color: var(--dim);
+            font-family: monospace;
+            margin-bottom: 30px;
+        }
+
+        .typewriter {
+            height: 40px;
+            font-size: 14px;
+            color: var(--dim);
+        }
+
+        .type-text {
+            border-right: 1px solid var(--main);
+            padding-right: 4px;
+        }
+
+        ul {
+            list-style: none;
+            padding: 0;
+            margin: 40px 0;
+        }
+
+        li {
+            margin: 18px 0;
+        }
+
+        a {
+            color: var(--main);
+            text-decoration: none;
+            font-size: 15px;
+            padding: 8px 16px;
+            border-radius: 4px;
+            transition: opacity 0.2s;
+            display: inline-block;
+        }
+
+        a:hover {
+            opacity: 0.6;
+        }
+
+        .contact {
+            margin-top: 50px;
+            padding-top: 20px;
+            border-top: 1px solid #222;
+        }
+
+        .contact h4 {
+            font-size: 11px;
+            color: var(--dim);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 15px;
+        }
+
+        .contact a {
+            font-size: 13px;
+            color: var(--dim);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h3>./index</h3>
+        <div class="age-display">
+            AGE: <span id="yearsAlive">0.0000000000</span>
+        </div>
+
+        <div class="typewriter">
+            <span class="type-text" id="typing"></span>
+        </div>
+
+        <ul>
+            <li><a href="公告.html">公告</a></li>
+            <li><a href="https://m.bilibili.com/space/3546610954931052">BILI SPACE</a></li>
+            <li><a href="压力确认页.html">起飞神器</a></li>
+            <li><a href="114.html">篮球练习</a></li>
+            <li><a href="项目.html">测试项目</a></li>
+        </ul>
+
+        <div class="contact">
+            <h4>Contact</h4>
+            <a href="tencent://message/?uin=3698088118">QQ: 3698088118</a><br>
+            <a href="mailto:3698088118@qq.com">Email: 3698088118@qq.com</a>
+        </div>
+    </div>
+
 <script>
     let ageUpdateRAF = null;
     const birthDate = new Date(2010, 11, 8);
-    
-    const DAYS_PER_YEAR = 365.2425;
-    const MS_PER_YEAR = DAYS_PER_YEAR * 24 * 60 * 60 * 1000;
-    
+    const MS_PER_YEAR = 365.2425 * 24 * 60 * 60 * 1000;
     let baseTime = Date.now() - birthDate;
 
     function updateAge() {
         const totalMs = baseTime + performance.now();
-        const years = totalMs / MS_PER_YEAR;
-        document.getElementById('yearsAlive').textContent = years.toFixed(16);
+        document.getElementById('yearsAlive').textContent = (totalMs / MS_PER_YEAR).toFixed(12);
         ageUpdateRAF = requestAnimationFrame(updateAge);
     }
 
-    const TEXTS = [
-        "无限进步!",
-        "无限进步!"
-    ];
+    const TEXTS = ["无限进步!", "Keep Growing."];
     let typingTimeout = null;
     let currentTextIndex = 0;
     let isDeleting = false;
 
     function typeEffect() {
         clearTimeout(typingTimeout);
+        const el = document.getElementById('typing');
+        const fullText = TEXTS[currentTextIndex];
+        const nowText = el.textContent;
 
-        const typingElement = document.getElementById('typing');
-        const currentText = TEXTS[currentTextIndex];
-        const currentLength = typingElement.textContent.length;
-
-        if (!isDeleting && currentLength < currentText.length) {
-            typingElement.textContent = currentText.substring(0, currentLength + 1);
-            typingTimeout = setTimeout(typeEffect, 50 + Math.random() * 100);
-        } 
-        else if (!isDeleting && currentLength === currentText.length) {
+        if (!isDeleting && nowText.length < fullText.length) {
+            el.textContent = fullText.substring(0, nowText.length + 1);
+            typingTimeout = setTimeout(typeEffect, 100);
+        } else if (!isDeleting && nowText.length === fullText.length) {
             isDeleting = true;
-            typingTimeout = setTimeout(typeEffect, 1000);
-        } 
-        else if (isDeleting && currentLength > 0) {
-            typingElement.textContent = currentText.substring(0, currentLength - 1);
-            typingTimeout = setTimeout(typeEffect, 30 + Math.random() * 70);
-        } 
-        else {
+            typingTimeout = setTimeout(typeEffect, 1500);
+        } else if (isDeleting && nowText.length > 0) {
+            el.textContent = nowText.substring(0, nowText.length - 1);
+            typingTimeout = setTimeout(typeEffect, 50);
+        } else {
             isDeleting = false;
             currentTextIndex = (currentTextIndex + 1) % TEXTS.length;
             typingTimeout = setTimeout(typeEffect, 500);
         }
     }
 
-    function handleVisibilityChange() {
+    document.addEventListener('visibilitychange', () => {
         if (document.hidden) {
             cancelAnimationFrame(ageUpdateRAF);
-            baseTime += performance.now();
             clearTimeout(typingTimeout);
         } else {
             baseTime = Date.now() - birthDate;
-            ageUpdateRAF = requestAnimationFrame(updateAge);
-            typingTimeout = setTimeout(typeEffect, 100);
+            updateAge();
+            typeEffect();
         }
-    }
+    });
 
-    document.addEventListener('visibilitychange', handleVisibilityChange);
     updateAge();
     typeEffect();
 </script>
