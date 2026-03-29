@@ -1,107 +1,159 @@
+<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, minimum-scale=1.0">
+    <meta name="HandheldFriendly" content="true">
     <title>./index</title>
     <style>
         :root {
-            --bg: #0a0a0a;
-            --main: #ffffff;
-            --dim: #666666;
-            --accent: #3498db;
+            --primary-color: #3498db;
+            --primary-hover: #2980b9;
+            --bg-color: #1a1a1a;
+            --text-color: #ffffff;
+            --secondary-text: #cccccc;
+            --border-color: #333333;
+        }
+
+        * {
+            box-sizing: border-box;
         }
 
         body {
-            font-family: -apple-system, "Noto Sans SC", sans-serif;
-            background-color: var(--bg);
-            color: var(--main);
+            font-family: '小黑子', Arial, sans-serif;
+            background-color: var(--bg-color);
             margin: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            padding: 20px;
+            color: var(--text-color);
+            line-height: 1.6;
             min-height: 100vh;
-            -webkit-font-smoothing: antialiased;
+            overflow-x: hidden;
+            position: relative;
         }
 
         .container {
-            width: 80%;
-            max-width: 400px;
-            text-align: center;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            position: relative;
+            z-index: 1;
+            background-color: rgba(26, 26, 26, 0.85);
+            border-radius: 8px;
         }
 
         h3 {
-            font-weight: 400;
-            letter-spacing: 2px;
-            margin-bottom: 8px;
-        }
-
-        .age-display {
-            font-size: 12px;
-            color: var(--dim);
-            font-family: monospace;
+            color: var(--text-color);
             margin-bottom: 30px;
-        }
-
-        .typewriter {
-            height: 40px;
-            font-size: 14px;
-            color: var(--dim);
-        }
-
-        .type-text {
-            border-right: 1px solid var(--main);
-            padding-right: 4px;
+            font-size: clamp(20px, 4vw, 24px);
+            text-shadow: 0 0 5px rgba(255,255,255,0.3);
+            line-height: 1.4;
         }
 
         ul {
             list-style: none;
             padding: 0;
-            margin: 40px 0;
+            margin: 0;
         }
 
         li {
-            margin: 18px 0;
+            margin: 15px 0;
+            padding: 0;
         }
 
         a {
-            color: var(--main);
+            color: var(--primary-color);
             text-decoration: none;
-            font-size: 15px;
-            padding: 8px 16px;
-            border-radius: 4px;
-            transition: opacity 0.2s;
+            font-weight: 500;
+            text-shadow: 0 0 3px rgba(52, 152, 219, 0.3);
+            transition: color 0.3s ease;
             display: inline-block;
+            padding: 5px 0;
+            word-break: break-all;
         }
 
         a:hover {
-            opacity: 0.6;
+            color: var(--primary-hover);
+            text-shadow: 0 0 5px rgba(52, 152, 219, 0.4);
         }
 
         .contact {
-            margin-top: 50px;
+            margin-top: 30px;
             padding-top: 20px;
-            border-top: 1px solid #222;
+            border-top: 1px solid var(--border-color);
         }
 
-        .contact h4 {
-            font-size: 11px;
-            color: var(--dim);
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-bottom: 15px;
+        .typewriter {
+            height: 60px;
+            margin: 30px 0;
+            text-align: center;
+            font-size: clamp(16px, 3vw, 18px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
-        .contact a {
-            font-size: 13px;
-            color: var(--dim);
+        .type-text {
+            color: white;
+            border-right: 2px solid white;
+            padding-right: 5px;
+            display: inline-block;
+            min-height: 1.2em;
+            text-shadow: 0 0 5px rgba(255,255,255,0.5);
+        }
+
+        .age-display {
+            margin: 20px 0;
+            text-align: center;
+            font-size: 18px;
+        }
+
+        .age-display span {
+            font-family: monospace;
+            font-size: 20px;
+            color: white;
+            text-shadow: 0 0 8px rgba(255,255,255,0.7);
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 15px;
+            }
+
+            .container {
+                padding: 10px;
+            }
+
+            .typewriter {
+                height: 50px;
+                margin: 20px 0;
+            }
+
+            .age-display span {
+                font-size: 18px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 10px;
+            }
+
+            .typewriter {
+                height: 40px;
+            }
+
+            .age-display span {
+                font-size: 16px;
+            }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h3>./index</h3>
+        <h3>./index<br>欢迎访问我的小站</h3>
+
         <div class="age-display">
-            AGE: <span id="yearsAlive">0.0000000000</span>
+            年龄: <span id="yearsAlive">0.0000000000</span> 岁
         </div>
 
         <div class="typewriter">
@@ -110,69 +162,83 @@
 
         <ul>
             <li><a href="公告.html">公告</a></li>
-            <li><a href="https://m.bilibili.com/space/3546610954931052">BILI SPACE</a></li>
-            <li><a href="压力确认页.html">起飞神器</a></li>
-            <li><a href="114.html">篮球练习</a></li>
+            <li><a href="https://m.bilibili.com/space/3546610954931052">B站主页</a></li>
+            <li><a href="压力确认页.html">乐迪的起飞神器</a></li>
+            <li><a href="114.html">和蔡徐坤一起去打篮球</a></li>
             <li><a href="项目.html">测试项目</a></li>
         </ul>
 
         <div class="contact">
-            <h4>Contact</h4>
-            <a href="tencent://message/?uin=3698088118">QQ: 3698088118</a><br>
-            <a href="mailto:3698088118@qq.com">Email: 3698088118@qq.com</a>
+            <h4>联系方式</h4>
+            <ul>
+                <li><a href="tencent://message/?uin=3698088118&site=qq&menu=yes">QQ: 3698088118</a></li>
+                <li><a href="mailto:3698088118@qq.com">邮箱: 3698088118@qq.com</a></li>
+            </ul>
         </div>
     </div>
-
 <script>
     let ageUpdateRAF = null;
     const birthDate = new Date(2010, 11, 8);
-    const MS_PER_YEAR = 365.2425 * 24 * 60 * 60 * 1000;
+
+    const DAYS_PER_YEAR = 365.2425;
+    const MS_PER_YEAR = DAYS_PER_YEAR * 24 * 60 * 60 * 1000;
+
     let baseTime = Date.now() - birthDate;
 
     function updateAge() {
         const totalMs = baseTime + performance.now();
-        document.getElementById('yearsAlive').textContent = (totalMs / MS_PER_YEAR).toFixed(12);
+        const years = totalMs / MS_PER_YEAR;
+        document.getElementById('yearsAlive').textContent = years.toFixed(16);
         ageUpdateRAF = requestAnimationFrame(updateAge);
     }
 
-    const TEXTS = ["无限进步!", "Keep Growing."];
+    const TEXTS = [
+        "无限进步!",
+        "无限进步!"
+    ];
     let typingTimeout = null;
     let currentTextIndex = 0;
     let isDeleting = false;
 
     function typeEffect() {
         clearTimeout(typingTimeout);
-        const el = document.getElementById('typing');
-        const fullText = TEXTS[currentTextIndex];
-        const nowText = el.textContent;
 
-        if (!isDeleting && nowText.length < fullText.length) {
-            el.textContent = fullText.substring(0, nowText.length + 1);
-            typingTimeout = setTimeout(typeEffect, 100);
-        } else if (!isDeleting && nowText.length === fullText.length) {
+        const typingElement = document.getElementById('typing');
+        const currentText = TEXTS[currentTextIndex];
+        const currentLength = typingElement.textContent.length;
+
+        if (!isDeleting && currentLength < currentText.length) {
+            typingElement.textContent = currentText.substring(0, currentLength + 1);
+            typingTimeout = setTimeout(typeEffect, 50 + Math.random() * 100);
+        } 
+        else if (!isDeleting && currentLength === currentText.length) {
             isDeleting = true;
-            typingTimeout = setTimeout(typeEffect, 1500);
-        } else if (isDeleting && nowText.length > 0) {
-            el.textContent = nowText.substring(0, nowText.length - 1);
-            typingTimeout = setTimeout(typeEffect, 50);
-        } else {
+            typingTimeout = setTimeout(typeEffect, 1000);
+        } 
+        else if (isDeleting && currentLength > 0) {
+            typingElement.textContent = currentText.substring(0, currentLength - 1);
+            typingTimeout = setTimeout(typeEffect, 30 + Math.random() * 70);
+        } 
+        else {
             isDeleting = false;
             currentTextIndex = (currentTextIndex + 1) % TEXTS.length;
             typingTimeout = setTimeout(typeEffect, 500);
         }
     }
 
-    document.addEventListener('visibilitychange', () => {
+    function handleVisibilityChange() {
         if (document.hidden) {
             cancelAnimationFrame(ageUpdateRAF);
+            baseTime += performance.now();
             clearTimeout(typingTimeout);
         } else {
             baseTime = Date.now() - birthDate;
-            updateAge();
-            typeEffect();
+            ageUpdateRAF = requestAnimationFrame(updateAge);
+            typingTimeout = setTimeout(typeEffect, 100);
         }
-    });
+    }
 
+    document.addEventListener('visibilitychange', handleVisibilityChange);
     updateAge();
     typeEffect();
 </script>
