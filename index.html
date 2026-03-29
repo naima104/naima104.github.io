@@ -3,16 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, minimum-scale=1.0">
-    <meta name="HandheldFriendly" content="true">
     <title>./index</title>
     <style>
         :root {
             --primary-color: #3498db;
-            --primary-hover: #2980b9;
-            --bg-color: #000000;
             --text-color: #ffffff;
-            --secondary-text: #cccccc;
-            --border-color: #333333;
+            --secondary-text: #888888;
+            --pure-black: #000000;
+            --border-color: #222222;
         }
 
         * {
@@ -21,32 +19,55 @@
 
         body {
             font-family: '小黑子', Arial, sans-serif;
-            background-color: var(--bg-color);
+            background-color: var(--pure-black); /* 适配 OLED 的纯黑 */
             margin: 0;
             padding: 20px;
             color: var(--text-color);
-            line-height: 1.6;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             min-height: 100vh;
-            overflow-x: hidden;
-            position: relative;
         }
 
         .container {
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 20px;
-            position: relative;
-            z-index: 1;
-            background-color: rgba(26, 26, 26, 0.85);
-            border-radius: 8px;
+            max-width: 450px;
+            width: 100%;
+            padding: 40px 20px;
+            border: 1px solid var(--border-color); /* 极细暗色边框 */
+            border-radius: 16px;
+            text-align: center;
         }
 
         h3 {
-            color: var(--text-color);
+            font-size: 22px;
+            font-weight: 400;
             margin-bottom: 30px;
-            font-size: clamp(20px, 4vw, 24px);
-            text-shadow: 0 0 5px rgba(255,255,255,0.3);
-            line-height: 1.4;
+            letter-spacing: 1px;
+        }
+
+        .age-display {
+            font-size: 13px;
+            color: var(--secondary-text);
+            margin-bottom: 20px;
+            font-family: monospace;
+        }
+
+        .age-display span {
+            color: var(--text-color);
+            /* 给数字加一点微弱的荧光感 */
+            text-shadow: 0 0 8px rgba(255, 255, 255, 0.2);
+        }
+
+        .typewriter {
+            height: 30px;
+            margin-bottom: 40px;
+            font-size: 16px;
+        }
+
+        .type-text {
+            color: var(--primary-color);
+            border-right: 2px solid var(--primary-color);
+            padding-right: 5px;
         }
 
         ul {
@@ -57,94 +78,40 @@
 
         li {
             margin: 15px 0;
-            padding: 0;
         }
 
         a {
-            color: var(--primary-color);
+            color: var(--text-color);
             text-decoration: none;
-            font-weight: 500;
-            text-shadow: 0 0 3px rgba(52, 152, 219, 0.3);
-            transition: color 0.3s ease;
-            display: inline-block;
-            padding: 5px 0;
-            word-break: break-all;
+            font-size: 15px;
+            transition: all 0.2s ease;
+            opacity: 0.8;
         }
 
         a:hover {
-            color: var(--primary-hover);
-            text-shadow: 0 0 5px rgba(52, 152, 219, 0.4);
+            opacity: 1;
+            color: var(--primary-color);
+            letter-spacing: 1px; /* 悬停时字间距微调，增加灵动感 */
         }
 
         .contact {
-            margin-top: 30px;
+            margin-top: 50px;
             padding-top: 20px;
             border-top: 1px solid var(--border-color);
         }
 
-        .typewriter {
-            height: 60px;
-            margin: 30px 0;
-            text-align: center;
-            font-size: clamp(16px, 3vw, 18px);
-            display: flex;
-            align-items: center;
-            justify-content: center;
+        .contact h4 {
+            font-size: 12px;
+            color: var(--secondary-text);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 15px;
         }
 
-        .type-text {
-            color: white;
-            border-right: 2px solid white;
-            padding-right: 5px;
-            display: inline-block;
-            min-height: 1.2em;
-            text-shadow: 0 0 5px rgba(255,255,255,0.5);
-        }
-
-        .age-display {
-            margin: 20px 0;
-            text-align: center;
-            font-size: 18px;
-        }
-
-        .age-display span {
-            font-family: monospace;
-            font-size: 20px;
-            color: white;
-            text-shadow: 0 0 8px rgba(255,255,255,0.7);
-        }
-
-        @media (max-width: 768px) {
-            body {
-                padding: 15px;
-            }
-
-            .container {
-                padding: 10px;
-            }
-
-            .typewriter {
-                height: 50px;
-                margin: 20px 0;
-            }
-
-            .age-display span {
-                font-size: 18px;
-            }
-        }
-
-        @media (max-width: 480px) {
-            body {
-                padding: 10px;
-            }
-
-            .typewriter {
-                height: 40px;
-            }
-
-            .age-display span {
-                font-size: 16px;
-            }
+        .contact a {
+            font-size: 13px;
+            color: var(--secondary-text);
+            margin: 0 10px;
         }
     </style>
 </head>
@@ -153,7 +120,7 @@
         <h3>./index<br>欢迎访问我的小站</h3>
 
         <div class="age-display">
-            年龄: <span id="yearsAlive">0.0000000000</span> 岁
+            AGE: <span id="yearsAlive">0.0000000000</span>
         </div>
 
         <div class="typewriter">
@@ -169,55 +136,46 @@
         </ul>
 
         <div class="contact">
-            <h4>联系方式</h4>
-            <ul>
-                <li><a href="tencent://message/?uin=3698088118&site=qq&menu=yes">QQ: 3698088118</a></li>
-                <li><a href="mailto:3698088118@qq.com">邮箱: 3698088118@qq.com</a></li>
-            </ul>
+            <h4>Contact</h4>
+            <a href="tencent://message/?uin=3698088118">QQ</a>
+            <a href="mailto:3698088118@qq.com">Email</a>
         </div>
     </div>
+
 <script>
     let ageUpdateRAF = null;
     const birthDate = new Date(2010, 11, 8);
-
     const DAYS_PER_YEAR = 365.2425;
     const MS_PER_YEAR = DAYS_PER_YEAR * 24 * 60 * 60 * 1000;
-
     let baseTime = Date.now() - birthDate;
 
     function updateAge() {
         const totalMs = baseTime + performance.now();
-        const years = totalMs / MS_PER_YEAR;
-        document.getElementById('yearsAlive').textContent = years.toFixed(16);
+        document.getElementById('yearsAlive').textContent = (totalMs / MS_PER_YEAR).toFixed(12);
         ageUpdateRAF = requestAnimationFrame(updateAge);
     }
 
-    const TEXTS = [
-        "无限进步!",
-        "无限进步!"
-    ];
+    const TEXTS = ["无限进步!", "无限进步!"];
     let typingTimeout = null;
     let currentTextIndex = 0;
     let isDeleting = false;
 
     function typeEffect() {
-        clearTimeout(typingTimeout);
-
-        const typingElement = document.getElementById('typing');
+        const el = document.getElementById('typing');
         const currentText = TEXTS[currentTextIndex];
-        const currentLength = typingElement.textContent.length;
+        const currentLength = el.textContent.length;
 
         if (!isDeleting && currentLength < currentText.length) {
-            typingElement.textContent = currentText.substring(0, currentLength + 1);
-            typingTimeout = setTimeout(typeEffect, 50 + Math.random() * 100);
+            el.textContent = currentText.substring(0, currentLength + 1);
+            typingTimeout = setTimeout(typeEffect, 100);
         } 
         else if (!isDeleting && currentLength === currentText.length) {
             isDeleting = true;
-            typingTimeout = setTimeout(typeEffect, 1000);
+            typingTimeout = setTimeout(typeEffect, 2000);
         } 
         else if (isDeleting && currentLength > 0) {
-            typingElement.textContent = currentText.substring(0, currentLength - 1);
-            typingTimeout = setTimeout(typeEffect, 30 + Math.random() * 70);
+            el.textContent = currentText.substring(0, currentLength - 1);
+            typingTimeout = setTimeout(typeEffect, 50);
         } 
         else {
             isDeleting = false;
@@ -226,19 +184,6 @@
         }
     }
 
-    function handleVisibilityChange() {
-        if (document.hidden) {
-            cancelAnimationFrame(ageUpdateRAF);
-            baseTime += performance.now();
-            clearTimeout(typingTimeout);
-        } else {
-            baseTime = Date.now() - birthDate;
-            ageUpdateRAF = requestAnimationFrame(updateAge);
-            typingTimeout = setTimeout(typeEffect, 100);
-        }
-    }
-
-    document.addEventListener('visibilitychange', handleVisibilityChange);
     updateAge();
     typeEffect();
 </script>
