@@ -2,189 +2,113 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, minimum-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>./index</title>
     <style>
         :root {
-            --primary-color: #3498db;
-            --text-color: #ffffff;
-            --secondary-text: #888888;
-            --pure-black: #000000;
-            --border-color: #222222;
-        }
-
-        * {
-            box-sizing: border-box;
+            --primary: #3498db;
+            --text: #ffffff;
+            --dim: #666666;
+            --black: #000000;
         }
 
         body {
-            font-family: '小黑子', Arial, sans-serif;
-            background-color: var(--pure-black); 
+            font-family: -apple-system, system-ui, sans-serif;
+            background-color: var(--black);
+            color: var(--text);
             margin: 0;
-            padding: 20px;
-            color: var(--text-color);
             display: flex;
             align-items: center;
             justify-content: center;
             min-height: 100vh;
+            -webkit-tap-highlight-color: transparent;
         }
 
         .container {
-            max-width: 450px;
-            width: 100%;
-            padding: 40px 20px;
-            border: 1px solid var(--border-color); /* 极细暗色边框 */
-            border-radius: 16px;
+            width: 85%;
+            max-width: 400px;
             text-align: center;
         }
 
         h3 {
-            font-size: 22px;
-            font-weight: 400;
-            margin-bottom: 30px;
+            font-size: 20px;
+            font-weight: 300;
             letter-spacing: 1px;
+            margin-bottom: 10px;
         }
 
         .age-display {
-            font-size: 13px;
-            color: var(--secondary-text);
-            margin-bottom: 20px;
             font-family: monospace;
+            font-size: 12px;
+            color: var(--dim);
+            margin-bottom: 30px;
         }
 
-        .age-display span {
-            color: var(--text-color);
-            text-shadow: 0 0 8px rgba(255, 255, 255, 0.2);
-        }
-
-        .typewriter {
-            height: 30px;
-            margin-bottom: 40px;
-            font-size: 16px;
-        }
-
-        .type-text {
-            color: var(--primary-color);
-            border-right: 2px solid var(--primary-color);
-            padding-right: 5px;
-        }
+        .age-display span { color: var(--text); }
 
         ul {
             list-style: none;
             padding: 0;
-            margin: 0;
+            margin: 40px 0;
         }
 
-        li {
-            margin: 15px 0;
-        }
+        li { margin: 20px 0; }
 
         a {
-            color: var(--text-color);
+            color: var(--text);
             text-decoration: none;
-            font-size: 15px;
-            transition: all 0.2s ease;
-            opacity: 0.8;
+            font-size: 16px;
+            transition: opacity 0.2s;
         }
 
-        a:hover {
-            opacity: 1;
-            color: var(--primary-color);
-            letter-spacing: 1px; 
-        }
+        a:active { opacity: 0.5; }
 
         .contact {
             margin-top: 50px;
             padding-top: 20px;
-            border-top: 1px solid var(--border-color);
+            border-top: 1px solid #222;
         }
 
-        .contact h4 {
-            font-size: 12px;
-            color: var(--secondary-text);
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            margin-bottom: 15px;
-        }
-
-        .contact a {
+        .contact-link {
             font-size: 13px;
-            color: var(--secondary-text);
+            color: var(--dim);
             margin: 0 10px;
+            display: inline-block;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h3>./index<br>欢迎访问我的小站</h3>
-
+        <h3>./index</h3>
         <div class="age-display">
-            年龄: <span id="yearsAlive">0.0000000000</span>
-        </div>
-
-        <div class="typewriter">
-            <span class="type-text" id="typing"></span>
+            AGE: <span id="yearsAlive">0.000000000000</span>
         </div>
 
         <ul>
             <li><a href="公告.html">公告</a></li>
             <li><a href="https://m.bilibili.com/space/3546610954931052">B站主页</a></li>
-            <li><a href="压力确认页.html">乐迪的起飞神器</a></li>
-            <li><a href="114.html">和蔡徐坤一起去打篮球</a></li>
+            <li><a href="压力确认页.html">起飞神器</a></li>
+            <li><a href="114.html">篮球练习</a></li>
             <li><a href="项目.html">测试项目</a></li>
         </ul>
 
         <div class="contact">
-            <h4>联系方式</h4>
-            <a href="tencent://message/?uin=3698088118">QQ</a>
-            <a href="mailto:3698088118@qq.com">Email</a>
+            <a class="contact-link" href="mqqwpa://im/chat?chat_type=wpa&uin=3698088118&version=1&src_type=web">QQ</a>
+            <a class="contact-link" href="mailto:3698088118@qq.com">EMAIL</a>
         </div>
     </div>
 
 <script>
-    let ageUpdateRAF = null;
     const birthDate = new Date(2010, 11, 8);
-    const DAYS_PER_YEAR = 365.2425;
-    const MS_PER_YEAR = DAYS_PER_YEAR * 24 * 60 * 60 * 1000;
-    let baseTime = Date.now() - birthDate;
+    const MS_PER_YEAR = 31556952000;
 
     function updateAge() {
-        const totalMs = baseTime + performance.now();
-        document.getElementById('yearsAlive').textContent = (totalMs / MS_PER_YEAR).toFixed(12);
-        ageUpdateRAF = requestAnimationFrame(updateAge);
+        const now = new Date();
+        const diff = now - birthDate;
+        document.getElementById('yearsAlive').textContent = (diff / MS_PER_YEAR).toFixed(12);
+        requestAnimationFrame(updateAge);
     }
-
-    const TEXTS = ["无限进步!", "无限进步!"];
-    let typingTimeout = null;
-    let currentTextIndex = 0;
-    let isDeleting = false;
-
-    function typeEffect() {
-        const el = document.getElementById('typing');
-        const currentText = TEXTS[currentTextIndex];
-        const currentLength = el.textContent.length;
-
-        if (!isDeleting && currentLength < currentText.length) {
-            el.textContent = currentText.substring(0, currentLength + 1);
-            typingTimeout = setTimeout(typeEffect, 100);
-        } 
-        else if (!isDeleting && currentLength === currentText.length) {
-            isDeleting = true;
-            typingTimeout = setTimeout(typeEffect, 2000);
-        } 
-        else if (isDeleting && currentLength > 0) {
-            el.textContent = currentText.substring(0, currentLength - 1);
-            typingTimeout = setTimeout(typeEffect, 50);
-        } 
-        else {
-            isDeleting = false;
-            currentTextIndex = (currentTextIndex + 1) % TEXTS.length;
-            typingTimeout = setTimeout(typeEffect, 500);
-        }
-    }
-
     updateAge();
-    typeEffect();
 </script>
 </body>
 </html>
