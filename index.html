@@ -1230,7 +1230,7 @@ button,input{font-family:inherit;}
     }
     if(file.type === "sh"){
       addLine("#!/usr/bin/env websh", "dim");
-      addLine("# music.sh — 启动 Web-OS 音乐播放器（循环播放）", "dim");
+      addLine("# music.sh — 启动 Web-OS 音乐播放", "dim");
       SONGS.forEach(function(song, i){
         addLine("# " + (i + 1) + ". " + song.title + " — " + song.artist, "dim");
       });
@@ -1266,7 +1266,7 @@ button,input{font-family:inherit;}
       showPlayer();
       wantPlay = true;
       if(audio.paused) tryPlay();
-      addLine("music.sh: 已启动 Web-OS 音乐播放器（5 首循环）", "ok");
+      addLine("music.sh: 已启动 Web-OS 音乐播放器", "ok");
       return;
     }
     addLine("bash: " + clean + ": No such file or directory", "err");
