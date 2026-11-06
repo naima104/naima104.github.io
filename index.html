@@ -1,0 +1,1780 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#131416">
+<meta name="color-scheme" content="dark">
+<title>./index · Web-OS</title>
+<style>
+:root{
+  --mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", "Courier New", monospace;
+  --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif;
+  --bg: #131416;
+  --bg2: #0b0c0e;
+  --text: #f3f5f7;
+  --muted: #a7adb6;
+  --dim: #6d7480;
+  --accent: #3498db;
+  --accent2: #2b7fd4;
+  --panel: rgba(17,18,21,.86);
+  --line: rgba(255,255,255,.12);
+  --glow: rgba(52,152,219,.24);
+  --glow2: rgba(88,101,242,.14);
+  --ok: #7ee787;
+  --warn: #ffd479;
+  --err: #ff7b72;
+  --top-h: 112px;
+  --radius: 14px;
+}
+*{box-sizing:border-box;}
+html,body{height:100%;}
+html{background:var(--bg);}
+body{
+  margin:0;
+  overflow:hidden;
+  font-family:var(--mono);
+  color:var(--text);
+  background:var(--bg);
+  -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;
+  transition:color .45s ease,background-color .45s ease;
+}
+button,input{font-family:inherit;}
+::selection{background:var(--accent);color:#0b0c0e;}
+#app{
+  position:relative;
+  height:100vh;
+  height:100dvh;
+  display:flex;
+  flex-direction:column;
+  overflow:hidden;
+  background:
+    radial-gradient(1200px 820px at 12% -12%, var(--glow), transparent 62%),
+    radial-gradient(1000px 720px at 102% 12%, var(--glow2), transparent 58%),
+    linear-gradient(165deg, var(--bg2) 0%, var(--bg) 56%, #07080a 100%);
+}
+#app::after{
+  content:"";
+  position:fixed;
+  inset:0;
+  z-index:90;
+  pointer-events:none;
+  opacity:.22;
+  background:repeating-linear-gradient(0deg, rgba(255,255,255,.035) 0 1px, transparent 1px 3px);
+}
+#top{
+  position:relative;
+  flex:0 0 auto;
+  height:var(--top-h);
+  min-height:92px;
+  overflow:hidden;
+  display:flex;
+  flex-direction:column;
+  padding:clamp(14px,2.2vh,22px) clamp(16px,4vw,36px) clamp(10px,1.6vh,18px);
+  cursor:row-resize;
+  touch-action:none;
+  user-select:none;
+}
+#top::before{
+  content:"";
+  position:absolute;
+  inset:-20%;
+  pointer-events:none;
+  background:
+    radial-gradient(circle at 18% 28%, var(--glow), transparent 42%),
+    radial-gradient(circle at 82% 74%, var(--glow2), transparent 45%);
+  filter:blur(10px);
+  opacity:.9;
+}
+#top::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  opacity:.55;
+  background-image:
+    linear-gradient(rgba(255,255,255,.038) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,.038) 1px, transparent 1px);
+  background-size:38px 38px;
+  -webkit-mask-image:radial-gradient(ellipse at 50% 38%, #000 0%, transparent 76%);
+  mask-image:radial-gradient(ellipse at 50% 38%, #000 0%, transparent 76%);
+}
+.brand{
+  position:relative;
+  z-index:2;
+  display:flex;
+  align-items:baseline;
+  width:max-content;
+  max-width:100%;
+  font-size:clamp(30px,5.4vw,60px);
+  font-weight:800;
+  letter-spacing:-.055em;
+  line-height:1;
+  color:var(--text);
+  text-shadow:0 0 30px var(--glow);
+  user-select:none;
+}
+.brand .slash{color:var(--accent);}
+.top-center{
+  position:relative;
+  z-index:2;
+  flex:1;
+  min-height:0;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:clamp(7px,1.4vh,14px);
+  text-align:center;
+  transition:opacity .3s ease,transform .3s ease;
+}
+#top.collapsed .top-center{opacity:0;transform:translateY(10px);pointer-events:none;}
+#swipeHint{
+  position:absolute;
+  left:50%;
+  bottom:8px;
+  z-index:3;
+  display:flex;
+  align-items:center;
+  gap:.35em;
+  transform:translateX(-50%);
+  font-size:clamp(10px,1.1vw,12px);
+  letter-spacing:.08em;
+  color:var(--muted);
+  opacity:0;
+  pointer-events:none;
+  white-space:nowrap;
+  transition:opacity .3s ease;
+}
+#top.collapsed #swipeHint{opacity:.82;}
+#swipeHint .arrow{
+  display:inline-block;
+  color:var(--accent);
+  font-weight:700;
+  animation:swipeUp 1.9s ease-in-out infinite;
+}
+@keyframes swipeUp{
+  0%,100%{transform:translateY(1px);opacity:.55;}
+  50%{transform:translateY(-4px);opacity:1;}
+}
+.typewriter{
+  min-height:1.5em;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:clamp(18px,3.4vw,30px);
+  font-weight:650;
+  letter-spacing:.01em;
+  color:var(--text);
+  text-shadow:0 0 22px var(--glow);
+}
+.type-text{white-space:pre;}
+.type-caret{
+  display:inline-block;
+  width:2px;
+  height:1.05em;
+  margin-left:4px;
+  background:var(--accent);
+  box-shadow:0 0 10px var(--glow);
+  animation:blink 1s steps(1,end) infinite;
+}
+.age-line{
+  font-family:var(--sans);
+  font-size:clamp(12px,1.5vw,15px);
+  letter-spacing:.04em;
+  color:var(--muted);
+  text-align:center;
+}
+.age-line b{
+  margin:0 .12em;
+  font-family:var(--mono);
+  font-size:1.12em;
+  font-weight:700;
+  color:var(--accent);
+  text-shadow:0 0 14px var(--glow);
+}
+.age-line .suffix{color:var(--muted);}
+#divider{
+  position:relative;
+  z-index:30;
+  flex:0 0 26px;
+  height:26px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  cursor:row-resize;
+  touch-action:none;
+  outline:none;
+}
+#divider .pill{
+  width:46px;
+  height:5px;
+  border-radius:999px;
+  background:var(--muted);
+  opacity:.4;
+  transition:width .22s cubic-bezier(.2,.8,.2,1),opacity .22s,background .22s,box-shadow .22s;
+}
+#divider:hover .pill,
+#divider:focus-visible .pill,
+#app.dragging .pill{
+  width:70px;
+  opacity:.95;
+  background:var(--accent);
+  box-shadow:0 0 16px var(--glow);
+}
+#app.dragging, #app.dragging *{user-select:none !important;}
+#app.dragging{cursor:row-resize;}
+#bottom{
+  position:relative;
+  z-index:10;
+  flex:1 1 auto;
+  min-height:0;
+  display:flex;
+  flex-direction:column;
+  background:var(--panel);
+  border-top:1px solid var(--line);
+  box-shadow:0 -18px 44px rgba(0,0,0,.3);
+  -webkit-backdrop-filter:blur(18px) saturate(1.2);
+  backdrop-filter:blur(18px) saturate(1.2);
+}
+#hint{
+  flex:0 0 auto;
+  display:flex;
+  align-items:center;
+  gap:.5em;
+  max-height:46px;
+  padding:10px clamp(14px,3vw,22px) 8px;
+  overflow:hidden;
+  white-space:nowrap;
+  font-size:clamp(11px,1.2vw,12.5px);
+  color:var(--muted);
+  opacity:1;
+  transition:opacity .5s ease,max-height .5s ease,padding .5s ease;
+}
+#hint.hide{opacity:0;max-height:0;padding-top:0;padding-bottom:0;}
+#hint .hint-dot{
+  flex:none;
+  width:6px;
+  height:6px;
+  border-radius:50%;
+  background:var(--ok);
+  box-shadow:0 0 8px var(--ok);
+  animation:pulse 2s ease-in-out infinite;
+}
+#hint .hint-key{
+  color:var(--accent);
+  font-weight:700;
+  text-decoration:underline;
+  text-underline-offset:2px;
+  cursor:pointer;
+}
+#hint .hint-key:hover{color:var(--text);}
+.rule{
+  flex:0 0 1px;
+  height:1px;
+  margin:0 clamp(14px,3vw,22px);
+  background:var(--line);
+}
+#screen{
+  position:relative;
+  flex:1 1 auto;
+  min-height:0;
+  overflow-y:auto;
+  overflow-x:hidden;
+  overscroll-behavior:contain;
+}
+#screen::-webkit-scrollbar{width:9px;}
+#screen::-webkit-scrollbar-track{background:transparent;}
+#screen::-webkit-scrollbar-thumb{
+  background:var(--line);
+  border:2px solid transparent;
+  background-clip:padding-box;
+  border-radius:99px;
+}
+#screen::-webkit-scrollbar-thumb:hover{background:var(--dim);background-clip:padding-box;}
+#player{
+  position:sticky;
+  top:0;
+  z-index:12;
+  display:none;
+  padding:9px clamp(14px,3vw,22px) 8px;
+  background:var(--panel);
+  border-bottom:1px solid var(--line);
+  box-shadow:0 12px 30px -22px rgba(0,0,0,.95);
+  -webkit-backdrop-filter:blur(16px) saturate(1.2);
+  backdrop-filter:blur(16px) saturate(1.2);
+}
+#player.show{display:block;animation:slideDown .4s cubic-bezier(.2,.8,.2,1);}
+#player .disc{
+  flex:none;
+  display:inline-block;
+  font-size:1.2em;
+  color:var(--accent);
+  text-shadow:0 0 12px var(--glow);
+  animation:spin 7s linear infinite;
+}
+#player.paused .disc{animation-play-state:paused;opacity:.55;}
+.player-top{
+  display:flex;
+  align-items:center;
+  gap:.7em;
+  min-width:0;
+  font-size:clamp(12px,1.05vw + 8px,14px);
+}
+.track{
+  flex:1;
+  min-width:0;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+#pTitle{font-weight:700;color:var(--text);}
+#pArtist{margin-left:.55em;font-size:.9em;color:var(--muted);}
+.state{
+  flex:none;
+  font-size:.8em;
+  letter-spacing:.03em;
+  color:var(--dim);
+}
+.state.on{color:var(--ok);text-shadow:0 0 10px rgba(126,231,135,.3);}
+.state.warnish{color:var(--warn);}
+.player-bottom{
+  display:flex;
+  align-items:center;
+  gap:.65em;
+  margin-top:5px;
+  font-size:clamp(11px,1vw + 7px,13px);
+  color:var(--dim);
+}
+#pTime,#pDur{flex:none;font-variant-numeric:tabular-nums;}
+.bar{
+  flex:1;
+  min-width:0;
+  overflow:hidden;
+  white-space:nowrap;
+  letter-spacing:.02em;
+  cursor:pointer;
+  user-select:none;
+}
+.bar-on{color:var(--accent);text-shadow:0 0 8px var(--glow);}
+.bar-off{color:var(--dim);opacity:.55;}
+.controls{display:flex;flex:none;gap:2px;}
+.controls button{
+  appearance:none;
+  min-width:28px;
+  border:1px solid transparent;
+  border-radius:7px;
+  padding:4px 6px;
+  background:transparent;
+  color:var(--muted);
+  font-size:1.08em;
+  line-height:1;
+  cursor:pointer;
+  transition:color .15s,background .15s,border-color .15s;
+}
+.controls button:hover{color:var(--text);background:rgba(255,255,255,.07);border-color:var(--line);}
+.controls button:active{transform:translateY(1px);}
+#output{
+  padding:14px clamp(14px,3vw,22px) 4px;
+  font-size:clamp(12px,1.05vw + 8px,14px);
+  line-height:1.62;
+  white-space:pre-wrap;
+  overflow-wrap:anywhere;
+}
+.line{min-height:1.05em;}
+.dim{color:var(--dim);}
+.muted{color:var(--muted);}
+.ok{color:var(--ok);}
+.warn{color:var(--warn);}
+.err{color:var(--err);}
+.accent{color:var(--accent);}
+.ascii-art{
+  margin:2px 0 10px;
+  white-space:pre;
+  font-size:clamp(7px,1.35vw,12px);
+  font-weight:700;
+  line-height:1.08;
+  letter-spacing:0;
+  color:var(--accent);
+  text-shadow:0 0 18px var(--glow);
+}
+.music-line{font-size:1.02em;}
+.music-name{color:var(--text);}
+.music-dash{color:var(--accent);letter-spacing:.05em;}
+.music-done{color:var(--ok);font-weight:700;text-shadow:0 0 10px rgba(126,231,135,.35);}
+.term-link{
+  color:var(--accent);
+  text-decoration:underline;
+  text-underline-offset:2px;
+  text-decoration-thickness:1px;
+  cursor:pointer;
+}
+.term-link:hover{color:var(--text);text-shadow:0 0 10px var(--glow);}
+.file-sh{color:var(--ok);text-decoration:none;}
+.file-sh:hover{color:var(--text);text-decoration:underline;}
+.file-ro{color:var(--muted);}
+.cmd{
+  color:var(--accent);
+  cursor:pointer;
+  text-decoration:underline dotted;
+  text-underline-offset:3px;
+}
+.cmd:hover{color:var(--text);}
+.ls-grid{
+  display:flex;
+  flex-wrap:wrap;
+  gap:.35em 2.4em;
+  padding:.2em 0;
+}
+.ls-row{
+  display:grid;
+  grid-template-columns:11ch 6ch 1fr;
+  gap:.8em;
+  align-items:baseline;
+}
+.ls-row .perm{color:var(--dim);font-size:.92em;}
+.ls-row .size{color:var(--dim);text-align:right;}
+.help-head{margin:2px 0 8px;color:var(--accent);font-weight:700;}
+.help-row{
+  display:grid;
+  grid-template-columns:minmax(11ch,22ch) 1fr;
+  gap:1em;
+  align-items:baseline;
+  padding:1px 0;
+}
+.help-desc{color:var(--muted);}
+.cat-pre{
+  margin:2px 0 6px;
+  padding:8px 10px;
+  border:1px solid var(--line);
+  border-radius:8px;
+  background:rgba(0,0,0,.22);
+  color:var(--muted);
+  font-size:.92em;
+  line-height:1.5;
+  white-space:pre-wrap;
+  overflow-wrap:anywhere;
+}
+.neofetch{
+  display:flex;
+  flex-wrap:wrap;
+  gap:1.2em;
+  align-items:flex-start;
+  padding:4px 0;
+}
+.neofetch .tux{
+  margin:0;
+  color:var(--accent);
+  font-size:clamp(9px,1.3vw,12px);
+  line-height:1.15;
+  text-shadow:0 0 14px var(--glow);
+}
+.nf-info{min-width:0;}
+.nf-row{display:flex;gap:.6em;line-height:1.55;}
+.nf-key{flex:none;width:8ch;color:var(--accent);font-weight:700;}
+.nf-val{color:var(--muted);}
+#promptLine{
+  display:flex;
+  align-items:center;
+  gap:.55em;
+  padding:6px clamp(14px,3vw,22px) 18px;
+  font-size:clamp(12px,1.05vw + 8px,14px);
+}
+#promptLine .ps1{flex:none;white-space:nowrap;}
+#promptLine .u{color:var(--ok);}
+#promptLine .host{color:var(--accent);}
+#promptLine .sep{color:var(--dim);}
+#promptLine .path{color:var(--muted);}
+#cmd{
+  flex:1;
+  min-width:0;
+  padding:2px 0;
+  border:0;
+  outline:none;
+  background:transparent;
+  color:var(--text);
+  font:inherit;
+  caret-color:var(--accent);
+}
+#cmd::placeholder{color:var(--dim);}
+@keyframes blink{50%{opacity:0;}}
+@keyframes pulse{50%{opacity:.35;}}
+@keyframes spin{to{transform:rotate(360deg);}}
+@keyframes slideDown{from{opacity:0;transform:translateY(-8px);}to{opacity:1;transform:none;}}
+@media (max-width:600px){
+  #top{padding:14px 16px 10px;}
+  .brand{font-size:clamp(28px,9vw,44px);}
+  .top-center{gap:6px;}
+  .typewriter{font-size:18px;}
+  #output{padding:12px 14px 4px;}
+  #player{padding:8px 14px 7px;}
+  #promptLine{padding:6px 14px 18px;font-size:13px;}
+  #cmd{font-size:16px;}
+  .ls-row{grid-template-columns:10ch 5ch 1fr;}
+  .help-row{grid-template-columns:minmax(10ch,16ch) 1fr;}
+}
+@media (max-height:520px){
+  .age-line{display:none;}
+  .typewriter{font-size:16px;}
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.001ms !important;animation-iteration-count:1 !important;transition-duration:.001ms !important;}
+}
+</style>
+</head>
+<body>
+<div id="app">
+  <header id="top" class="collapsed">
+    <div class="brand"><span class="slash">./</span>index</div>
+    <div class="top-center">
+      <div class="typewriter"><span class="type-text" id="typing"></span><span class="type-caret" aria-hidden="true"></span></div>
+      <div class="age-line">这里是<b id="ageNum">15</b>岁<span id="grade">高一</span><span class="suffix" id="suffix">学生</span>的小屋</div>
+    </div>
+    <div id="swipeHint"><span class="arrow">↑</span><span>上滑展开</span></div>
+  </header>
+  <div id="divider" role="separator" aria-orientation="horizontal" aria-label="拖动调整上下区域" tabindex="0"><div class="pill"></div></div>
+  <section id="bottom">
+    <div id="hint"><span class="hint-dot" aria-hidden="true"></span><span class="hint-key" id="hintHelp">Help</span><span>命令已获得帮助</span></div>
+    <div class="rule"></div>
+    <div id="screen">
+      <div id="player" aria-label="音乐播放器">
+        <div class="player-top">
+          <span class="disc" aria-hidden="true">♪</span>
+          <span class="track"><span id="pTitle">—</span><span id="pArtist"></span></span>
+          <span class="state" id="pState">[loading]</span>
+        </div>
+        <div class="player-bottom">
+          <span id="pTime">00:00</span>
+          <span class="bar" id="pBar" role="slider" aria-label="播放进度" tabindex="0"></span>
+          <span id="pDur">00:00</span>
+          <span class="controls">
+            <button id="btnPrev" aria-label="上一首" title="上一首">|&lt;</button>
+            <button id="btnPlay" aria-label="播放或暂停" title="播放 / 暂停">&gt;</button>
+            <button id="btnNext" aria-label="下一首" title="下一首">&gt;|</button>
+          </span>
+        </div>
+      </div>
+      <div id="output"></div>
+      <form id="promptLine" autocomplete="off">
+        <span class="ps1"><span class="u">naima</span><span class="sep">@</span><span class="host">web-os</span><span class="sep">:</span><span class="path">~</span><span class="sep">$</span></span>
+        <input id="cmd" type="text" aria-label="终端输入" spellcheck="false" autocapitalize="off" autocorrect="off" placeholder="输入 help 查看命令" />
+      </form>
+    </div>
+  </section>
+</div>
+<script>
+(function(){
+  "use strict";
+
+  const $ = (sel, root) => (root || document).querySelector(sel);
+  const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+  const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
+  const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c]));
+
+  const appEl = $("#app");
+  const topEl = $("#top");
+  const dividerEl = $("#divider");
+  const screenEl = $("#screen");
+  const outputEl = $("#output");
+  const cmdEl = $("#cmd");
+  const playerEl = $("#player");
+  const hintEl = $("#hint");
+
+  const ART = [
+    "██╗    ██╗███████╗██████╗        ██████╗ ███████╗",
+    "██║    ██║██╔════╝██╔══██╗      ██╔═══██╗██╔════╝",
+    "██║ █╗ ██║█████╗  ██████╔╝█████╗██║   ██║███████╗",
+    "██║███╗██║██╔══╝  ██╔══██╗╚════╝██║   ██║╚════██║",
+    "╚███╔███╔╝███████╗██████╔╝      ╚██████╔╝███████║",
+    " ╚══╝╚══╝ ╚══════╝╚═════╝        ╚═════╝ ╚══════╝"
+  ].join("\n");
+
+  const SITE = "https://naima104.github.io/";
+  const BIRTH = new Date(2010, 11, 8);
+  const CN_NUM = ["一", "二", "三", "四", "五", "六"];
+
+  const SONGS = [
+    {id:2008048808, title:"岁末码头", artist:"Newbiao好梦一场 / 星尘infinity", cover:"https://p1.music.126.net/KVI3FAFuE_tohe7zhK3ZPg==/109951168160791853.jpg", duration:139.5, hue:31},
+    {id:3364302039, title:"逃离不开", artist:"MOCKER44. / 洛天依 / 乐正绫", cover:"https://p1.music.126.net/vh77U-ktoZrYhuljZkzrSA==/109951172957997550.jpg", duration:157.7, hue:200},
+    {id:2661119343, title:"情绪未响应", artist:"夜踊Yoodori / 洛天依", cover:"https://p1.music.126.net/wOZSYhz0fjzk0rNuJjU3Dw==/109951171416801479.jpg", duration:367.4, hue:214},
+    {id:3373876910, title:"泪欲海", artist:"MOCKER44.", cover:"https://p1.music.126.net/gSMSXoUnDN5EyjsQxiJRqg==/109951173108547485.jpg", duration:124.7, hue:222},
+    {id:2705018667, title:"遥远小镇的我", artist:"洛天依 / flybanana", cover:"https://p2.music.126.net/0oaljSQno1HLMn7o9pu-CQ==/109951172862213418.jpg", duration:195.4, hue:35}
+  ];
+
+  const FILES = [
+    {name:"music.sh", type:"sh", perm:"-r--r--r--", size:812, date:"Nov  6 23:00"},
+    {name:"联系方式.html", type:"html", perm:"-r--r--r--", size:2460, date:"Nov  6 23:00"},
+    {name:"QQ 聊天机器人.link", type:"link", perm:"-r--r--r--", size:96, date:"Nov  6 23:00"},
+    {name:"关于我.html", type:"html", perm:"-r--r--r--", size:3180, date:"Nov  6 23:00"},
+    {name:"关于这个网页.html", type:"html", perm:"-r--r--r--", size:2740, date:"Nov  6 23:00"}
+  ];
+
+  const TUX = [
+    "   .--.        ",
+    "  |o_o |       ",
+    "  |:_/ |       ",
+    " //   \\ \\      ",
+    "(|     | )     ",
+    "/'\\_   _/`\\    ",
+    "\\___)=(___/    "
+  ].join("\n");
+
+  const DARK_THEME = {
+    "--bg":"#131416",
+    "--bg2":"#0b0c0e",
+    "--text":"#f3f5f7",
+    "--muted":"#a7adb6",
+    "--dim":"#6d7480",
+    "--accent":"#3498db",
+    "--accent2":"#2b7fd4",
+    "--panel":"rgba(17,18,21,.86)",
+    "--line":"rgba(255,255,255,.12)",
+    "--glow":"rgba(52,152,219,.24)",
+    "--glow2":"rgba(88,101,242,.14)"
+  };
+
+  let themeState = {mode:"dark", accent:"#3498db", h:210, s:60};
+  let hintTimer = null;
+  let booted = false;
+  let barWidth = 26;
+
+  function setVars(vars){
+    const root = document.documentElement;
+    Object.keys(vars).forEach((k) => root.style.setProperty(k, vars[k]));
+  }
+
+  function applyDarkTheme(){
+    setVars(DARK_THEME);
+    themeState = {mode:"dark", accent:"#3498db", h:210, s:60};
+    const meta = document.querySelector('meta[name="theme-color"]');
+    if(meta) meta.setAttribute("content", "#131416");
+  }
+
+  function hslToHex(h, s, l){
+    s /= 100;
+    l /= 100;
+    const k = (n) => (n + h / 30) % 12;
+    const a = s * Math.min(l, 1 - l);
+    const f = (n) => l - a * Math.max(-1, Math.min(k(n) - 3, Math.min(9 - k(n), 1)));
+    const toHex = (x) => Math.round(255 * x).toString(16).padStart(2, "0");
+    return "#" + toHex(f(0)) + toHex(f(8)) + toHex(f(4));
+  }
+
+  function themeFromHsl(h, s){
+    const H = Math.round(((h % 1) + 1) % 1 * 360);
+    const S = Math.round(clamp(s, .38, .9) * 100);
+    const vars = {
+      "--accent":"hsl(" + H + " " + S + "% 64%)",
+      "--accent2":"hsl(" + ((H + 38) % 360) + " " + Math.round(S * .82) + "% 56%)",
+      "--text":"hsl(" + H + " 28% 97%)",
+      "--muted":"hsl(" + H + " 18% 74%)",
+      "--dim":"hsl(" + H + " 15% 55%)",
+      "--bg":"hsl(" + H + " 32% 7%)",
+      "--bg2":"hsl(" + ((H + 22) % 360) + " 38% 12%)",
+      "--panel":"hsla(" + H + " 34% 8% / .87)",
+      "--line":"hsla(" + H + " 45% 72% / .15)",
+      "--glow":"hsla(" + H + " 85% 58% / .3)",
+      "--glow2":"hsla(" + ((H + 40) % 360) + " 80% 55% / .18)"
+    };
+    setVars(vars);
+    themeState = {mode:"cover", accent:hslToHex(H, S, 64), h:H, s:S};
+    const meta = document.querySelector('meta[name="theme-color"]');
+    if(meta) meta.setAttribute("content", hslToHex(H, Math.round(S * .55), 8));
+  }
+
+  function rgbToHsv(r, g, b){
+    r /= 255; g /= 255; b /= 255;
+    const max = Math.max(r, g, b);
+    const min = Math.min(r, g, b);
+    const d = max - min;
+    let h = 0;
+    const s = max ? d / max : 0;
+    const v = max;
+    if(d){
+      if(max === r) h = ((g - b) / d + (g < b ? 6 : 0));
+      else if(max === g) h = (b - r) / d + 2;
+      else h = (r - g) / d + 4;
+      h /= 6;
+    }
+    return {h:h, s:s, v:v};
+  }
+
+  const paletteCache = new Map();
+
+  function extractPalette(url){
+    if(paletteCache.has(url)) return Promise.resolve(paletteCache.get(url));
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      img.crossOrigin = "anonymous";
+      img.decoding = "async";
+      img.onload = function(){
+        try{
+          const size = 40;
+          const canvas = document.createElement("canvas");
+          canvas.width = size;
+          canvas.height = size;
+          const ctx = canvas.getContext("2d", {willReadFrequently:true});
+          ctx.drawImage(img, 0, 0, size, size);
+          const data = ctx.getImageData(0, 0, size, size).data;
+          const buckets = [];
+          for(let i = 0; i < 18; i++) buckets.push({w:0, r:0, g:0, b:0, n:0});
+          for(let i = 0; i < data.length; i += 4){
+            const r = data[i], g = data[i+1], b = data[i+2];
+            const hsv = rgbToHsv(r, g, b);
+            if(hsv.v < .08) continue;
+            const w = (hsv.s * .76 + .24) * hsv.v;
+            const bi = Math.floor(hsv.h * 18) % 18;
+            const bucket = buckets[bi];
+            bucket.w += w;
+            bucket.r += r;
+            bucket.g += g;
+            bucket.b += b;
+            bucket.n++;
+          }
+          buckets.sort((a, b) => b.w - a.w);
+          let top = buckets[0];
+          for(let i = 0; i < buckets.length; i++){
+            if(buckets[i].n >= 5){ top = buckets[i]; break; }
+          }
+          if(!top || !top.n) throw new Error("no colors");
+          const hsv = rgbToHsv(top.r / top.n, top.g / top.n, top.b / top.n);
+          const palette = {h:hsv.h, s:hsv.s, v:hsv.v};
+          paletteCache.set(url, palette);
+          resolve(palette);
+        }catch(err){
+          reject(err);
+        }
+      };
+      img.onerror = () => reject(new Error("cover load failed"));
+      img.src = url + (url.indexOf("?") >= 0 ? "&" : "?") + "param=200y200";
+    });
+  }
+
+  let themeToken = 0;
+
+  async function refreshCoverTheme(){
+    if(!isPlaying) return;
+    const token = ++themeToken;
+    const song = SONGS[currentIndex];
+    try{
+      const palette = await extractPalette(song.cover);
+      if(token !== themeToken || !isPlaying || SONGS[currentIndex] !== song) return;
+      themeFromHsl(palette.h, clamp(palette.s + .12, .42, .9));
+    }catch(err){
+      if(token !== themeToken || !isPlaying) return;
+      themeFromHsl((song.hue || 210) / 360, .58);
+    }
+  }
+
+  function ageAt(date){
+    let age = date.getFullYear() - BIRTH.getFullYear();
+    const m = date.getMonth() - BIRTH.getMonth();
+    if(m < 0 || (m === 0 && date.getDate() < BIRTH.getDate())) age--;
+    return age;
+  }
+
+  function schoolAge(date){
+    const year = date.getMonth() >= 8 ? date.getFullYear() : date.getFullYear() - 1;
+    const start = new Date(year, 8, 1);
+    let age = start.getFullYear() - BIRTH.getFullYear();
+    const m = start.getMonth() - BIRTH.getMonth();
+    if(m < 0 || (m === 0 && start.getDate() < BIRTH.getDate())) age--;
+    return age;
+  }
+
+  function gradeFor(age){
+    if(age < 3) return {name:"幼儿", suffix:"小朋友"};
+    if(age < 6) return {name:"幼儿园", suffix:"小朋友"};
+    if(age < 12) return {name:"小学" + CN_NUM[age - 6] + "年级", suffix:"学生"};
+    if(age < 15) return {name:"初" + CN_NUM[age - 12], suffix:"学生"};
+    if(age < 18) return {name:"高" + CN_NUM[age - 15], suffix:"学生"};
+    if(age < 22) return {name:"大" + CN_NUM[age - 18], suffix:"学生"};
+    return {name:"社会", suffix:"人"};
+  }
+
+  function refreshAge(){
+    const now = new Date();
+    const age = ageAt(now);
+    const grade = gradeFor(schoolAge(now));
+    $("#ageNum").textContent = age;
+    $("#grade").textContent = grade.name;
+    $("#suffix").textContent = grade.suffix;
+  }
+
+  const TEXTS = ["无限进步!", "欢迎来到我的小屋", "Hello, World!", "Keep coding, keep living."];
+  let textIndex = 0;
+  let deleting = false;
+  let typeTimer = null;
+
+  function typeLoop(){
+    const el = $("#typing");
+    const current = TEXTS[textIndex];
+    const length = el.textContent.length;
+    if(!deleting && length < current.length){
+      el.textContent = current.slice(0, length + 1);
+      typeTimer = setTimeout(typeLoop, 55 + Math.random() * 85);
+    }else if(!deleting && length === current.length){
+      deleting = true;
+      typeTimer = setTimeout(typeLoop, 1500);
+    }else if(deleting && length > 0){
+      el.textContent = current.slice(0, length - 1);
+      typeTimer = setTimeout(typeLoop, 26 + Math.random() * 42);
+    }else{
+      deleting = false;
+      textIndex = (textIndex + 1) % TEXTS.length;
+      typeTimer = setTimeout(typeLoop, 350);
+    }
+  }
+
+  function scrollBottom(){
+    requestAnimationFrame(() => {
+      screenEl.scrollTop = screenEl.scrollHeight;
+    });
+  }
+
+  function addRaw(html, cls){
+    const div = document.createElement("div");
+    div.className = "line" + (cls ? " " + cls : "");
+    div.innerHTML = html;
+    outputEl.appendChild(div);
+    scrollBottom();
+    return div;
+  }
+
+  function addLine(text, cls){
+    return addRaw(esc(text == null ? "" : text), cls || "");
+  }
+
+  function fmtSize(n){
+    if(!isFinite(n) || n < 0) return "?";
+    if(n < 1024) return n + "B";
+    if(n < 1024 * 1024) return (n / 1024).toFixed(1) + "K";
+    return (n / 1024 / 1024).toFixed(1) + "M";
+  }
+
+  function fmtTime(sec){
+    if(!isFinite(sec) || sec < 0) sec = 0;
+    const m = Math.floor(sec / 60);
+    const s = Math.floor(sec % 60);
+    return String(m).padStart(2, "0") + ":" + String(s).padStart(2, "0");
+  }
+
+  function progressBar(ratio, width){
+    const w = width || 18;
+    const f = Math.round(clamp(ratio, 0, 1) * w);
+    return "█".repeat(f) + "░".repeat(w - f);
+  }
+
+  function fileHTML(file){
+    const name = esc(file.name);
+    if(file.type === "html"){
+      return '<a class="term-link" href="' + SITE + encodeURIComponent(file.name) + '" target="_blank" rel="noopener noreferrer">' + name + "</a>";
+    }
+    if(file.type === "sh"){
+      return '<span class="term-link file-sh" role="link" tabindex="0" data-run="' + name + '" title="点击执行">' + name + "</span>";
+    }
+    return '<span class="file-ro">' + name + "</span>";
+  }
+
+  const audio = new Audio();
+  audio.preload = "metadata";
+  let currentIndex = 0;
+  let isPlaying = false;
+  let autoplayBlocked = false;
+  let changingTrack = false;
+  let fallbackTried = false;
+  let wantPlay = false;
+  let autoplayNoteShown = false;
+
+  function metingUrl(id){
+    return "https://api.injahow.cn/meting/?server=netease&type=url&id=" + id;
+  }
+
+  function outerUrl(id){
+    return "https://music.163.com/song/media/outer/url?id=" + id + ".mp3";
+  }
+
+  function renderPlayer(){
+    const song = SONGS[currentIndex];
+    $("#pTitle").textContent = song.title;
+    $("#pArtist").textContent = song.artist;
+    const state = $("#pState");
+    if(isPlaying){
+      state.textContent = "[playing]";
+      state.className = "state on";
+    }else if(autoplayBlocked){
+      state.textContent = "[tap to play]";
+      state.className = "state warnish";
+    }else{
+      state.textContent = "[paused]";
+      state.className = "state";
+    }
+    $("#btnPlay").textContent = isPlaying ? "||" : ">";
+    playerEl.classList.toggle("paused", !isPlaying);
+  }
+
+  function renderProgress(cur, dur){
+    const song = SONGS[currentIndex];
+    if(dur == null || !isFinite(dur)) dur = (isFinite(audio.duration) && audio.duration > 0) ? audio.duration : song.duration;
+    if(cur == null) cur = audio.currentTime || 0;
+    const ratio = dur ? clamp(cur / dur, 0, 1) : 0;
+    const filled = Math.round(ratio * barWidth);
+    const bar = $("#pBar");
+    bar.innerHTML = '<span class="bar-on">' + "━".repeat(filled) + '</span><span class="bar-off">' + "─".repeat(Math.max(0, barWidth - filled)) + "</span>";
+    $("#pTime").textContent = fmtTime(cur);
+    $("#pDur").textContent = fmtTime(dur);
+  }
+
+  async function tryPlay(){
+    try{
+      await audio.play();
+      autoplayBlocked = false;
+      return true;
+    }catch(err){
+      autoplayBlocked = true;
+      isPlaying = false;
+      applyDarkTheme();
+      renderPlayer();
+      if(!autoplayNoteShown){
+        autoplayNoteShown = true;
+        addLine("浏览器已拦截自动播放。点击播放器或按任意键即可开始播放。", "warn");
+      }
+      return false;
+    }
+  }
+
+  function loadTrack(index, autoplay){
+    currentIndex = (index + SONGS.length) % SONGS.length;
+    const song = SONGS[currentIndex];
+    changingTrack = true;
+    fallbackTried = false;
+    audio.src = metingUrl(song.id);
+    audio.load();
+    $("#pTime").textContent = "00:00";
+    $("#pDur").textContent = fmtTime(song.duration);
+    renderProgress(0, song.duration);
+    renderPlayer();
+    if(autoplay){
+      wantPlay = true;
+      tryPlay();
+    }else{
+      changingTrack = false;
+    }
+  }
+
+  function nextTrack(){
+    loadTrack(currentIndex + 1, true);
+  }
+
+  function prevTrack(){
+    loadTrack(currentIndex - 1, true);
+  }
+
+  function togglePlay(){
+    if(audio.paused){
+      wantPlay = true;
+      autoplayBlocked = false;
+      tryPlay();
+    }else{
+      wantPlay = false;
+      audio.pause();
+    }
+  }
+
+  audio.addEventListener("play", function(){
+    isPlaying = true;
+    playerEl.classList.remove("paused");
+    renderPlayer();
+  });
+
+  audio.addEventListener("playing", function(){
+    isPlaying = true;
+    autoplayBlocked = false;
+    changingTrack = false;
+    playerEl.classList.remove("paused");
+    renderPlayer();
+    refreshCoverTheme();
+  });
+
+  audio.addEventListener("pause", function(){
+    if(changingTrack) return;
+    isPlaying = false;
+    playerEl.classList.add("paused");
+    renderPlayer();
+    if(!audio.ended) applyDarkTheme();
+  });
+
+  audio.addEventListener("ended", function(){
+    changingTrack = true;
+    loadTrack(currentIndex + 1, true);
+  });
+
+  audio.addEventListener("timeupdate", function(){
+    renderProgress();
+  });
+
+  audio.addEventListener("loadedmetadata", function(){
+    if(isFinite(audio.duration) && audio.duration > 0){
+      $("#pDur").textContent = fmtTime(audio.duration);
+    }
+    renderProgress();
+  });
+
+  audio.addEventListener("error", function(){
+    if(!fallbackTried){
+      fallbackTried = true;
+      audio.src = outerUrl(SONGS[currentIndex].id);
+      audio.load();
+      if(wantPlay) tryPlay();
+    }else{
+      isPlaying = false;
+      applyDarkTheme();
+      renderPlayer();
+      addLine("音频加载失败：" + SONGS[currentIndex].title + "，试试 music next。", "err");
+    }
+  });
+
+  $("#btnPlay").addEventListener("click", togglePlay);
+  $("#btnPrev").addEventListener("click", prevTrack);
+  $("#btnNext").addEventListener("click", nextTrack);
+
+  $("#pBar").addEventListener("click", function(e){
+    const rect = this.getBoundingClientRect();
+    const ratio = clamp((e.clientX - rect.left) / rect.width, 0, 1);
+    if(isFinite(audio.duration) && audio.duration > 0){
+      audio.currentTime = ratio * audio.duration;
+      renderProgress();
+    }
+  });
+
+  $("#pBar").addEventListener("keydown", function(e){
+    if(!isFinite(audio.duration) || audio.duration <= 0) return;
+    if(e.key === "ArrowRight"){
+      e.preventDefault();
+      audio.currentTime = clamp(audio.currentTime + 5, 0, audio.duration);
+    }
+    if(e.key === "ArrowLeft"){
+      e.preventDefault();
+      audio.currentTime = clamp(audio.currentTime - 5, 0, audio.duration);
+    }
+  });
+
+  function showPlayer(){
+    playerEl.classList.add("show");
+  }
+
+  function unlockAudio(e){
+    if(e && e.type === "pointerdown" && e.target && e.target.closest && e.target.closest("#player button, #pBar")) return;
+    if(autoplayBlocked){
+      wantPlay = true;
+      tryPlay();
+    }
+  }
+
+  document.addEventListener("pointerdown", unlockAudio, {passive:true});
+  document.addEventListener("keydown", unlockAudio);
+
+  let dragging = false;
+  let manualTop = false;
+  let dragStartY = 0;
+  let dragStartH = 0;
+  let dragTarget = null;
+
+  function setTopHeight(h){
+    h = clamp(h, 84, window.innerHeight - 150);
+    topEl.style.height = h + "px";
+    document.documentElement.style.setProperty("--top-h", h + "px");
+    topEl.classList.toggle("collapsed", h < 190);
+  }
+
+  function beginDrag(e){
+    if(e.button != null && e.button !== 0) return;
+    dragging = true;
+    manualTop = true;
+    dragStartY = e.clientY;
+    dragStartH = topEl.getBoundingClientRect().height;
+    dragTarget = e.currentTarget;
+    appEl.classList.add("dragging");
+    if(dragTarget && dragTarget.setPointerCapture){
+      try{ dragTarget.setPointerCapture(e.pointerId); }catch(err){}
+    }
+    e.preventDefault();
+  }
+
+  function endDrag(e){
+    if(!dragging) return;
+    dragging = false;
+    appEl.classList.remove("dragging");
+    if(dragTarget && dragTarget.releasePointerCapture){
+      try{ dragTarget.releasePointerCapture(e.pointerId); }catch(err){}
+    }
+    dragTarget = null;
+  }
+
+  topEl.addEventListener("pointerdown", beginDrag);
+  dividerEl.addEventListener("pointerdown", beginDrag);
+
+  window.addEventListener("pointermove", function(e){
+    if(!dragging) return;
+    setTopHeight(dragStartH + (e.clientY - dragStartY));
+  });
+
+  window.addEventListener("pointerup", endDrag);
+  window.addEventListener("pointercancel", endDrag);
+
+  dividerEl.addEventListener("dblclick", function(){
+    manualTop = true;
+    if(topEl.classList.contains("collapsed")){
+      setTopHeight(Math.min(window.innerHeight / 3, window.innerHeight - 150));
+    }else{
+      setTopHeight(112);
+    }
+  });
+
+  dividerEl.addEventListener("keydown", function(e){
+    const h = topEl.getBoundingClientRect().height;
+    if(e.key === "ArrowUp" || e.key === "ArrowDown"){
+      e.preventDefault();
+      manualTop = true;
+      setTopHeight(h + (e.key === "ArrowDown" ? 24 : -24));
+    }
+  });
+
+  window.addEventListener("resize", function(){
+    if(manualTop) setTopHeight(topEl.getBoundingClientRect().height);
+    barWidth = window.innerWidth < 420 ? 16 : (window.innerWidth < 720 ? 22 : 28);
+    renderProgress();
+  });
+
+  function showHint(){
+    hintEl.classList.remove("hide");
+    clearTimeout(hintTimer);
+    hintTimer = setTimeout(function(){
+      hintEl.classList.add("hide");
+    }, 10000);
+  }
+
+  $("#hintHelp").addEventListener("click", function(){
+    execute("help");
+    cmdEl.focus({preventScroll:true});
+  });
+
+  const cmdHistoryLog = [];
+  let historyIndex = 0;
+
+  function printPromptLine(text){
+    addRaw('<span class="u">naima</span><span class="sep">@</span><span class="host">web-os</span><span class="sep">:</span><span class="path">~</span><span class="sep">$ </span>' + esc(text));
+  }
+
+  function parseArgs(str){
+    const out = [];
+    const re = /"([^"\\]*(?:\\.[^"\\]*)*)"|'([^']*)'|(\S+)/g;
+    let m;
+    while((m = re.exec(str))){
+      if(m[1] !== undefined) out.push(m[1]);
+      else if(m[2] !== undefined) out.push(m[2]);
+      else out.push(m[3]);
+    }
+    return out;
+  }
+
+  const HELP = [
+    ["ls", "列出当前目录（ls -l 查看详细权限）"],
+    ["cat <file>", "查看只读文件内容"],
+    ["bash <file>", "执行 shell 脚本，例如 bash music.sh"],
+    ["open <file>", "在新标签页打开网页文件"],
+    ["download <url>", "下载网络文件到浏览器下载文件夹（别名 wget）"],
+    ["music", "打开音乐播放器（music list 查看歌单）"],
+    ["music next|prev|pause", "控制音乐播放"],
+    ["theme", "查看当前动态配色"],
+    ["neofetch", "显示 Web-OS 系统信息"],
+    ["clear", "清屏"],
+    ["date / whoami / pwd / uname / echo", "常用 Linux 指令"],
+    ["history", "查看命令历史"],
+    ["sudo <cmd>", "执行提权命令"]
+  ];
+
+  function cmdHelp(){
+    addRaw('<div class="help-head">Web-OS shell · 可用命令</div>');
+    HELP.forEach(function(item){
+      addRaw('<div class="help-row"><span class="cmd" data-cmd="' + esc(item[0]) + '">' + esc(item[0]) + '</span><span class="help-desc">' + esc(item[1]) + "</span></div>");
+    });
+    addLine("提示：点击命令名可以把它填入输入框。", "dim");
+  }
+
+  function cmdLs(args){
+    const long = args.indexOf("-l") >= 0 || args.indexOf("--long") >= 0 || args.indexOf("-al") >= 0 || args.indexOf("-la") >= 0;
+    if(!long){
+      addRaw('<div class="ls-grid">' + FILES.map(fileHTML).join("") + "</div>");
+      addLine("（只读文件 · 点击 .html 打开 · 点击 music.sh 执行）", "dim");
+      return;
+    }
+    addLine("total " + FILES.length, "dim");
+    FILES.forEach(function(file){
+      addRaw('<div class="ls-row"><span class="perm">' + file.perm + '</span><span class="size">' + fmtSize(file.size) + '</span><span>' + fileHTML(file) + "</span></div>");
+    });
+    addLine("所有文件均为只读 (r--r--r--)", "dim");
+  }
+
+  function cmdCat(args){
+    const name = args[0];
+    if(!name){
+      addLine("cat: 缺少文件名。用法: cat <file>", "err");
+      return;
+    }
+    const file = FILES.find(function(f){ return f.name === name; });
+    if(!file){
+      addLine("cat: " + name + ": No such file or directory", "err");
+      return;
+    }
+    if(file.type === "sh"){
+      addLine("#!/usr/bin/env websh", "dim");
+      addLine("# music.sh — 启动 Web-OS 音乐播放器（循环播放）", "dim");
+      SONGS.forEach(function(song, i){
+        addLine("# " + (i + 1) + ". " + song.title + " — " + song.artist, "dim");
+      });
+      addLine("exec music player --loop", "dim");
+      return;
+    }
+    const note = addLine("正在读取 " + name + " ...", "dim");
+    fetch(encodeURI(name), {cache:"no-store"}).then(function(res){
+      if(!res.ok) throw new Error("HTTP " + res.status);
+      return res.text();
+    }).then(function(text){
+      note.remove();
+      let truncated = false;
+      if(text.length > 6000){
+        text = text.slice(0, 6000) + "\n... (已截断)";
+        truncated = true;
+      }
+      addRaw('<pre class="cat-pre">' + esc(text) + "</pre>");
+      if(truncated) addLine("文件较长，仅显示前 6000 个字符。", "dim");
+    }).catch(function(err){
+      note.className = "line warn";
+      note.textContent = "cat: " + name + ": 无法读取 (" + err.message + ")。这是只读网页文件，可直接点击打开。";
+    });
+  }
+
+  function runScript(name){
+    if(!name){
+      addLine("bash: 需要一个脚本文件。例如: bash music.sh", "err");
+      return;
+    }
+    const clean = String(name).replace(/^\.\//, "");
+    if(clean === "music.sh"){
+      showPlayer();
+      wantPlay = true;
+      if(audio.paused) tryPlay();
+      addLine("music.sh: 已启动 Web-OS 音乐播放器（5 首循环）", "ok");
+      return;
+    }
+    addLine("bash: " + clean + ": No such file or directory", "err");
+  }
+
+  function cmdOpen(name){
+    if(!name){
+      addLine("open: 缺少文件名。用法: open <file>", "err");
+      return;
+    }
+    const file = FILES.find(function(f){ return f.name === name; });
+    if(!file){
+      addLine("open: " + name + ": No such file or directory", "err");
+      return;
+    }
+    if(file.type === "html"){
+      const url = SITE + encodeURIComponent(file.name);
+      window.open(url, "_blank", "noopener");
+      addLine("已在新的标签页打开 " + url, "dim");
+    }else if(file.type === "sh"){
+      runScript(file.name);
+    }else{
+      addLine("open: " + name + ": 未配置打开方式", "warn");
+    }
+  }
+
+  async function cmdDownload(args){
+    const urls = args.filter(function(a){ return /^https?:\/\//i.test(a); });
+    const url = urls[0];
+    if(!url){
+      addLine("download: 缺少 URL。用法: download <url> [文件名]", "err");
+      return;
+    }
+    let name = null;
+    const oi = args.indexOf("-o");
+    if(oi >= 0 && args[oi + 1]) name = args[oi + 1];
+    if(!name){
+      const idx = args.indexOf(url);
+      const next = args[idx + 1];
+      if(next && !/^-/.test(next) && !/^https?:\/\//i.test(next)) name = next;
+    }
+    if(!name){
+      try{
+        const path = new URL(url).pathname;
+        name = decodeURIComponent(path.split("/").filter(Boolean).pop() || "download");
+      }catch(err){
+        name = "download";
+      }
+    }
+    name = String(name).replace(/[\\/:*?"<>|]/g, "_").slice(0, 160) || "download";
+
+    addLine("GET " + url, "dim");
+    const line = addLine("下载中 " + name + " ...", "muted");
+    try{
+      const res = await fetch(url, {mode:"cors", cache:"no-store"});
+      if(!res.ok) throw new Error("HTTP " + res.status);
+      const total = Number(res.headers.get("content-length")) || 0;
+      let blob;
+      if(res.body && res.body.getReader){
+        const reader = res.body.getReader();
+        const chunks = [];
+        let received = 0;
+        let lastPct = -1;
+        while(true){
+          const part = await reader.read();
+          if(part.done) break;
+          chunks.push(part.value);
+          received += part.value.length;
+          const ratio = total ? received / total : 0;
+          const pct = total ? Math.floor(ratio * 100) : -1;
+          if(pct !== lastPct){
+            lastPct = pct;
+            line.textContent = "下载中 " + name + "  " + (total ? pct + "%  " + progressBar(ratio) : fmtSize(received));
+          }
+        }
+        blob = new Blob(chunks, {type:res.headers.get("content-type") || "application/octet-stream"});
+      }else{
+        blob = await res.blob();
+      }
+      saveBlob(blob, name);
+      line.className = "line ok";
+      line.textContent = "[ok] 已保存到下载文件夹: " + name + " (" + fmtSize(blob.size) + ")";
+    }catch(err){
+      line.className = "line warn";
+      line.textContent = "跨域下载受限，交给浏览器直接下载: " + name;
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = name;
+      a.target = "_blank";
+      a.rel = "noopener";
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      addLine("若浏览器直接打开了文件，请在页面中右键另存为。", "dim");
+    }
+  }
+
+  function saveBlob(blob, name){
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = name;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(function(){ URL.revokeObjectURL(url); }, 5000);
+  }
+
+  function cmdMusic(cmd, args){
+    const sub = args[0];
+    if(cmd === "play" && !sub){
+      showPlayer();
+      wantPlay = true;
+      tryPlay();
+      return;
+    }
+    if(!sub || sub === "show"){
+      showPlayer();
+      if(audio.paused){
+        wantPlay = true;
+        tryPlay();
+      }
+      addLine("正在播放: " + SONGS[currentIndex].title + " — " + SONGS[currentIndex].artist, "muted");
+      return;
+    }
+    if(sub === "list"){
+      showPlayer();
+      SONGS.forEach(function(song, i){
+        addRaw('<div><span class="dim">' + String(i + 1).padStart(2, "0") + '</span>  <span class="cmd" data-music="' + i + '">' + esc(song.title) + '</span> <span class="dim">— ' + esc(song.artist) + "</span></div>");
+      });
+      addLine("点击歌名，或输入 music <序号> 切歌。", "dim");
+      return;
+    }
+    if(sub === "play"){
+      wantPlay = true;
+      tryPlay();
+      return;
+    }
+    if(sub === "pause"){
+      wantPlay = false;
+      audio.pause();
+      return;
+    }
+    if(sub === "toggle"){
+      togglePlay();
+      return;
+    }
+    if(sub === "next"){
+      nextTrack();
+      return;
+    }
+    if(sub === "prev" || sub === "previous"){
+      prevTrack();
+      return;
+    }
+    const n = parseInt(sub, 10);
+    if(!isNaN(n) && n >= 1 && n <= SONGS.length){
+      showPlayer();
+      loadTrack(n - 1, true);
+      addLine("切换到: " + SONGS[n - 1].title, "muted");
+      return;
+    }
+    addLine("music: 未知子命令 " + sub + "。试试 music list / play / pause / next / prev", "err");
+  }
+
+  function cmdTheme(){
+    const mode = themeState.mode === "cover" ? "动态取色（来自封面）" : "暗色模式";
+    addLine("主题: " + mode, "muted");
+    addRaw('<div>accent: <span style="color:' + themeState.accent + '">██████</span> ' + themeState.accent + (themeState.h != null ? " · hue " + themeState.h : "") + "</div>");
+    if(isPlaying){
+      addLine("当前封面: " + SONGS[currentIndex].title + " — " + SONGS[currentIndex].artist, "dim");
+    }else{
+      addLine("播放音乐后，会从专辑封面提取颜色并应用到整个页面。", "dim");
+    }
+  }
+
+  function cmdNeofetch(){
+    const grade = gradeFor(schoolAge(new Date()));
+    const rows = [
+      ["naima", "@web-os"],
+      ["OS", "Web-OS 1.0 (Android-inspired)"],
+      ["Host", "naima104.github.io"],
+      ["Kernel", "JavaScript / " + (navigator.platform || "browser")],
+      ["Shell", "websh 1.0"],
+      ["Theme", themeState.mode === "cover" ? "Dynamic (cover)" : "Dark"],
+      ["Now", isPlaying ? SONGS[currentIndex].title + " — " + SONGS[currentIndex].artist : "—"],
+      ["Age", ageAt(new Date()) + " 岁 / " + grade.name]
+    ];
+    const info = rows.map(function(row){
+      return '<div class="nf-row"><span class="nf-key">' + esc(row[0]) + '</span><span class="nf-val">' + esc(row[1]) + "</span></div>";
+    }).join("");
+    addRaw('<div class="neofetch"><pre class="tux">' + esc(TUX) + '</pre><div class="nf-info">' + info + "</div></div>");
+  }
+
+  function cmdUname(args){
+    if(args.indexOf("-a") >= 0){
+      addLine("Web-OS 1.0 web-kernel #1 SMP " + new Date().toDateString() + " JavaScript " + (navigator.platform || "browser"));
+    }else{
+      addLine("Web-OS");
+    }
+  }
+
+  function cmdHistory(){
+    if(!cmdHistoryLog.length){
+      addLine("history: 暂无记录", "dim");
+      return;
+    }
+    cmdHistoryLog.forEach(function(item, i){
+      addRaw('<div><span class="dim">' + String(i + 1).padStart(4, " ") + "</span>  " + esc(item) + "</div>");
+    });
+  }
+
+  function cmdSudo(){
+    addLine("[sudo] password for naima:", "dim");
+    setTimeout(function(){
+      addLine("naima is not in the sudoers file. This incident has been reported.", "err");
+    }, 550);
+  }
+
+  function clearTerminal(){
+    outputEl.innerHTML = "";
+    cmdEl.focus({preventScroll:true});
+  }
+
+  function runBanner(){
+    addRaw('<div class="ascii-art">' + esc(ART) + "</div>");
+  }
+
+  function nextTrackCommand(){
+    nextTrack();
+    addLine("next: " + SONGS[currentIndex].title + " — " + SONGS[currentIndex].artist, "muted");
+  }
+
+  function prevTrackCommand(){
+    prevTrack();
+    addLine("prev: " + SONGS[currentIndex].title + " — " + SONGS[currentIndex].artist, "muted");
+  }
+
+  function execute(raw, record){
+    const input = String(raw == null ? "" : raw).trim();
+    if(record !== false){
+      cmdHistoryLog.push(input);
+      historyIndex = cmdHistoryLog.length;
+    }
+    printPromptLine(input);
+    if(!input) return;
+    const args = parseArgs(input);
+    const cmd = args[0];
+    const rest = args.slice(1);
+    if(cmd.indexOf("./") === 0){
+      runScript(cmd.slice(2), rest);
+      return;
+    }
+    switch(cmd){
+      case "help":
+      case "man":
+      case "--help":
+        cmdHelp();
+        break;
+      case "ls":
+        cmdLs(rest);
+        break;
+      case "ll":
+        cmdLs(["-l"].concat(rest));
+        break;
+      case "cat":
+        cmdCat(rest);
+        break;
+      case "bash":
+      case "sh":
+        runScript(rest[0], rest.slice(1));
+        break;
+      case "open":
+      case "xdg-open":
+        cmdOpen(rest[0]);
+        break;
+      case "download":
+      case "wget":
+        cmdDownload(rest);
+        break;
+      case "curl": {
+        const urls = rest.filter(function(a){ return /^https?:\/\//i.test(a); });
+        if(!urls.length) addLine("curl: 缺少 URL。用法: curl -O <url>", "err");
+        else cmdDownload(rest);
+        break;
+      }
+      case "music":
+      case "play":
+        cmdMusic(cmd, rest);
+        break;
+      case "pause":
+        wantPlay = false;
+        audio.pause();
+        break;
+      case "next":
+        nextTrackCommand();
+        break;
+      case "prev":
+        prevTrackCommand();
+        break;
+      case "theme":
+        cmdTheme();
+        break;
+      case "neofetch":
+        cmdNeofetch();
+        break;
+      case "clear":
+        clearTerminal();
+        break;
+      case "date":
+        addLine(new Date().toLocaleString("zh-CN", {hour12:false}), "muted");
+        break;
+      case "whoami":
+        addLine("naima");
+        break;
+      case "pwd":
+        addLine("/home/naima");
+        break;
+      case "uname":
+        cmdUname(rest);
+        break;
+      case "echo":
+        addLine(rest.join(" "));
+        break;
+      case "history":
+        cmdHistory();
+        break;
+      case "cd":
+        addLine("cd: Web-OS 文件系统为只读，仍停留在 /home/naima", "dim");
+        break;
+      case "sudo":
+        cmdSudo();
+        break;
+      case "rm":
+      case "mv":
+      case "cp":
+      case "touch":
+      case "mkdir":
+      case "chmod":
+        addLine(cmd + ": 只读文件系统 (read-only file system)", "err");
+        break;
+      case "banner":
+        runBanner();
+        break;
+      case "hint":
+        showHint();
+        addLine("提示已重新显示 10 秒。", "dim");
+        break;
+      case "reboot":
+      case "shutdown":
+        addLine("正在重新启动 Web-OS ...", "warn");
+        setTimeout(function(){ location.reload(); }, 900);
+        break;
+      case "exit":
+        addLine("logout — 刷新页面可以重新连接。", "dim");
+        break;
+      default:
+        addLine(cmd + ": command not found. 输入 help 查看可用命令。", "err");
+    }
+  }
+
+  function completeInput(){
+    const value = cmdEl.value;
+    const parts = value.split(/\s+/);
+    if(parts.length <= 1){
+      const commands = ["ls", "ll", "cat", "bash", "open", "download", "wget", "curl", "music", "play", "pause", "next", "prev", "theme", "neofetch", "clear", "date", "whoami", "pwd", "uname", "echo", "history", "sudo", "banner", "hint", "reboot", "exit"];
+      const matches = commands.filter(function(c){ return c.indexOf(parts[0]) === 0; });
+      if(matches.length === 1) cmdEl.value = matches[0] + " ";
+    }else{
+      const frag = parts[parts.length - 1];
+      const matches = FILES.map(function(f){ return f.name; }).filter(function(n){ return n.indexOf(frag) === 0; });
+      if(matches.length === 1){
+        parts[parts.length - 1] = matches[0];
+        cmdEl.value = parts.join(" ");
+      }
+    }
+  }
+
+  cmdEl.addEventListener("keydown", function(e){
+    if(e.key === "Enter"){
+      e.preventDefault();
+      const value = cmdEl.value;
+      cmdEl.value = "";
+      execute(value);
+    }else if(e.key === "ArrowUp"){
+      e.preventDefault();
+      if(!cmdHistoryLog.length) return;
+      historyIndex = Math.max(0, historyIndex - 1);
+      cmdEl.value = cmdHistoryLog[historyIndex] || "";
+      requestAnimationFrame(function(){ cmdEl.setSelectionRange(cmdEl.value.length, cmdEl.value.length); });
+    }else if(e.key === "ArrowDown"){
+      e.preventDefault();
+      historyIndex = Math.min(cmdHistoryLog.length, historyIndex + 1);
+      cmdEl.value = cmdHistoryLog[historyIndex] || "";
+      requestAnimationFrame(function(){ cmdEl.setSelectionRange(cmdEl.value.length, cmdEl.value.length); });
+    }else if(e.key === "Tab"){
+      e.preventDefault();
+      completeInput();
+    }else if((e.ctrlKey || e.metaKey) && (e.key === "l" || e.key === "L")){
+      e.preventDefault();
+      clearTerminal();
+    }else if(e.ctrlKey && (e.key === "c" || e.key === "C")){
+      e.preventDefault();
+      addLine("^C", "dim");
+      cmdEl.value = "";
+    }
+  });
+
+  $("#promptLine").addEventListener("submit", function(e){
+    e.preventDefault();
+    const value = cmdEl.value;
+    cmdEl.value = "";
+    execute(value);
+  });
+
+  screenEl.addEventListener("click", function(e){
+    if(e.target.closest("a,button,input,[data-run],[data-cmd],[data-music]")) return;
+    if(window.getSelection && String(window.getSelection()).length) return;
+    cmdEl.focus({preventScroll:true});
+  });
+
+  outputEl.addEventListener("click", function(e){
+    const cmdTarget = e.target.closest("[data-cmd]");
+    if(cmdTarget){
+      cmdEl.value = cmdTarget.getAttribute("data-cmd") || "";
+      cmdEl.focus({preventScroll:true});
+      return;
+    }
+    const musicTarget = e.target.closest("[data-music]");
+    if(musicTarget){
+      execute("music " + (Number(musicTarget.getAttribute("data-music")) + 1));
+      return;
+    }
+    const runTarget = e.target.closest("[data-run]");
+    if(runTarget){
+      execute("bash " + runTarget.getAttribute("data-run"));
+    }
+  });
+
+  outputEl.addEventListener("keydown", function(e){
+    if(e.key !== "Enter" && e.key !== " ") return;
+    const runTarget = e.target.closest("[data-run]");
+    if(runTarget){
+      e.preventDefault();
+      execute("bash " + runTarget.getAttribute("data-run"));
+    }
+  });
+
+  document.addEventListener("visibilitychange", function(){
+    if(document.hidden){
+      clearTimeout(typeTimer);
+    }else{
+      clearTimeout(typeTimer);
+      typeLoop();
+      refreshAge();
+    }
+  });
+
+  async function boot(){
+    if(booted) return;
+    booted = true;
+    const artLine = addRaw('<div class="ascii-art"></div>');
+    const artEl = $(".ascii-art", artLine);
+    for(let i = 0; i < ART.length; i++){
+      const ch = ART[i];
+      artEl.textContent += ch;
+      if(ch !== "\n") scrollBottom();
+      await sleep(ch === "\n" ? 26 : 4 + Math.random() * 7);
+    }
+    scrollBottom();
+    await sleep(140);
+
+    const musicLine = addRaw('<div class="music-line"><span class="music-name">Music</span><span class="music-dash"></span><span class="music-done"></span></div>');
+    const dashEl = $(".music-dash", musicLine);
+    const doneEl = $(".music-done", musicLine);
+    for(let i = 0; i < 15; i++){
+      dashEl.textContent += "-";
+      scrollBottom();
+      await sleep(68 + Math.random() * 58);
+    }
+    await sleep(170);
+    doneEl.textContent = "done";
+    scrollBottom();
+    await sleep(320);
+
+    showPlayer();
+    loadTrack(0, false);
+    await sleep(160);
+    addLine("Web-OS 已就绪 · 输入 help 查看可用命令", "dim");
+    wantPlay = true;
+    tryPlay();
+    scrollBottom();
+  }
+
+  function init(){
+    applyDarkTheme();
+    refreshAge();
+    setInterval(refreshAge, 30000);
+    barWidth = window.innerWidth < 420 ? 16 : (window.innerWidth < 720 ? 22 : 28);
+    renderPlayer();
+    renderProgress(0, SONGS[0].duration);
+    showHint();
+    typeLoop();
+    boot();
+  }
+
+  init();
+})();
+</script>
+</body>
+</html>
